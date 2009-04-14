@@ -11,15 +11,16 @@ import java.util.EventListener;
  */
 public class DrawingCanvas extends JComponent 
 {
-	protected MouseController mouseController = null;
-    protected KeyboardController keyController = null;
-    protected Image imageBuffer = null;
-    protected Graphics imageBufferGraphics = null;
-    protected int canvasWidth = 0;
-    protected int canvasHeight = 0;
-    protected Color penColor = Color.black;
-    protected Tool currentTool = null; 
-    protected Session session = null;
+	
+	private MouseController mouseController = null;
+	private KeyboardController keyController = null;
+	private Image imageBuffer = null;
+	private Graphics imageBufferGraphics = null;
+	private int canvasWidth = 0;
+	private int canvasHeight = 0;
+	private Color penColor = Color.black;
+	private Tool currentTool = null; 
+	protected Session session = null;
     
     /**
      * Create a new DrawingCanvas.
@@ -103,6 +104,11 @@ public class DrawingCanvas extends JComponent
       }
     }  
   
+    /**
+     * Get the current color that the canvas will use for 
+     * new/selected objects.
+     * @return Current color.
+     */
     public Color getpenColor() {
     	return penColor;
     }
@@ -136,61 +142,75 @@ public class DrawingCanvas extends JComponent
 	    }	
 	  }
   
-  public Tool getcurrentTool() {
-    return currentTool;
-  }
+    /**
+     * Get the current tool in use for the canvas.
+     * @return Return the current tool.
+     */
+    public Tool getcurrentTool() 
+    {
+    	return currentTool;
+    }
+  	
   
-  public Graphics getimageBufferGraphics() {
-    return imageBufferGraphics;
-  }
+    /**
+     * Get the current graphics.
+     * @return Returns the imageBufferGraphics.
+     */
+    public Graphics getimageBufferGraphics() {
+    	return imageBufferGraphics;
+    }
   
-  public void clearCanvas() 
-  {
+    /**
+     * Clean the canvas.
+     */
+    public void clearCanvas() 
+    {
 	  if(session != null)
 	  {
 		  session.clearObjects();
 	  }
    
-   /* Set the new rectangle color to white */
-   imageBufferGraphics.setColor(Color.WHITE);
-   imageBufferGraphics.setXORMode(Color.WHITE);
+	  /* Set the new rectangle color to white */
+	  imageBufferGraphics.setColor(Color.WHITE);
+	  imageBufferGraphics.setXORMode(Color.WHITE);
    
-   imageBufferGraphics.fillRect(0, 0, canvasWidth, canvasHeight);
-   imageBufferGraphics.setColor(penColor); 
-   paint(imageBufferGraphics);
-   repaint();
-  }
+	   imageBufferGraphics.fillRect(0, 0, canvasWidth, canvasHeight);
+	   imageBufferGraphics.setColor(penColor); 
+	   paint(imageBufferGraphics);
+	   repaint();
+  	}
   
-  /**
-   * Change the canvas size.  Note that this event is not
-   * sent via network.
-   */
-  public void setBounds(int x, int y, int width, int height) {
-    Image newimageBuffer = createImage(width, height);
-    imageBufferGraphics = newimageBuffer.getGraphics();
-    if (imageBuffer != null) 
+    /**
+     * Change the canvas size.  Note that this event is not
+     * sent to session.
+     */
+    public void setBounds(int x, int y, int width, int height) 
     {
-      imageBufferGraphics.drawImage(imageBuffer, 0, 0 ,this);
-    }
-    imageBuffer = newimageBuffer;
-    setpenColor(penColor);
-    super.setBounds(x, y, width, height);
-    
-    if (session != null)
-    {
-    	ArrayList <Shape> drawableShapes = session.currentState.currentShapes();
-    	if (drawableShapes != null)
-    	{
-    		for (int i = 0 ; i < drawableShapes.size(); i++)
-    		{
-    			drawableShapes.get(i).draw(imageBufferGraphics);
-    		}
-    	}
-    }
-    
-    repaint();
-    canvasWidth = width;
-    canvasHeight = height;
+	    Image newimageBuffer = createImage(width, height);
+	    imageBufferGraphics = newimageBuffer.getGraphics();
+	    if (imageBuffer != null) 
+	    {
+	      imageBufferGraphics.drawImage(imageBuffer, 0, 0 ,this);
+	    }
+	    imageBuffer = newimageBuffer;
+	    setpenColor(penColor);
+	    super.setBounds(x, y, width, height);
+	    
+	    if (session != null)
+	    {
+	    	ArrayList <Shape> drawableShapes = session.currentState.currentShapes();
+	    	if (drawableShapes != null)
+	    	{
+	    		for (int i = 0 ; i < drawableShapes.size(); i++)
+	    		{
+	    			drawableShapes.get(i).draw(imageBufferGraphics);
+	    		}
+	    	}
+	    }
+	    
+	    repaint();
+	    canvasWidth = width;
+	    canvasHeight = height;
   }
 
   /**

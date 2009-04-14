@@ -168,7 +168,7 @@ public class MultiDraw extends JApplet  {
    */
   public static void main(String[] args) {
     JFrame frame = new JFrame();
-    frame.setTitle("MultiDraw Forth Iteration");
+    frame.setTitle("MultiDraw Development Build");
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(new MultiDraw(false),
 			      BorderLayout.CENTER);
