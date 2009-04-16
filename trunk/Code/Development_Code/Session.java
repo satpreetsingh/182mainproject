@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -8,6 +11,9 @@ import java.util.UUID;
 
 public class Session {
 
+	public ServerSocket server;
+	public ArrayList <Socket> clientSockets;
+	
 	public UUID	id;
 	public ArrayList <Member> members;
 	public Member localUser;
@@ -17,6 +23,29 @@ public class Session {
 	public DrawingCanvas canvas;
 	
 	
+	public Session (Member local, DrawingCanvas canvas, String ip, int port)
+	{
+		members = new ArrayList<Member>();
+		members.add(local);
+		currentState = new DrawState();
+		this.canvas = canvas;
+		this.localUser = local;
+		clientSockets = new ArrayList<Socket>();
+		
+		
+		
+		try 
+		{
+			Socket clientSocket = new Socket(ip, port);
+			clientSockets.add(clientSocket);
+			server = new ServerSocket(3000);
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public Session (Member creater, DrawingCanvas canvas)
 	{
 		members = new ArrayList<Member>();
@@ -24,6 +53,17 @@ public class Session {
 		currentState = new DrawState();
 		this.canvas = canvas;
 		this.localUser = creater;
+		clientSockets = new ArrayList<Socket>();
+		
+		try 
+		{
+			server = new ServerSocket(3000);
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void publishEvent()

@@ -12,6 +12,7 @@ public class DateClient {
         // open a socket connection
           //127.0.0.1 represents the machine on which the Server will run
           //In my case i used my local machine as the server hence the ip address
+    	 
         socket = new Socket("127.0.0.1", 3000);
         // open I/O streams for objects
         oos = new ObjectOutputStream(socket.getOutputStream());
