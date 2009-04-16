@@ -6,10 +6,9 @@ import java.net.*;
 
 public class MultiDraw extends JApplet  {
 
-	private boolean isMaster = true;
+	private boolean isMaster = false;
 	
 	
-	private String tempName = "Ben";
 	
 	private SessionManager sessionMgr;
 	protected DrawingCanvas canvas;
@@ -66,7 +65,16 @@ public class MultiDraw extends JApplet  {
 	   * This is temp code, it automatically creates a new session,
 	   * so that Object draw functionality will work.
 	   */
-	  Member temp = new Member(tempName);
+	  String tempName;
+    if(isMaster)
+    {
+    	tempName = "Ben_Master";
+    }
+    else
+    {
+    	tempName = "Ben_Slave";
+    }
+    	Member temp = new Member(tempName);
 	  
 	  Session tempAuto;
 	  if (isMaster)
@@ -75,7 +83,7 @@ public class MultiDraw extends JApplet  {
 	  }
 	  else
 	  {
-		  tempAuto = null;
+		  tempAuto = new Session(temp, canvas, "192.168.1.2", 3000);
 		  ;
 		  //TODO:
 	  }
