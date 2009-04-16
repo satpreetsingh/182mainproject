@@ -1,4 +1,8 @@
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -7,7 +11,7 @@ import java.util.ArrayList;
  * 
  * @author bmhelppi
  */
-public class SessionManager {
+public class SessionManager extends Thread {
 	
 	ArrayList <Session> availableSessions;
 	ArrayList <Session> activeSessions;
@@ -23,13 +27,63 @@ public class SessionManager {
 		activeSessions = new ArrayList<Session>();
 	}
 	
+	
+	public void run ()
+	{
+		while(true)
+		{
+			for(int i = 0; i < availableSessions.size(); i++)
+			{
+				updateActiveSession(activeSessions.get(i));
+			}
+		}
+		
+	}
+	
+	private void sendWelcome(Socket client)
+	{
+		ObjectInputStream ois = null;
+		ObjectOutputStream oos = null;
+		
+		try
+		{
+			ois = new ObjectInputStream(client.getInputStream());
+			oos = new ObjectOutputStream(client.getOutputStream());
+		    oos.writeObject(new Date());
+	        oos.flush();
+		}
+		catch (Exception e)
+		{
+			
+		}
+	}
+	
 	/**
 	 * Update all sessions.
 	 * TODO: Should be called periodically in some way.
 	 */
-	public void update()
+	public void updateActiveSession(Session s)
 	{
-		
+		try
+		{
+			Socket client = s.server.accept();
+			if (Constants.messageLevel == Constants.Messages.debug)
+			{
+			   System.out.println("Accepted a connection from: "+
+		        		client.getInetAddress());
+		        
+			}
+			if (client != null)
+			{
+				s.clientSockets.add(client);
+				sendWelcome(client);
+			}
+			
+		}
+		catch(Exception e)
+		{
+			
+		}
 	}
 	
 	/**
@@ -42,6 +96,11 @@ public class SessionManager {
 		activeSessions.add(s);
 	}
 	
+	/**
+	 * Update the canvas that this SessionManager has control of
+	 * to focus on a new session.
+	 * @param s
+	 */
 	public void setFocusOnSession(Session s)
 	{
 		if (s != null)
