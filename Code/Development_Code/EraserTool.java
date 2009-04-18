@@ -15,15 +15,13 @@ public class EraserTool implements Tool {
   /**
    * Create a new instance of the Eraser tool.
    */
-  public EraserTool() {
-  }
+  public EraserTool() {}
 
   
   /**
 	* Dragging mouse does nothing for this class.
    */
-  public void mouseDragged(Point p, ArrayList<Shape> currentShapes,DrawingCanvas canvas) {
-  }
+  public void mouseDragged(Point p, ArrayList<Shape> currentShapes,DrawingCanvas canvas) {}
 
   
   /**
@@ -32,9 +30,11 @@ public class EraserTool implements Tool {
    */
   public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
     Shape shape;
-    for (int i =0; i < currentShapes.size(); i++) {
+    for (int i = 0; i < currentShapes.size(); i++) 
+    {
       shape = currentShapes.get(i);
-      if (shape.near(p.x, p.y)) {
+      if (shape.near(p.x, p.y)) 
+      {
         currentShapes.remove(i);
         i = currentShapes.size();
         canvas.refresh();
@@ -52,6 +52,6 @@ public class EraserTool implements Tool {
   /**
    * This event does nothing for this tool.
    */
-  public void deselected(DrawingCanvas canvas) { }
+  public void deselected(DrawingCanvas canvas) {}
 	
 }

@@ -1,4 +1,10 @@
 
+
+/**
+ * This class defines some constants in a single place.
+ * @author ben
+ *
+ */
 public class Constants {
 
 	/**
@@ -12,6 +18,7 @@ public class Constants {
 		debug,
 		info,
 		error,
+		chat,
 		none
 	}
 }

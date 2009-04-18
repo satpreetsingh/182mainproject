@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 /**
  * Creates an abstract class for shapes that
@@ -7,7 +8,7 @@ import java.awt.geom.Point2D;
  * @authors bmhelppi, jjtrapan
  *
  */
-public abstract class TwoPointShape extends Shape
+public abstract class TwoPointShape extends Shape implements Serializable
 {
 	 
 	Point2D.Double end;

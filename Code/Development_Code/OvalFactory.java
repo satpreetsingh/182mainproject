@@ -3,12 +3,15 @@ import java.awt.Color;
 /**
  * Implements the TwoPointShapeFactory, to create Oval objects.
  * @author jjtrapan
+ * @author ben
  *
  */
 
 public class OvalFactory implements TwoPointShapeFactory{
 
-	@Override
+	/**
+	 * Create a new Oval from a generic TwoPointShape.
+	 */
 	public TwoPointShape createShape
 	(int xOne, 
 	 int yOne, 
@@ -16,9 +19,7 @@ public class OvalFactory implements TwoPointShapeFactory{
 	 int yTwo,
 	 Color c) 
 	{
-
 		Oval newOval = new Oval(xOne, yOne, c);
-		
 		return newOval;
 		
 	}

@@ -1,46 +1,77 @@
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * This class manages the controlPanel.
+ * @author ben
+ *
+ */
 public class ControlPanelController
-	implements ActionListener, ItemListener {
+	implements ActionListener, ItemListener 
+{
 
-  protected DrawingCanvas canvas;
+  Session session;
   
-  /* ------------------------------------------------------- */
-  /* Constructor */
-  
-  ControlPanelController(DrawingCanvas c) {
-    canvas = c;
+  /**
+   * Create a new instance of the Controller, with the session it should be interacting with.
+   * @param s Session to interact with.
+   */
+  ControlPanelController(Session s) 
+  {
+	  session = s;
   }
-  /* ------------------------------------------------------- */
-  
+
+  /**
+   * The clearObjects button received an event,
+   * ask Session to delete objects.
+   */
   public void actionPerformed(ActionEvent e) {
-    canvas.clearCanvas();
+	  if(session != null)
+	  {
+		  session.clearObjects();
+	  }
   }
-  /* ------------------------------------------------------- */
   
-  public void itemStateChanged(ItemEvent e)  {
-    if (e.getStateChange() == ItemEvent.SELECTED) {
-      canvas.setpenColor(itemToColor(e.getItem()));
+  /**
+   * The color of the pen changed, update it.
+   */
+  public void itemStateChanged(ItemEvent e)  
+  {
+    if (e.getStateChange() == ItemEvent.SELECTED)
+    {
+    	if(session != null)
+    	{
+    		session.canvas.setpenColor(itemToColor(e.getItem()));
+    	}
     }
   }
-  /* ------------------------------------------------------- */
   
-  protected Color itemToColor(Object item) {
+  /**
+   * Change the Session that this Controller focuses on.
+   * @param s Session to focus on.
+   */
+  public void updateSession(Session s)
+  {
+	  session = s;
+  }
+  private Color itemToColor(Object item) {
     
-    if("black".equals(item)) {
+    if("black".equals(item)) 
+    {
       return Color.black;
     }
-    else if("blue".equals(item)) {
-          return Color.blue;
-         }
-         else if("green".equals(item)) {
-               return Color.green;
-              }
-              else {
-                return Color.red;
-              }
+    else if("blue".equals(item)) 
+    {
+      return Color.blue;
+    }
+    else if("green".equals(item)) 
+    {
+    	return Color.green;
+    }
+    else 
+    {
+    	return Color.red;
+    }
   }
-  /* ------------------------------------------------------- */
   
 } 

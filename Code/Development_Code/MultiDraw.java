@@ -84,10 +84,11 @@ public class MultiDraw extends JApplet  {
 	  else
 	  {
 		  tempAuto = ServerUtils.buildSession(temp, canvas, "192.168.1.3", 3000);
-		  //TODO:
 	  }
 	  sessionMgr.addNewSession(tempAuto);
 	  canvas.updateSession(tempAuto);
+	  controlPanel.updateSession(tempAuto);
+	  
 	  sessionMgr.start();
   }
 
@@ -99,7 +100,7 @@ public class MultiDraw extends JApplet  {
 	}
   
 	protected ControlPanelView createControlPanelView() {
-		return new ControlPanelView(canvas); 
+		return new ControlPanelView(null); 
 	}
  
 	protected ToolBarView createToolBarView(ToolList toolList) {

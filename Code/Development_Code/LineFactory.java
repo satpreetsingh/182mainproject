@@ -8,6 +8,9 @@ import java.io.Serializable;
  */
 public class LineFactory implements TwoPointShapeFactory, Serializable{
 
+	/**
+	 * Create a new Line, from the generic TwoPointShape.
+	 */
 	public TwoPointShape createShape
 	(int xOne, 
 	 int yOne, 

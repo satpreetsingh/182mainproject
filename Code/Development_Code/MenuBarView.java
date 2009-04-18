@@ -2,20 +2,32 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
-public class MenuBarView extends JMenuBar {
+/**
+ * Implements a MenuBar.
+ * @author ben
+ *
+ */
+public class MenuBarView extends JMenuBar 
+{
   
-  MenuBarView(ToolList actions) {
-    JMenu toolMenu = new JMenu("Tool");
-    ToolListIterator iter = actions.iterator();
+	/**
+	 * Create a new MenuBar.
+	 * @param actions Actions the Menubar can perform.
+	 */
+	MenuBarView(ToolList actions) 
+	{
+		JMenu toolMenu = new JMenu("Tool");
+		ToolListIterator iter = actions.iterator();
 
-    while(iter.hasNext()) {
-      Action a = (Action) iter.next();
-      toolMenu.add(a);
-    }
+		while(iter.hasNext()) 
+		{
+			Action a = (Action) iter.next();
+			toolMenu.add(a);
+		}	
     
-    add(toolMenu);
+		add(toolMenu);
   
-  }
+	}
   
 } 
 

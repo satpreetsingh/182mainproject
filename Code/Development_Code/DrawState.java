@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -6,7 +7,7 @@ import java.util.ArrayList;
  * @author bmhelppi
  *
  */
-public class DrawState {
+public class DrawState implements Serializable{
 
 	private ArrayList <Shape> currentShapes;
 	private Shape lastSelected;

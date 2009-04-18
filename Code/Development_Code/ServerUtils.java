@@ -10,8 +10,13 @@ import java.util.Date;
 
 
 
-
-public class ServerUtils {
+/**
+ * Static utilities.  Handles large chunks of code for Session, and SessionManager.
+ * @author ben
+ *
+ */
+public class ServerUtils
+{
 
 	
 	/**
