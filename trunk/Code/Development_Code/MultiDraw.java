@@ -79,16 +79,16 @@ public class MultiDraw extends JApplet  {
 	  Session tempAuto;
 	  if (isMaster)
 	  {
-		  tempAuto = new Session(temp, canvas);
+		  tempAuto = ServerUtils.buildSession(temp,canvas);
 	  }
 	  else
 	  {
-		  tempAuto = new Session(temp, canvas, "192.168.1.2", 3000);
-		  ;
+		  tempAuto = ServerUtils.buildSession(temp, canvas, "192.168.1.3", 3000);
 		  //TODO:
 	  }
 	  sessionMgr.addNewSession(tempAuto);
 	  canvas.updateSession(tempAuto);
+	  sessionMgr.start();
   }
 
 	
@@ -128,33 +128,33 @@ public class MultiDraw extends JApplet  {
 	  		getImageIcon("line.jpg"),
 	  		"Line drawing tool",
 	  		canvas,
-	  		new TwoPointShapeTool(canvas, new LineFactory())));
+	  		new TwoPointShapeTool(new LineFactory())));
 	  
 	    actions.add(
 	  		new ToolController("Rectangle",
 	  		getImageIcon("rectangle.jpg"),
 	  		"Rectangle drawing tool",
 	  		canvas,
-	  		new TwoPointShapeTool(canvas, new RectangleFactory())));
+	  		new TwoPointShapeTool(new RectangleFactory())));
 	  		
 	    actions.add(
 	  	        new ToolController("Oval",
 	  	        getImageIcon("oval.jpg"),
 	  		"Oval drawing tool",
 	  		canvas,
-	  		new TwoPointShapeTool(canvas, new OvalFactory())));
+	  		new TwoPointShapeTool(new OvalFactory())));
 	    actions.add(
 	  		new ToolController("Text",
 	  		getImageIcon("text.jpg"),
 	  		"text drawing tool",
 	          	canvas,
-	  		new TextTool(canvas, new TextFactory())));		
+	  		new TextTool(new TextFactory())));		
 	    actions.add(
 	  		new ToolController("Eraser",
 	  		getImageIcon("eraser.jpg"),
 	  		"Eraser drawing tool",
 	  		canvas,
-	  		new EraserTool(canvas)));
+	  		new EraserTool()));
 	    
 	  
 	    /* Create a select tool to select other objects */
@@ -163,7 +163,7 @@ public class MultiDraw extends JApplet  {
 	      		getImageIcon("select.jpg"),
 	      		"Select tool",
 	      		canvas,
-	      		new SelectorTool(canvas)));
+	      		new SelectorTool()));
 	    
 	    return actions;
   }

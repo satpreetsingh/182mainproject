@@ -1,69 +1,93 @@
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.activation.ActivationException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
 
 
 public class Session {
 
-	public ServerSocket server;
-	public ArrayList <Socket> clientSockets;
 	
-	public UUID	id;
-	public ArrayList <Member> members;
-	public Member localUser;
+	public ArrayList <NetworkBundle>  networkMembers;
+	
+	public NetworkBundle localUser;
+	public NetworkBundle master;
+	public ServerSocket serverSock;
 	
 	public DrawState currentState;
 	
 	public DrawingCanvas canvas;
 	
-	
-	public Session (Member local, DrawingCanvas canvas, String ip, int port)
+	/**
+	 * Create a new Session on the local machine, that this application will not be in charge of.
+	 * If the master specified can't be found, throws ActivationException.
+	 * @param local
+	 * @param serverSock
+	 * @param canvas
+	 * @param ip
+	 * @param port
+	 * @throws ActivationException
+	 */
+	public Session (NetworkBundle local, ServerSocket serverSock,DrawingCanvas canvas, String ip, int port) throws ActivationException
 	{
-		members = new ArrayList<Member>();
-		members.add(local);
+		networkMembers = new ArrayList<NetworkBundle>();
+		networkMembers.add(local);
 		currentState = new DrawState();
 		this.canvas = canvas;
 		this.localUser = local;
-		clientSockets = new ArrayList<Socket>();
-		
-		
+		this.master = null;
+		this.serverSock = serverSock;
 		
 		try 
 		{
-			Socket clientSocket = new Socket(ip, port);
-			clientSockets.add(clientSocket);
-			server = new ServerSocket(3000);
+			/**
+			 * Create a socket for the server that we are connecting to.
+			 * Note when we create it we can't possibly fill out the member object, need to establish communication to do so.
+			 */
+			Socket masterSocket = new Socket(ip, port);
+			ObjectOutputStream oos = new ObjectOutputStream(masterSocket.getOutputStream());
+			ObjectInputStream ois = new ObjectInputStream(masterSocket.getInputStream());
+			Member master = null;
+			
+			NetworkBundle masterBundle = new NetworkBundle(master, ois,oos,masterSocket);
+			
+			this.master = masterBundle;
+			networkMembers.add(this.master);
+			
+			ServerUtils.acceptConn2(this);
 		} 
 		catch (IOException e) 
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Output.processMessage("Error creating Session", Constants.Message_Type.error);
+			throw new ActivationException("Could not connect to server.");
 		}
 	}
-	public Session (Member creater, DrawingCanvas canvas)
+	
+	/**
+	 * Create a new Session on the local machine that the local application will
+	 * be in charge of.
+	 * @param serverSock
+	 * @param creater
+	 * @param canvas
+	 */
+	public Session (ServerSocket serverSock,NetworkBundle creater, DrawingCanvas canvas)
 	{
-		members = new ArrayList<Member>();
-		members.add(creater);
+		networkMembers = new ArrayList<NetworkBundle>();
+		networkMembers.add(creater);
 		currentState = new DrawState();
+		this.master = creater;
 		this.canvas = canvas;
 		this.localUser = creater;
-		clientSockets = new ArrayList<Socket>();
-		
-		try 
-		{
-			server = new ServerSocket(3000);
-		} 
-		catch (IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.serverSock = serverSock;
 	}
 	
 	public void publishEvent()
@@ -81,7 +105,7 @@ public class Session {
 		return currentState;
 	}
 	
-	public boolean drawable(Member m)
+	public boolean drawable(NetworkBundle m)
 	{
 		return true;
 	}
@@ -142,7 +166,7 @@ public class Session {
 			KeyboardTool tool = (KeyboardTool)canvas.getcurrentTool();
 			if(tool != null) 
 			{
-				tool.keyTyped(e, this.currentState.currentShapes());
+				tool.keyTyped(e, this.currentState.currentShapes(), this.canvas);
 			}
 		}
 	}
@@ -152,7 +176,7 @@ public class Session {
 		{
 			KeyboardTool tool = (KeyboardTool)canvas.getcurrentTool();
 			if(tool != null) {
-				tool.keyReleased(e,this.currentState.currentShapes());
+				tool.keyReleased(e,this.currentState.currentShapes(), this.canvas);
 			}
 		}
 	}
@@ -163,49 +187,100 @@ public class Session {
 			KeyboardTool tool = (KeyboardTool)canvas.getcurrentTool();
 			if (tool != null) 
 			{
-				tool.keyPressed(e, this.currentState.currentShapes());
+				tool.keyPressed(e, this.currentState.currentShapes(), this.canvas);
 			}
 		}
 	}
-	public void processMouseDrag(MouseEvent e)
+	
+	/**
+	 * Process a mouseDrag event.
+	 * @param p Point where the event occurred.
+	 * @param networkEvent If true, event came from the network.
+	 * @param networkTool If networkEvent is true, then it is expected that this will exist.
+	 */
+	public void processMouseDrag(Point p, boolean networkEvent, Tool networkTool)
 	{
-		if (this.drawable(this.localUser))
+		if (this.drawable(this.localUser) || networkEvent)
 		{
-			Tool tool = canvas.getcurrentTool();
+			Tool tool;
+			if(networkEvent == false)
+			{
+				tool = canvas.getcurrentTool();
+				ServerUtils.sendMouseDrag(this,p, tool);
+				
+			}
+			else
+			{
+				tool = networkTool;
+			}
+			
 			if(tool != null) 
 			{
-				tool.mouseDragged(e,this.currentState.currentShapes());
+				tool.mouseDragged(p,this.currentState.currentShapes(), this.canvas);
 			}
 		}
 	}
-	public void processMouseRelease(MouseEvent e)
+	
+	/**
+	 * Process a mouseRelease event.
+	 * @param p Point where event occurred.
+	 * @param networkEvent If true, event came from network.
+	 * @param networkTool If NetworkEvent is true, then it is expected that this will exist.
+	 */
+	public void processMouseRelease(Point p, boolean networkEvent, Tool networkTool)
 	{
 		if(this.drawable(this.localUser))
 		{
-			  Tool tool = canvas.getcurrentTool();
-			  if(tool != null) 
-			  {
-				  tool.mouseReleased(e, this.currentState.currentShapes());
-			  }
+			Tool tool;
+			if(networkEvent == false)
+			{
+				tool = canvas.getcurrentTool();
+				ServerUtils.sendMouseRelease(this, p, tool);
+			}
+			else
+			{
+				tool = networkTool;
+			}
+			
+			
+			if(tool != null) 
+			{
+				tool.mouseReleased(p, this.currentState.currentShapes(), this.canvas);
+			}
 	  }
 	}
-	public void processMousePress(MouseEvent e)
+	
+	/**
+	 * Process a mousePress event.
+	 * @param p Point where event occurred.
+	 * @param networkEvent If true, event came from network.
+	 * @param networkTool If NetworkEvent is true, then it is expected that this will exist.
+	 */
+	public void processMousePress(Point p, boolean networkEvent, Tool networkTool)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
-		 //TODO: BMH SESSION Management of events.
+			Tool tool;
+			if(networkEvent == false)
+			{
+				tool = canvas.getcurrentTool();
+				ServerUtils.sendMousePress(this, p, tool);
+			}
+			else
+			{
+				tool = networkTool;
+			}
 			
 			
-		  if (this.currentState.lastSelected() != null)
-		  {
-			  canvas.repaint();	
-			  this.currentState.clearLastSelectedObject();	
-		  }
-		  Tool tool = canvas.getcurrentTool();
-		  if (tool != null) 
-		  {
-			  tool.mousePressed(e,this.currentState.currentShapes());
-		  }
+			if (this.currentState.lastSelected() != null)
+			{
+				canvas.repaint();	
+				this.currentState.clearLastSelectedObject();	
+			}
+			if (tool != null) 
+			{
+				tool.mousePressed(p,this.currentState.currentShapes(), this.canvas);
+			}
 		}
 	}
 }

@@ -1,15 +1,13 @@
 import java.awt.Color;
+import java.io.Serializable;
 
 /**
  * Implements the TwoPointShapeFactory, to create Line objects.
  * @author bmhelppi
  *
  */
-public class LineFactory implements TwoPointShapeFactory{
+public class LineFactory implements TwoPointShapeFactory, Serializable{
 
-	/* ------------------------------------------------------- */
-	@Override
-	
 	public TwoPointShape createShape
 	(int xOne, 
 	 int yOne, 
@@ -24,6 +22,5 @@ public class LineFactory implements TwoPointShapeFactory{
 		return newLine;
 		
 	}
-	/* ------------------------------------------------------- */
 	
 }

@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,33 +9,36 @@ import java.util.ArrayList;
  * @author bmhelppi
  *
  */
-public interface Tool {
+public interface Tool extends Serializable {
   
 	/**
 	 * Any instance of the Tool interface must handle mousePressed events.
-	 * @param e The event.
+	 * @param p Point where mousePress occurred.
 	 * @param currentShapes ArrayList of drawable shapes in the current context.
+	 * @param canvas Canvas to draw on.
 	 */
-  void mousePressed(MouseEvent e, ArrayList<Shape> currentShapes);
+  void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
  
   /**
    * Any instance of the Tool interface must handle mouseReleased events.
-   * @param e The event.
+   * @param p Point where the event occurred.
    * @param currentShapes ArrayList of drawable shapes in the current context.
+   * @param canvas Canvas to draw on.
    */
-  void mouseReleased(MouseEvent e, ArrayList<Shape> currentShapes);
+  void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
   
   /**
    * Any instance of the Tool interface must handle mouseDragged events.
-   * @param e The event.
+   * @param P Point where the event occurred.
    * @param currentShapes ArrayList of drawable shapes in the current context.
+   * @param canvas Canvas to draw on.
    */
-  void mouseDragged(MouseEvent e, ArrayList<Shape> currentShapes);
+  void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
   
   /**
    * Tool is no longer selected, any tools that need to finalize objects,
    * or do other handling should do so implementing this function.
    */
-  void deselected();
+  void deselected(DrawingCanvas canvas);
   
 }

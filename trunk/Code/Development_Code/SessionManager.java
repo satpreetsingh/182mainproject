@@ -1,21 +1,17 @@
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
-
 
 /**
  * Manages all the sessions that this program
  * participates in.
  * 
+ * If the object returned from getActiveSessions() is modified,
+ * correctness not guaranteed.
  * @author bmhelppi
  */
 public class SessionManager extends Thread {
 	
-	ArrayList <Session> availableSessions;
-	ArrayList <Session> activeSessions;
-	
+	private ArrayList <Session> activeSessions;
 	private DrawingCanvas canvas;
 	
 	/**
@@ -23,16 +19,17 @@ public class SessionManager extends Thread {
 	 */
 	public SessionManager ()
 	{
-		availableSessions = new ArrayList<Session>();
 		activeSessions = new ArrayList<Session>();
 	}
 	
-	
+	/**
+	 * Start the thread for this object.
+	 */
 	public void run ()
 	{
 		while(true)
 		{
-			for(int i = 0; i < availableSessions.size(); i++)
+			for(int i = 0; i < activeSessions.size(); i++)
 			{
 				updateActiveSession(activeSessions.get(i));
 			}
@@ -40,43 +37,21 @@ public class SessionManager extends Thread {
 		
 	}
 	
-	private void sendWelcome(Socket client)
-	{
-		ObjectInputStream ois = null;
-		ObjectOutputStream oos = null;
-		
-		try
-		{
-			ois = new ObjectInputStream(client.getInputStream());
-			oos = new ObjectOutputStream(client.getOutputStream());
-		    oos.writeObject(new Date());
-	        oos.flush();
-		}
-		catch (Exception e)
-		{
-			
-		}
-	}
 	
-	/**
-	 * Update all sessions.
-	 * TODO: Should be called periodically in some way.
-	 */
-	public void updateActiveSession(Session s)
+	private void updateActiveSessionPartThree(Session s)
 	{
 		try
 		{
-			Socket client = s.server.accept();
-			if (Constants.messageLevel == Constants.Messages.debug)
-			{
-			   System.out.println("Accepted a connection from: "+
-		        		client.getInetAddress());
-		        
-			}
+			s.serverSock.setSoTimeout(1);
+			Socket client = s.serverSock.accept();
+			
+			Output.processMessage("Accepted a connection from: "+
+		        		client.getInetAddress(), Constants.Message_Type.debug);
+			
+		
 			if (client != null)
 			{
-				s.clientSockets.add(client);
-				sendWelcome(client);
+				ServerUtils.acceptConn1(client, s);
 			}
 			
 		}
@@ -84,6 +59,36 @@ public class SessionManager extends Thread {
 		{
 			
 		}
+	}
+	
+	/**
+	 * Update data for an active session.
+	 * This includes:
+	 * 1.  Receive messages from active connections.
+	 * 2.  Do keep alive messages if master of the session.
+	 * 3.  Accept new connections.
+	 * @param s Session to update.
+	 */
+	private void updateActiveSession(Session s)
+	{
+		/**
+		 * Part One
+		 */
+		for (int i = 0; i < s.networkMembers.size(); i++)
+		{
+			ServerUtils.checkMessageFromClient(s.networkMembers.get(i), s.localUser);
+		}
+		
+		/**
+		 * Part Two
+		 */
+		//TODO: BMH
+		
+		/**
+		 * Part Three
+		 */
+		updateActiveSessionPartThree(s);
+	
 	}
 	
 	/**
@@ -106,6 +111,30 @@ public class SessionManager extends Thread {
 		if (s != null)
 		{
 			canvas.updateSession(s);
+		}
+	}
+	
+	/**
+	 * Get the active sessions in this application.
+	 * @return Returns a list of sessions.
+	 */
+	public ArrayList<Session> getActiveSessions()
+	{
+		return this.activeSessions;
+	}
+	
+	/**
+	 * Remove a session from those being managed.
+	 * @param s Session to remove.
+	 */
+	public void removeSession(Session s)
+	{
+		for(int i = 0; i < activeSessions.size(); i++)
+		{
+			if(activeSessions.get(i) == s)
+			{
+				activeSessions.remove(i);
+			}
 		}
 	}
 }

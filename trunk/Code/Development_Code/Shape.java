@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 /**
  * Abstract interface for all Shapes 
@@ -7,7 +8,7 @@ import java.awt.geom.Point2D;
  * @author bmhelppi, jjtrapan
  *
  */
-public abstract class Shape extends Object
+public abstract class Shape extends Object implements Serializable
 {
 	  /* Temp, define a common tolerance for nearness, or other such operations */
 	  int nearTol = 10;

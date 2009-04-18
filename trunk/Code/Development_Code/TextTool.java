@@ -4,44 +4,39 @@ import java.util.ArrayList;
 
 public class TextTool implements KeyboardTool {
    
-  protected DrawingCanvas canvas;
   protected TextFactory textFactory;
   protected Text currentText = null;
   
   
-     /* ------------------------------------------------------- */	
      /**
   	  * Create a new TextTool
-  	  * @param c Canvas to draw on.
   	  * @param f Factory that this tool will use to instantiate objects.
   	  */
 	  
-  	 public TextTool(DrawingCanvas c, TextFactory f) {
-	   canvas = c;
+  	 public TextTool(TextFactory f) {
 	   textFactory = f;
 	 }
-  	 /* ------------------------------------------------------- */	
-	 /**
+
+  	 /**
 	  * When mousePressed received, create a new text object,
 	  * finalizing the previous one if it exists.
 	  */
-	  
-  	  public void mousePressed(MouseEvent e, ArrayList<Shape> shapes) {
+  	  public void mousePressed(Point p, ArrayList<Shape> shapes, DrawingCanvas canvas) {
   		  
 		  Graphics graphics = canvas.getimageBufferGraphics();
 		  canvas.requestFocus();
 		  graphics.setXORMode(Color.lightGray);
 		  graphics.setColor(Color.white);
 			 
-		  finalizeText();
-		  currentText = textFactory.createShape(e.getX(), e.getY(), Color.WHITE);
+		  finalizeText(canvas);
+		  currentText = textFactory.createShape(p.x,p.y, Color.WHITE);
 	 }
-      /* ------------------------------------------------------- */	
-	  /**
+
+  	  /**
 	   * When a key is typed, update the text object, 
 	   * if it exists.
 	   */
-     public void keyTyped(KeyEvent e, ArrayList<Shape> shapes) {
+     public void keyTyped(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas) {
     	 
 	   Graphics graphics;
 		if(currentText != null)
@@ -57,23 +52,20 @@ public class TextTool implements KeyboardTool {
 		}
    }
      
-   /* ------------------------------------------------------- */	
    /**
     * When the text tool is deselected, if text exists finalize it,
     * and add it to the list of drawable items.
     */
-    
-    public void deselected() {
+    public void deselected(DrawingCanvas canvas) {
 		
-	   finalizeText();
+	   finalizeText(canvas);
 		
 	}
-    /* ------------------------------------------------------- */		
-	/**
+
+    /**
 	 * Add a text object to list of objects if it exists, and has data.
 	 */
-	
-    private void finalizeText()
+    private void finalizeText(DrawingCanvas canvas)
 	{
 		
 		if(currentText != null &&
@@ -99,10 +91,10 @@ public class TextTool implements KeyboardTool {
 	 * Does nothing
 	 */
 	
-     public void mouseReleased(MouseEvent e,ArrayList<Shape> shapes) { } 
-	 public void mouseDragged(MouseEvent e, ArrayList<Shape> shapes) { }
-	 public void keyReleased(KeyEvent e, ArrayList<Shape> shapes) { }
-	 public void keyPressed(KeyEvent e, ArrayList<Shape> shapes)  { }
+     public void mouseReleased(Point p,ArrayList<Shape> shapes, DrawingCanvas canvas) { }
+	 public void mouseDragged(Point p, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
+	 public void keyReleased(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
+	 public void keyPressed(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas)  { }
 	 /* ------------------------------------------------------- */	
 	
 

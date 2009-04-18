@@ -4,24 +4,24 @@ import java.util.ArrayList;
 
 public class FreehandTool implements Tool {
    
-  protected DrawingCanvas canvas;
   protected Point startingMousePosition;
   protected FreeHandFactory factory;
   protected FreeHandObject freeHand;
 
 
-  /* ------------------------------------------------------- */
-  /* Constructor */
-  
+  /**
+   * Create a new FreeHandTool
+   * @param c DrawingCanvas tool will interact with.
+   * @param f Factory for creating new drawable objects.
+   */
   public FreehandTool(DrawingCanvas c, FreeHandFactory f) {
-	canvas = c;
     factory = f;
   }
-  /* ------------------------------------------------------- */
 
-  public void mousePressed(MouseEvent e, ArrayList<Shape> currentShapes)  {
+  public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas)  
+  {
 		 
-	freeHand = factory.createFreeHand(e.getX(), e.getY(), Color.WHITE);
+	freeHand = factory.createFreeHand(p.x, p.y, Color.WHITE);
 		 
 	Graphics graphics = canvas.getimageBufferGraphics();
 	graphics.setXORMode(Color.lightGray);
@@ -30,24 +30,24 @@ public class FreehandTool implements Tool {
 	freeHand.draw(graphics); 
     canvas.repaint();
   }
-  /* ------------------------------------------------------- */	
 	 
-  public void mouseDragged(MouseEvent e, ArrayList<Shape> currentShapes)  {
+  public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas)  
+  {
 		
 	Graphics graphics = canvas.getimageBufferGraphics();
 			
 	/* erase previous temporary figure by redrawing it */
 	freeHand.draw(graphics);
 		 
-	freeHand.appendSegment(e.getPoint());
+	freeHand.appendSegment(p);
     freeHand.draw(graphics);
 		
     canvas.repaint();
 		 
   }
-  /* ------------------------------------------------------- */
 
-  public void mouseReleased(MouseEvent e, ArrayList<Shape> currentShapes) {
+  public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+  {
 	  
 	   Graphics graphics = canvas.getimageBufferGraphics();
 		
@@ -63,11 +63,8 @@ public class FreehandTool implements Tool {
 	    
 	    
    }
-   /* ------------------------------------------------------- */
 
-  @Override
-  public void deselected() {
+  public void deselected(DrawingCanvas canvas) {
 		
   }
-  /* ------------------------------------------------------- */
 }

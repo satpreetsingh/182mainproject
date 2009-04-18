@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.UUID;
 
 
@@ -7,7 +8,7 @@ import java.util.UUID;
  * @author bmhelppi
  *
  */
-public class Member {
+public class Member implements Serializable {
 
 	public UUID	id;
 	public String name;
