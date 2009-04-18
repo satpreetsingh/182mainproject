@@ -2,23 +2,27 @@ import java.awt.event.*;
 import java.util.EventListener;
 import javax.swing.*;
 
+
+/**
+ * Manages viewable state of control panel.
+ * @author ben
+ *
+ */
 public class ControlPanelView extends JPanel {
   
-	protected DrawingCanvas canvas;
-	protected ControlPanelController CPcontroller;
-	protected JButton clearButton;
-	protected JComboBox comboBox;
+	private Session session;
+	private ControlPanelController controller;
+	private JButton clearButton;
+	private JComboBox comboBox;
   
 	
-	/* ------------------------------------------------------- */
 	/**
 	 * Create a new ControlPanelView
-	 * @param c Canvas that the panel is linked to.
+	 * @param s Session that the panel is linked to.
 	 */
-	
-	public ControlPanelView(DrawingCanvas c) 
+	public ControlPanelView(Session s) 
 	{ 
-	    canvas = c;
+	    session = s;
 	    clearButton = new JButton("Clear");
 	    add(clearButton);
 	    add(new JLabel("Pen color"));
@@ -28,22 +32,22 @@ public class ControlPanelView extends JPanel {
 	    comboBox.addItem("green");
 	    comboBox.addItem("red");
 	    add(comboBox);
-	    ControlPanelController CPcontroller =
-	        createControlPanelController();
-	    addControlPanelListener(CPcontroller);
-  }
+	    controller = new ControlPanelController(session);
+	    clearButton.addActionListener((ActionListener)controller);
+	    comboBox.addItemListener((ItemListener)controller);
 
-  /* ------------------------------------------------------- */
-  protected ControlPanelController 
-          createControlPanelController() {
-      return new ControlPanelController(canvas);
-  }
-  /* ------------------------------------------------------- */
-  
-  protected void addControlPanelListener(EventListener listener)  {
-    clearButton.addActionListener((ActionListener)listener);
-    comboBox.addItemListener((ItemListener)listener);
-  }
-  /* ------------------------------------------------------- */
+	}
+	
+	/**
+	 * Change the Session that this ControlPanel is associated with.
+	 * @param s Session to focus on.
+	 */
+	public void updateSession(Session s)
+	{
+		session = s;
+		controller.updateSession(s);
+	}
+
+	  
   
 }

@@ -1,6 +1,12 @@
 import java.io.Serializable;
 
 
+/**
+ * A network object, this is the only item sent over the network.
+ * Any object put in here MUST implement Serializable.
+ * @author ben
+ *
+ */
 public class NetworkObject implements Serializable {
 
 	public Member Originator;
@@ -26,7 +32,16 @@ public class NetworkObject implements Serializable {
 	 mouseRelease};
 	 
 	 
-	 
+	 /**
+	  * Create a new NetworkObject.
+	  * @param Originator Person who created the object.
+	  * @param Recipient Person who should get the object.
+	  * @param data Actual data.
+	  * @param objectReason Reason the object was made.  
+	  * 	Helps for deconstructing object, 
+	  * 	as data is packed a standard way for each event.
+	  * @param messageNumber Nice debug??
+	  */
 	 public NetworkObject(
 		 Member Originator,
 		 Member Recipient,

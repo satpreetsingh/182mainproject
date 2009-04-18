@@ -7,9 +7,10 @@ import java.awt.Color;
  */
 public class RectangleFactory implements TwoPointShapeFactory{
 
-	/* ------------------------------------------------------- */
-	@Override
 
+	/**
+	 * Create a new Rectangle TwoPointShape.
+	 */
 	public TwoPointShape createShape
 	(int xOne, 
 	 int yOne, 
@@ -17,12 +18,9 @@ public class RectangleFactory implements TwoPointShapeFactory{
 	 int yTwo,
 	 Color c) 
 	{
-
 		Rectangle newRect = new Rectangle(xOne, yOne, c);
-		
 		return newRect;
 		
 	}
-  /* ------------------------------------------------------- */
 
 }

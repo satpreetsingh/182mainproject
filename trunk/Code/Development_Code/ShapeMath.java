@@ -1,6 +1,11 @@
 
-import java.awt.*;
-import java.awt.geom.Point2D;
+
+
+/**
+ * Does some common math functions for shapes.
+ * @author ben
+ *
+ */
 public class ShapeMath 
 {
 
@@ -9,8 +14,15 @@ public class ShapeMath
 	static int neither = 2;
 	
 	
-	/* ------------------------------------------------------- */	
-	static boolean bracket(double p1, double p2, double test, double tol)
+	/**
+	 * Determine if a # is between two other #s, and a given tolerance.
+	 * @param p1 Bracket one
+	 * @param p2 Bracket two
+	 * @param test Test point.
+	 * @param tol Tolerance.
+	 * @return
+	 */
+	public static boolean bracket(double p1, double p2, double test, double tol)
 	{
 		boolean result;
 		if(p1 > p2)
@@ -42,5 +54,4 @@ public class ShapeMath
 		}
 		return result;
 	}
-	/* ------------------------------------------------------- */	
 }

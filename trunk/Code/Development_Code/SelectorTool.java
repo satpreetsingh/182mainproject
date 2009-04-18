@@ -11,7 +11,8 @@ import java.util.ArrayList;
  * @authors bmhelppi, jjtrapan
  *
  */
-public class SelectorTool implements Tool{
+public class SelectorTool implements Tool
+{
 
 	protected Shape shapeOfInterest = null;
 	protected Point2D.Double point; 
@@ -33,12 +34,13 @@ public class SelectorTool implements Tool{
 		eventPoint = new Point2D.Double();
 	}
 	
+	
 	/**
 	 * When the mouse is pressed, highlight the first shape that 
 	 * is near the point if one is, and consider it for future shape manipulations.
 	 */
-	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
-		
+	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+	{
 		/* Declare local vars to start the list with the latest object */
 		int LastListPos;
 		boolean found = false;
@@ -64,16 +66,19 @@ public class SelectorTool implements Tool{
 		shapeOfInterest = null;
 		
 		/* Search the list and find the first object that is 'near' the mouse click */
-		if (currentShapes != null) {
+		if (currentShapes != null) 
+		{
 			
-			for (int i = LastListPos; i < currentShapes.size(); i++) {
+			for (int i = LastListPos; i < currentShapes.size(); i++) 
+			{
 				
 				if (currentShapes.get(i).near
 						(p.x,p.y)) 
 				{
 					
 					/* If we selected the same object twice, but not three times, set it as the focus shape */
-					if (previousSelectedObject == currentShapes.get(i)){
+					if (previousSelectedObject == currentShapes.get(i))
+					{
 						if ((PrepreviousSelectedObject != currentShapes.get(i)) || 
 						    (found == true)) {
 							found = true;
@@ -84,7 +89,8 @@ public class SelectorTool implements Tool{
 					}
 					
 					/* If we have not found a near object, rescan the object list from 0 */
-					else { 		
+					else 
+					{ 		
 						found = true;
 						shapeOfInterest = currentShapes.get(i);
 						shapeOfInterest.ListPos = i;
@@ -96,7 +102,8 @@ public class SelectorTool implements Tool{
 				/*  If we have started from the mid section of the list and nothing has
 				      been found, then start from the beginning */
 				if ((found == false) && 
-					(i == currentShapes.size() - 1)){ 
+					(i == currentShapes.size() - 1))
+				{ 
 					
 					/* Set to negative one since the for loop will increment it to 0 */
 					i = -1; 
@@ -119,8 +126,6 @@ public class SelectorTool implements Tool{
 			
 			/* Redraw the shape */
 			shapeOfInterest.draw(graphics);
-			
-
 			
   			/* Draw selection rectangles */
 			shapeOfInterest.drawHighlightBoxes(graphics);
@@ -157,12 +162,12 @@ public class SelectorTool implements Tool{
 		}	
     	else 
     	{ 
-    	  /* Clear the canvas's last selected object */	
-	      canvas.session.clearSelection();
+    		/* Clear the canvas's last selected object */	
+    		canvas.session.clearSelection();
 	      
-	  	 /* Set the previous selected objects to null */
-		  PrepreviousSelectedObject = previousSelectedObject;
-		  previousSelectedObject = null;
+	  	 	/* Set the previous selected objects to null */
+    		PrepreviousSelectedObject = previousSelectedObject;
+		 	 previousSelectedObject = null;
 			
 		}
 		
@@ -171,7 +176,11 @@ public class SelectorTool implements Tool{
 		
 	}
 	
-	public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
+	/**
+	 * Processes mouseDragged events.
+	 */
+	public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+	{
 		
 		int deltaX, deltaY;
 		
@@ -180,12 +189,10 @@ public class SelectorTool implements Tool{
 		previousSelectedObject = null;
 		PrepreviousSelectedObject = null;
 		
-		if (shapeOfInterest != null) {
+		if (shapeOfInterest != null) 
+		{
 			
 			Graphics graphics = canvas.getimageBufferGraphics();
-		
-          
-            
             
             deltaX = p.x - (int)this.point.x;
   			deltaY = p.y - (int)this.point.y;
@@ -208,34 +215,27 @@ public class SelectorTool implements Tool{
 			/* Save the shape's latest position */
 			this.point.setLocation(p.x,p.y);
 			
-			
-			
 			/* Set the XOR mode to light gray */
 			graphics.setXORMode(Color.lightGray);
 			
-
-
-			
 			/* Redraw the shape */
 			shapeOfInterest.draw(graphics);
-						
   	
 			/* Draw selection rectangles */
 			shapeOfInterest.drawHighlightBoxes(graphics);
 	
 			/* Repaint the canvas to visually select/unselect the object */ 
 	 		canvas.repaint();	
-
-
-					
 			
 		}
 		
 	}
 
-	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
+	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+	{
 		
-		if (shapeOfInterest != null){
+		if (shapeOfInterest != null)
+		{
 			
 			/* Paint a white rectangle over the canvas, and redraw all shapes from list */
 			canvas.refresh();

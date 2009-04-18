@@ -73,13 +73,13 @@ public class MouseController
   	/**
   	 * Controller handles mousedragged events.
   	 */
-    public void mouseDragged(MouseEvent e) 
-    {
+  public void mouseDragged(MouseEvent e) 
+  {
 	  if (session != null)
 	  {
 		  session.processMouseDrag(e.getPoint(), false,null);
 	  }
-    }
+  }
 
     /* Null listener methods */
 	  public void mouseClicked(MouseEvent e) {}

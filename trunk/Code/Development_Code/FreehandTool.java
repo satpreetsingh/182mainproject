@@ -2,6 +2,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+/**
+ * Tool for manipulating FreeHandObjects
+ * @author ben
+ *
+ */
 public class FreehandTool implements Tool {
    
   protected Point startingMousePosition;
@@ -18,9 +23,9 @@ public class FreehandTool implements Tool {
     factory = f;
   }
 
+  
   public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas)  
   {
-		 
 	freeHand = factory.createFreeHand(p.x, p.y, Color.WHITE);
 		 
 	Graphics graphics = canvas.getimageBufferGraphics();
@@ -41,14 +46,12 @@ public class FreehandTool implements Tool {
 		 
 	freeHand.appendSegment(p);
     freeHand.draw(graphics);
-		
     canvas.repaint();
 		 
   }
 
   public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
   {
-	  
 	   Graphics graphics = canvas.getimageBufferGraphics();
 		
 	    /* Save the object's color to match the pen's color */
@@ -64,7 +67,6 @@ public class FreehandTool implements Tool {
 	    
    }
 
-  public void deselected(DrawingCanvas canvas) {
-		
-  }
+  public void deselected(DrawingCanvas canvas) {}
+  
 }

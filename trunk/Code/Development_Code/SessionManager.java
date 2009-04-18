@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class SessionManager extends Thread {
 	
 	private ArrayList <Session> activeSessions;
+	private Session sessionInFocus = null;
 	private DrawingCanvas canvas;
 	
 	/**
@@ -94,11 +95,17 @@ public class SessionManager extends Thread {
 	/**
 	 * Create a new network session.  
 	 * Automatically assumes this will be an active session.
+	 * If no sessions exist, assume it is Session in focus.
 	 * @param s New Session to publish.
 	 */
 	public void addNewSession(Session s)
 	{
+		if(activeSessions.size() == 0)
+		{
+			sessionInFocus = s;
+		}
 		activeSessions.add(s);
+		
 	}
 	
 	/**
@@ -112,6 +119,11 @@ public class SessionManager extends Thread {
 		{
 			canvas.updateSession(s);
 		}
+	}
+	
+	public Session getSessionInFocus()
+	{
+		return sessionInFocus;
 	}
 	
 	/**

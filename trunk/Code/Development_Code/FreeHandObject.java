@@ -12,17 +12,15 @@ import java.util.ArrayList;
 public class FreeHandObject extends Shape{
 
 	
-	protected ArrayList <Line> segments;
-	protected Color color;
+	private ArrayList <Line> segments;
+	private Color color;
 	
-    /* ------------------------------------------------------- */	
 	/**
 	 * Create a new FreeHandObject.
 	 * @param x X point for origin.
 	 * @param y Y point for origin.
  	 * @param c Color of object.
 	 */
-
 	public FreeHandObject(int x, int y, Color c)
 	{
 		Line newLine = new Line(x,y,c);
@@ -32,30 +30,30 @@ public class FreeHandObject extends Shape{
 		segments.add(newLine);
 	}
 
-    /* ------------------------------------------------------- */
 	/**
 	 * Draw FreeHandObject
 	 */
-
-	void draw(Graphics g) {
+	public void draw(Graphics g) 
+	{
 		for(int i = 0; i < segments.size(); i++)
 		{
 			segments.get(i).draw(g);
 		}
-		
 	}
-	/* ------------------------------------------------------- */
 	
-	@Override
-	void drawHighlightBoxes(Graphics g) {
-		
-	}
-    /* ------------------------------------------------------- */
 	/**
-	 * Return true if a point is near first/last piece of freehand.
+	 * Freehand shape doesn't draw its own boxes.
 	 */
-	
-	boolean exterior(int x, int y) {
+	public void drawHighlightBoxes(Graphics g) 
+	{
+		
+	}
+
+	/**
+	 * Return true if a point is near first/last piece of FreeHandObject.
+	 */
+	boolean exterior(int x, int y) 
+	{
 		
 		Line firstLine = null;
 		Line lastLine = null;
@@ -79,12 +77,13 @@ public class FreeHandObject extends Shape{
 		}
 		return boolResult;
 	}
-    /* ------------------------------------------------------- */
-	/**
-	 * Return true if a point is near any part of a freehand segment.
-	 */
+
 	
-	boolean interior(int x, int y) {
+	/**
+	 * Return true if a point is near any part of a FreeHandObject segment.
+	 */
+	boolean interior(int x, int y) 
+	{
 		boolean output = false;
 		for(int i = 0; i < segments.size(); i++)
 		{
@@ -97,11 +96,10 @@ public class FreeHandObject extends Shape{
 		}
 		return output;
 	}
-    /* ------------------------------------------------------- */
+
 	/**
-	 * Move a freehand segment.
+	 * Move a FreeHandObject segment.
 	 */
-	
 	void move(int x, int y) {
 		Line temp;
 		for(int i = 0; i < segments.size(); i++)
@@ -111,28 +109,31 @@ public class FreeHandObject extends Shape{
 		}
 		
 	}
-    /* ------------------------------------------------------- */
-	@Override
 	
-	Double pickAnchor(Double p) {
-		
+	/**
+	 * Always picks first point as origin.
+	 */
+	Double pickAnchor(Double p) 
+	{
 		return segments.get(0).origin;
 	}
-    /* ------------------------------------------------------- */
-	@Override
 	
-	void resize(Double point, int deltaX, int deltaY) {
-	/* Advanced program logic needed */
+	/**
+	 * Not currently effective.
+	 */
+	void resize(Double point, int deltaX, int deltaY) 
+	{
+		/* Advanced program logic needed */
 	}
-    /* ------------------------------------------------------- */
+
+	
 	/**
 	 * Add another piece to freehand.
 	 * Will be from last piece to point P.
 	 * @param p End point.
 	 * 
 	 */
-	
-	void appendSegment(Point p)
+	public void appendSegment(Point p)
 	{
 		Line prior = segments.get(segments.size() - 1);
 		
@@ -143,12 +144,11 @@ public class FreeHandObject extends Shape{
 		l.setSecondPoint(p.x, p.y);
 		segments.add(l);
 	}
-    /* ------------------------------------------------------- */	
+
 	/**
 	 * Set color of Freehand object.
 	 */
-	
-	void set_MainColor(Color c)
+	public void set_MainColor(Color c)
 	{
 		Line l;
 		for(int i = 0; i < segments.size(); i++)
@@ -157,5 +157,5 @@ public class FreeHandObject extends Shape{
 			l.set_MainColor(c);
 		}
 	}
-    /* ------------------------------------------------------- */
+	
 }

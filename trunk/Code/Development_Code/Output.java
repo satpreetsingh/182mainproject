@@ -1,4 +1,9 @@
 
+/**
+ * A macro for message processing, allows layers to turn on/off some messages depending on setting.
+ * @author ben
+ *
+ */
 public class Output {
 
 	public static void processMessage(String s, Constants.Message_Type m)
@@ -24,7 +29,15 @@ public class Output {
 			}
 			else if (Constants.messageLevel == Constants.Message_Type.error)
 			{
-				if(m == Constants.Message_Type.error)
+				if(m == Constants.Message_Type.error ||
+				   m == Constants.Message_Type.chat)
+				{
+					System.out.println(s);
+				}
+			}
+			else if (Constants.messageLevel == Constants.Message_Type.chat)
+			{
+				if(m == Constants.Message_Type.chat)
 				{
 					System.out.println(s);
 				}
