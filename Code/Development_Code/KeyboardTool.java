@@ -15,14 +15,14 @@ public interface KeyboardTool extends Tool{
 	 * @param e The event.
 	 * @param shapes Current list of shapes on the canvas.
 	 */
-  void keyPressed(KeyEvent e, ArrayList<Shape> shapes);
+  void keyPressed(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas);
   
   /**
    * Accept a keyReleased event
    * @param e The event.
    * @param shapes Current list of shapes on the canvas.
    */
-  void keyReleased(KeyEvent e, ArrayList<Shape> shapes);
+  void keyReleased(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas);
   
   /**
    * Accept a keyTyped event.
@@ -30,5 +30,5 @@ public interface KeyboardTool extends Tool{
    * @param e
    * @param shapes Current list of shapes on the canvas.
    */
-  void keyTyped(KeyEvent e, ArrayList<Shape> shapes);
+  void keyTyped(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas);
 }

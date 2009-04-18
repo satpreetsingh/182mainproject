@@ -123,7 +123,7 @@ public class DrawingCanvas extends JComponent
     {
     	if (currentTool != null)
     	{
-    		currentTool.deselected();
+    		currentTool.deselected(this);
     	}
     	currentTool = t;
 	  

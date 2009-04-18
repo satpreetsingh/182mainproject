@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
  */
 public class SelectorTool implements Tool{
 
-	protected DrawingCanvas canvas;
 	protected Shape shapeOfInterest = null;
 	protected Point2D.Double point; 
 	
@@ -26,20 +26,18 @@ public class SelectorTool implements Tool{
 	 * Create a new instance of a selector tool.
 	 * @param c Canvas tool will ask shapes to draw themselves on.
 	 */
-	public SelectorTool(DrawingCanvas c)
+	public SelectorTool()
 	{
-		canvas = c;
 		point = new Point2D.Double();
 		anchor = new Point2D.Double();
 		eventPoint = new Point2D.Double();
 	}
 	
-	@Override
 	/**
 	 * When the mouse is pressed, highlight the first shape that 
 	 * is near the point if one is, and consider it for future shape manipulations.
 	 */
-	public void mousePressed(MouseEvent e, ArrayList<Shape> currentShapes) {
+	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
 		
 		/* Declare local vars to start the list with the latest object */
 		int LastListPos;
@@ -71,8 +69,8 @@ public class SelectorTool implements Tool{
 			for (int i = LastListPos; i < currentShapes.size(); i++) {
 				
 				if (currentShapes.get(i).near
-						(e.getPoint().x,
-						 e.getPoint().y)) {
+						(p.x,p.y)) 
+				{
 					
 					/* If we selected the same object twice, but not three times, set it as the focus shape */
 					if (previousSelectedObject == currentShapes.get(i)){
@@ -113,7 +111,7 @@ public class SelectorTool implements Tool{
 		{
 			
 			/* Save the shape's original position */
-			point.setLocation(e.getX(), e.getY());
+			point.setLocation(p.x,p.y);
 			
 			
 			/* Set the color to light gray */
@@ -132,11 +130,11 @@ public class SelectorTool implements Tool{
 			previousSelectedObject = shapeOfInterest;
 						
 			/* Determine which part of the object the user clicked */
-			if(shapeOfInterest.exterior(e.getX(), e.getY()))
+			if(shapeOfInterest.exterior(p.x,p.y))
 			{
 				this.selectionStyle = ShapeMath.exterior;
-				eventPoint.x = e.getX();
-				eventPoint.y = e.getY();
+				eventPoint.x = p.x;
+				eventPoint.y = p.y;
 				this.anchor = shapeOfInterest.pickAnchor(eventPoint);
 		
 			}
@@ -172,10 +170,8 @@ public class SelectorTool implements Tool{
 		canvas.refresh();
 		
 	}
-	/* ------------------------------------------------------- */
 	
-	@Override
-	public void mouseDragged(MouseEvent e, ArrayList<Shape> currentShapes) {
+	public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
 		
 		int deltaX, deltaY;
 		
@@ -191,8 +187,8 @@ public class SelectorTool implements Tool{
           
             
             
-            deltaX = e.getX() - (int)this.point.x;
-  			deltaY = e.getY() - (int)this.point.y;
+            deltaX = p.x - (int)this.point.x;
+  			deltaY = p.y - (int)this.point.y;
   			
 			/* Resize the object */ 
   			if(this.selectionStyle == ShapeMath.exterior)
@@ -210,7 +206,7 @@ public class SelectorTool implements Tool{
   			canvas.refresh();
   			
 			/* Save the shape's latest position */
-			this.point.setLocation(e.getX(), e.getY());
+			this.point.setLocation(p.x,p.y);
 			
 			
 			
@@ -236,10 +232,8 @@ public class SelectorTool implements Tool{
 		}
 		
 	}
-	/* ------------------------------------------------------- */
-	
-	@Override
-	public void mouseReleased(MouseEvent e, ArrayList<Shape> currentShapes) {
+
+	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
 		
 		if (shapeOfInterest != null){
 			
@@ -260,13 +254,11 @@ public class SelectorTool implements Tool{
 		}		
 	}
 
-    /* ------------------------------------------------------- */	
 	/**
 	 * When deselected is invoked on the selector tool,
 	 * if an object is currently selected, deselect it.
 	 */
-	
-	public void deselected() {
+	public void deselected(DrawingCanvas canvas) {
 				
 		Graphics graphics = canvas.getimageBufferGraphics();
 		
@@ -285,7 +277,6 @@ public class SelectorTool implements Tool{
 		}
 		
 	}
-	/* ------------------------------------------------------- */
 
 
 }

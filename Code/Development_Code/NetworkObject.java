@@ -1,13 +1,15 @@
+import java.io.Serializable;
 
-public class NetworkObject {
 
-	private Member Originator;
-	private Member Recipient;
+public class NetworkObject implements Serializable {
+
+	public Member Originator;
+	public Member Recipient;
 	
-	private Object data;
-	private reason objectReason;
+	public Object data;
+	public reason objectReason;
 	
-	private int messageNumber; //FIFO??? nice for debug?
+	public int messageNumber; //FIFO??? nice for debug?
 	
 	enum reason 
 	{joinRequest,
@@ -19,5 +21,23 @@ public class NetworkObject {
 	 dataState,  //What objects are drawn on canvas.
 	 networkState,
 	 chat,
-	 toolTransfer};
+	 mousePress,
+	 mouseDrag,
+	 mouseRelease};
+	 
+	 
+	 
+	 public NetworkObject(
+		 Member Originator,
+		 Member Recipient,
+		 Object data,
+		 reason objectReason,
+		 int messageNumber)
+	 {
+		 this.Originator = Originator;
+		 this.Recipient = Recipient;
+		 this.data = data;
+		 this.objectReason = objectReason;
+		 this.messageNumber = messageNumber;
+	 }
 }
