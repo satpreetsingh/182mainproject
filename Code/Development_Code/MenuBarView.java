@@ -14,16 +14,15 @@ public class MenuBarView extends JMenuBar
 	 * Create a new MenuBar.
 	 * @param actions Actions the Menubar can perform.
 	 */
-	MenuBarView(ToolList actions) 
+	MenuBarView(ArrayList<ToolController> actions) 
 	{
 		JMenu toolMenu = new JMenu("Tool");
-		ToolListIterator iter = actions.iterator();
-
-		while(iter.hasNext()) 
+		
+		for(int i = 0; i < actions.size(); i++)
 		{
-			Action a = (Action) iter.next();
+			Action a = (Action) actions.get(i);
 			toolMenu.add(a);
-		}	
+		}
     
 		add(toolMenu);
   

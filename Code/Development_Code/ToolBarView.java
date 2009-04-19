@@ -14,14 +14,12 @@ import javax.swing.*;
      * Create a ToolBar.
      * @param actions List of items on the ToolBar.
      */
-	ToolBarView(ToolList actions) 
+	ToolBarView(ArrayList<ToolController> actions) 
     {
     	super(VERTICAL);
-    	ToolListIterator iter = actions.iterator();
-    
-    	while(iter.hasNext()) 
+    	for(int i = 0; i < actions.size(); i++)
     	{
-    		Action a = (Action) iter.next();
+    		Action a = (Action)actions.get(i);
     		this.add(a);
     	}
     } 

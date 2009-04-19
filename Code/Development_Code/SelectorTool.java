@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class SelectorTool implements Tool
 {
-
+	private String name;
 	protected Shape shapeOfInterest = null;
 	protected Point2D.Double point; 
 	
@@ -27,8 +27,9 @@ public class SelectorTool implements Tool
 	 * Create a new instance of a selector tool.
 	 * @param c Canvas tool will ask shapes to draw themselves on.
 	 */
-	public SelectorTool()
+	public SelectorTool(String name)
 	{
+		this.name = name;
 		point = new Point2D.Double();
 		anchor = new Point2D.Double();
 		eventPoint = new Point2D.Double();
@@ -231,7 +232,7 @@ public class SelectorTool implements Tool
 		
 	}
 
-	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor) 
 	{
 		
 		if (shapeOfInterest != null)
@@ -276,6 +277,12 @@ public class SelectorTool implements Tool
 			canvas.refresh();	
 		}
 		
+	}
+
+
+	public String toolName() 
+	{
+		return this.name;
 	}
 
 

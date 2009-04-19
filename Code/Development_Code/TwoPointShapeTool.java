@@ -13,21 +13,25 @@ import java.util.ArrayList;
  */
 public class TwoPointShapeTool implements Tool {
    
-  protected Point startingMousePosition;
-  protected Point currentMousePosition;
-  protected TwoPointShape shape=null;
-  protected TwoPointShapeFactory shapeFactory;
+	protected String name;
+	protected Point startingMousePosition;
+	protected Point currentMousePosition;
+	protected TwoPointShape shape=null;
+	protected TwoPointShapeFactory shapeFactory;
   
 	  /**
 	   * Create a new instance of a TwoEndShapeTool
-	   * @param sf An object factory, that will create
+	   * @param shapeFactory An object factory, that will create
 	   * drawable shapes that the tool will manipulate
 	   * on the canvas.
+	   * @param name A name for this tool.
 	   */
 	  public TwoPointShapeTool
-	   (TwoPointShapeFactory sf)
+	   (TwoPointShapeFactory shapeFactory,
+	    String name)
 	  {
-	   shapeFactory = sf;
+		  this.name = name;
+		  this.shapeFactory = shapeFactory;
 	  }
 	  
 	  /**
@@ -77,12 +81,12 @@ public class TwoPointShapeTool implements Tool {
 	  * then handed over to the CanvasController for future 
 	  * manipulation. 
 	  */
-	 public void mouseReleased(Point p,ArrayList<Shape> currentShapes, DrawingCanvas canvas) { 
+	 public void mouseReleased(Point p,ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor) { 
 	    
 		Graphics graphics = canvas.getimageBufferGraphics();
 	
 	    /* Save the object's color to match the pen's color */
-	    shape.set_MainColor(canvas.getpenColor());
+	    shape.set_MainColor(finalColor);
 	   
 	    /* Draw final "permanent" object */
 	    shape.draw(graphics);
@@ -93,6 +97,11 @@ public class TwoPointShapeTool implements Tool {
 	  }
 
 	public void deselected(DrawingCanvas canvas) { }
+
+	public String toolName() 
+	{
+		return this.name;
+	}
 
 
 }

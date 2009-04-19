@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,7 +8,6 @@ import java.net.Socket;
 import java.rmi.activation.ActivationException;
 import java.util.ArrayList;
 import java.util.Date;
-
 
 
 /**
@@ -86,14 +86,14 @@ public class ServerUtils
 	 * @param c Canvas, will be in focus of the Session created.
 	 * @return Returns an operation Session, if the port is available, else null.
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c)
+	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools)
 	{
 		Session result;
 		try 
 		{
 			ServerSocket serverSock = new ServerSocket(3000);
 			NetworkBundle creater = new NetworkBundle(m, null, null, null);
-		 	result = new Session(serverSock, creater, c);
+		 	result = new Session(serverSock, creater, c, tools);
 		} 
 		catch (IOException e) 
 		{
@@ -112,7 +112,7 @@ public class ServerUtils
 	 * @param port Port to connect to.
 	 * @return Returns a session, if success, else returns null; 
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port)
+	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools)
 	{
 		Session result;
 		try
@@ -120,7 +120,7 @@ public class ServerUtils
 			ServerSocket serverSock = new ServerSocket(3001);
 			NetworkBundle local = new NetworkBundle(m,null,null,null);
 		
-			result = new Session(local, serverSock, c, ip, port);
+			result = new Session(local, serverSock, c, ip, port,tools);
 		
 		}
 		catch(Exception e)
@@ -132,12 +132,58 @@ public class ServerUtils
 		return result;
 	}
 	
-	/**
-	 * Generic message processing.
-	 * @param client Client to check.
-	 * @param local Ourself.
-	 */
-	public static void checkMessageFromClient(NetworkBundle client, NetworkBundle local)
+	
+	private static void processMouseRelease(Session s, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			Point point = (Point)networkData.get(0);
+			Tool tool = (Tool)networkData.get(1);
+			Color color = (Color)networkData.get(2);
+			
+			s.processMouseRelease(point, true, tool, color);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective mouseRelease message recieved", Constants.Message_Type.error);
+		}
+	}
+
+	private static void processMousePress(Session s, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			Point point = (Point)networkData.get(0);
+			Tool tool = (Tool)networkData.get(1);
+			
+			s.processMousePress(point, true, tool);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective mouseRelease message recieved", Constants.Message_Type.error);
+		}
+	}
+	
+	private static void processMouseDrag(Session s, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			Point point = (Point)networkData.get(0);
+			Tool tool = (Tool)networkData.get(1);
+			
+			s.processMouseDrag(point, true, tool);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective mouseRelease message recieved", Constants.Message_Type.error);
+		}
+	}
+
+	
+	protected static void checkMessageFromClient(Session session, NetworkBundle client, NetworkBundle local)
 	{
 		/**
 		 * Don't check ourself for messages.
@@ -148,6 +194,21 @@ public class ServerUtils
 			{
 				NetworkObject data = (NetworkObject)client.ois.readObject();
 				Output.processMessage("Got message of type " + data.objectReason.toString(), Constants.Message_Type.info);
+				if(data.objectReason == NetworkObject.reason.mouseRelease)
+				{
+					processMouseRelease(session, data);
+					
+					
+				}
+				else if (data.objectReason == NetworkObject.reason.mousePress)
+				{
+					processMousePress(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.mouseDrag)
+				{
+					processMouseDrag(session, data);
+				}
+					
 				
 			} 
 			catch (Exception e) 
@@ -225,11 +286,12 @@ public class ServerUtils
 	 * @param p Point event occurred at.
 	 * @param t Tool selected when event occurred.
 	 */
-	public static void sendMouseRelease(Session s, Point p, Tool t)
+	public static void sendMouseRelease(Session s, Point p, Tool t, Color c)
 	{
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(p);
 		data.add(t);
+		data.add(c);
 		
 		genericSend(s, data, NetworkObject.reason.mouseRelease);
 		Output.processMessage("Master is sending mouseRelease", Constants.Message_Type.info);

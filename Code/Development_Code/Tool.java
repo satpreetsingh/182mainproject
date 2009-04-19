@@ -12,33 +12,40 @@ import java.util.ArrayList;
 public interface Tool extends Serializable {
   
 	/**
+	 * Get the name of this tool.
+	 * @return Returns a string with this tools name.
+	 */
+	public String toolName();
+	
+	/**
 	 * Any instance of the Tool interface must handle mousePressed events.
 	 * @param p Point where mousePress occurred.
 	 * @param currentShapes ArrayList of drawable shapes in the current context.
 	 * @param canvas Canvas to draw on.
 	 */
-  void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
+	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
  
-  /**
-   * Any instance of the Tool interface must handle mouseReleased events.
-   * @param p Point where the event occurred.
-   * @param currentShapes ArrayList of drawable shapes in the current context.
-   * @param canvas Canvas to draw on.
-   */
-  void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
+	/**
+     * Any instance of the Tool interface must handle mouseReleased events.
+     * @param p Point where the event occurred.
+     * @param currentShapes ArrayList of drawable shapes in the current context.
+     * @param canvas Canvas to draw on.
+     * @param finalColor The color the shape should be.
+     */
+	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor);
   
-  /**
-   * Any instance of the Tool interface must handle mouseDragged events.
-   * @param P Point where the event occurred.
-   * @param currentShapes ArrayList of drawable shapes in the current context.
-   * @param canvas Canvas to draw on.
-   */
-  void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
+	/**
+     * Any instance of the Tool interface must handle mouseDragged events.
+     * @param P Point where the event occurred.
+     * @param currentShapes ArrayList of drawable shapes in the current context.
+     * @param canvas Canvas to draw on.
+     */
+	public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
   
-  /**
-   * Tool is no longer selected, any tools that need to finalize objects,
-   * or do other handling should do so implementing this function.
-   */
-  void deselected(DrawingCanvas canvas);
+	/**
+     * Tool is no longer selected, any tools that need to finalize objects,
+    * or do other handling should do so implementing this function.
+     */
+	public void deselected(DrawingCanvas canvas);
   
 }

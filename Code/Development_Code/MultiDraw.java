@@ -1,13 +1,13 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.EventListener;
 import javax.swing.*;
 import java.net.*;
 
 public class MultiDraw extends JApplet  {
 
-	private boolean isMaster = false;
-	
+	private boolean isMaster = true;
 	
 	
 	private SessionManager sessionMgr;
@@ -15,8 +15,9 @@ public class MultiDraw extends JApplet  {
 	protected ControlPanelView controlPanel;
 	protected ToolBarView toolBar;
 	protected MenuBarView menuBar;
-	protected ToolList toolList;
+	protected ArrayList<ToolController> tools;
 	protected boolean isApplet = false;
+	
 
   /* Constructors  */
   
@@ -53,10 +54,10 @@ public class MultiDraw extends JApplet  {
     getContentPane().add(canvas, BorderLayout.CENTER);
     controlPanel = createControlPanelView();
     getContentPane().add(controlPanel, BorderLayout.SOUTH);
-    toolList = createToolList();
-    toolBar = createToolBarView(toolList);
+    tools = createTools();
+    toolBar = createToolBarView(tools);
     getContentPane().add(toolBar, BorderLayout.WEST);
-    menuBar = createMenuBarView(toolList);
+    menuBar = createMenuBarView(tools);
     getContentPane().add (menuBar, BorderLayout.NORTH);
     
     
@@ -79,11 +80,11 @@ public class MultiDraw extends JApplet  {
 	  Session tempAuto;
 	  if (isMaster)
 	  {
-		  tempAuto = ServerUtils.buildSession(temp,canvas);
+		  tempAuto = ServerUtils.buildSession(temp,canvas, tools);
 	  }
 	  else
 	  {
-		  tempAuto = ServerUtils.buildSession(temp, canvas, "192.168.1.3", 3000);
+		  tempAuto = ServerUtils.buildSession(temp, canvas, "192.168.1.3", 3000, tools);
 	  }
 	  sessionMgr.addNewSession(tempAuto);
 	  canvas.updateSession(tempAuto);
@@ -103,59 +104,59 @@ public class MultiDraw extends JApplet  {
 		return new ControlPanelView(null); 
 	}
  
-	protected ToolBarView createToolBarView(ToolList toolList) {
+	protected ToolBarView createToolBarView(ArrayList<ToolController> toolList) {
 		return new ToolBarView(toolList);
 	}
   
-	protected MenuBarView createMenuBarView(ToolList toolList) {
+	protected MenuBarView createMenuBarView(ArrayList<ToolController> toolList) {
 		return new MenuBarView(toolList);
 	}
 
 	
 	/* Configure tool list used for ToolBar and MenuBar construction */
   
-	protected ToolList createToolList() {
-	    ToolList actions = new ToolList();
+	protected ArrayList<ToolController> createTools() {
+	    ArrayList<ToolController> actions = new ArrayList();
 	
 	    actions.add(
 	                new ToolController("Freehand",
 	  	        getImageIcon("freehand.jpg"),
 	  	        "freehand drawing tool",
 	  	        canvas,
-	  		new FreehandTool(canvas, new FreeHandFactory())));
+	  		new FreehandTool(canvas, new FreeHandFactory(), "Freehand")));
 	
 	    actions.add(
 	  		new ToolController("Line",
 	  		getImageIcon("line.jpg"),
 	  		"Line drawing tool",
 	  		canvas,
-	  		new TwoPointShapeTool(new LineFactory())));
+	  		new TwoPointShapeTool(new LineFactory(), "Line")));
 	  
 	    actions.add(
 	  		new ToolController("Rectangle",
 	  		getImageIcon("rectangle.jpg"),
 	  		"Rectangle drawing tool",
 	  		canvas,
-	  		new TwoPointShapeTool(new RectangleFactory())));
+	  		new TwoPointShapeTool(new RectangleFactory(), "Rectangle")));
 	  		
 	    actions.add(
 	  	        new ToolController("Oval",
 	  	        getImageIcon("oval.jpg"),
 	  		"Oval drawing tool",
 	  		canvas,
-	  		new TwoPointShapeTool(new OvalFactory())));
+	  		new TwoPointShapeTool(new OvalFactory(), "Oval")));
 	    actions.add(
 	  		new ToolController("Text",
 	  		getImageIcon("text.jpg"),
 	  		"text drawing tool",
 	          	canvas,
-	  		new TextTool(new TextFactory())));		
+	  		new TextTool(new TextFactory(),"Text")));		
 	    actions.add(
 	  		new ToolController("Eraser",
 	  		getImageIcon("eraser.jpg"),
 	  		"Eraser drawing tool",
 	  		canvas,
-	  		new EraserTool()));
+	  		new EraserTool("Eraser")));
 	    
 	  
 	    /* Create a select tool to select other objects */
@@ -164,7 +165,7 @@ public class MultiDraw extends JApplet  {
 	      		getImageIcon("select.jpg"),
 	      		"Select tool",
 	      		canvas,
-	      		new SelectorTool()));
+	      		new SelectorTool("Select")));
 	    
 	    return actions;
   }

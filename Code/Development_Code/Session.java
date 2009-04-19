@@ -24,6 +24,7 @@ public class Session {
 
 	
 	public ArrayList <NetworkBundle>  networkMembers;
+	public ArrayList<ToolController> tools;
 	
 	public NetworkBundle localUser;
 	public NetworkBundle master;
@@ -43,7 +44,7 @@ public class Session {
 	 * @param port
 	 * @throws ActivationException
 	 */
-	public Session (NetworkBundle local, ServerSocket serverSock,DrawingCanvas canvas, String ip, int port) throws ActivationException
+	public Session (NetworkBundle local, ServerSocket serverSock,DrawingCanvas canvas, String ip, int port,ArrayList<ToolController> tools) throws ActivationException
 	{
 		networkMembers = new ArrayList<NetworkBundle>();
 		networkMembers.add(local);
@@ -52,6 +53,7 @@ public class Session {
 		this.localUser = local;
 		this.master = null;
 		this.serverSock = serverSock;
+		this.tools = tools;
 		
 		try 
 		{
@@ -85,7 +87,7 @@ public class Session {
 	 * @param creater
 	 * @param canvas
 	 */
-	public Session (ServerSocket serverSock,NetworkBundle creater, DrawingCanvas canvas)
+	public Session (ServerSocket serverSock,NetworkBundle creater, DrawingCanvas canvas,ArrayList<ToolController> tools)
 	{
 		networkMembers = new ArrayList<NetworkBundle>();
 		networkMembers.add(creater);
@@ -94,6 +96,7 @@ public class Session {
 		this.canvas = canvas;
 		this.localUser = creater;
 		this.serverSock = serverSock;
+		this.tools = tools;
 	}
 	
 	public void publishEvent()
@@ -245,7 +248,7 @@ public class Session {
 			}
 			else
 			{
-				tool = networkTool;
+				tool = convertNetworkTool(networkTool);
 			}
 			
 			if(tool != null) 
@@ -255,31 +258,36 @@ public class Session {
 		}
 	}
 	
+	
 	/**
 	 * Process a mouseRelease event.
 	 * @param p Point where event occurred.
 	 * @param networkEvent If true, event came from network.
 	 * @param networkTool If NetworkEvent is true, then it is expected that this will exist.
 	 */
-	public void processMouseRelease(Point p, boolean networkEvent, Tool networkTool)
+	public void processMouseRelease(Point p, boolean networkEvent, Tool networkTool, Color networkColor)
 	{
 		if(this.drawable(this.localUser))
 		{
 			Tool tool;
+			Color color;
 			if(networkEvent == false)
 			{
 				tool = canvas.getcurrentTool();
-				ServerUtils.sendMouseRelease(this, p, tool);
+				color = canvas.getpenColor();
+				ServerUtils.sendMouseRelease(this, p, tool, color);
+				
 			}
 			else
 			{
-				tool = networkTool;
+				tool = convertNetworkTool(networkTool);
+				color = networkColor;
 			}
 			
 			
 			if(tool != null) 
 			{
-				tool.mouseReleased(p, this.currentState.currentShapes(), this.canvas);
+				tool.mouseReleased(p, this.currentState.currentShapes(), this.canvas, color);
 			}
 	  }
 	}
@@ -302,7 +310,7 @@ public class Session {
 			}
 			else
 			{
-				tool = networkTool;
+				tool = convertNetworkTool(networkTool);
 			}
 			
 			
@@ -317,4 +325,19 @@ public class Session {
 			}
 		}
 	}
+	
+	
+	private Tool convertNetworkTool(Tool networkTool)
+	{
+		Tool localTool = null;;
+		for(int i = 0; i < tools.size(); i++)
+		{
+			if(tools.get(i).tool.toolName().equals(networkTool.toolName()))
+			{
+				localTool = tools.get(i).tool;
+			}
+		}
+		return localTool;
+	}
+
 }
