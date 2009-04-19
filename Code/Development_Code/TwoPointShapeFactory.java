@@ -1,11 +1,12 @@
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * An interface defining a class for creating TwoPointShape objects.
  * @author bmhelppi
  *
  */
-interface TwoPointShapeFactory {
+interface TwoPointShapeFactory extends Serializable{
 
 	/**
 	 * Creates an instance of a TwoPointShape.

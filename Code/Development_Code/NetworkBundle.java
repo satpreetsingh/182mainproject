@@ -5,7 +5,7 @@ import java.net.Socket;
 
 
 /**
- * Macro class, puts some things together for convient management.
+ * Macro class, puts some things together for convenient management.
  * @author ben
  *
  */

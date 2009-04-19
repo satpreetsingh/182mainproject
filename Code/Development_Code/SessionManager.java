@@ -9,11 +9,14 @@ import java.util.ArrayList;
  * correctness not guaranteed.
  * @author bmhelppi
  */
-public class SessionManager extends Thread {
+public class SessionManager extends Thread 
+{
 	
 	private ArrayList <Session> activeSessions;
 	private Session sessionInFocus = null;
+	//TODO: Add canvas, etc... that change focus.
 	private DrawingCanvas canvas;
+	
 	
 	/**
 	 * Create a new SessionManager class.
@@ -39,28 +42,6 @@ public class SessionManager extends Thread {
 	}
 	
 	
-	private void updateActiveSessionPartThree(Session s)
-	{
-		try
-		{
-			s.serverSock.setSoTimeout(1);
-			Socket client = s.serverSock.accept();
-			
-			Output.processMessage("Accepted a connection from: "+
-		        		client.getInetAddress(), Constants.Message_Type.debug);
-			
-		
-			if (client != null)
-			{
-				ServerUtils.acceptConn1(client, s);
-			}
-			
-		}
-		catch(Exception e)
-		{
-			
-		}
-	}
 	
 	/**
 	 * Update data for an active session.
@@ -88,8 +69,26 @@ public class SessionManager extends Thread {
 		/**
 		 * Part Three
 		 */
-		updateActiveSessionPartThree(s);
-	
+		try
+		{
+			s.serverSock.setSoTimeout(1);
+			Socket client = s.serverSock.accept();
+			
+			Output.processMessage("Accepted a connection from: "+
+		        		client.getInetAddress(), Constants.Message_Type.debug);
+			
+		
+			if (client != null)
+			{
+				ServerUtils.acceptConn1(client, s);
+			}
+			
+		}
+		catch(Exception e)
+		{
+			
+		}
+
 	}
 	
 	/**
@@ -111,16 +110,17 @@ public class SessionManager extends Thread {
 	/**
 	 * Update the canvas that this SessionManager has control of
 	 * to focus on a new session.
-	 * @param s
+	 * @param s Session to focus on.
 	 */
 	public void setFocusOnSession(Session s)
 	{
-		if (s != null)
-		{
-			canvas.updateSession(s);
-		}
+		this.sessionInFocus = s;
 	}
 	
+	/**
+	 * Get the current sessionInFocus.
+	 * @return Returns the sessionInFocus.
+	 */
 	public Session getSessionInFocus()
 	{
 		return sessionInFocus;
