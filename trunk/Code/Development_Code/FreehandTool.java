@@ -9,9 +9,10 @@ import java.util.ArrayList;
  */
 public class FreehandTool implements Tool {
    
-  protected Point startingMousePosition;
-  protected FreeHandFactory factory;
-  protected FreeHandObject freeHand;
+	private String name;
+	protected Point startingMousePosition;
+	protected FreeHandFactory factory;
+	protected FreeHandObject freeHand;
 
 
   /**
@@ -19,8 +20,9 @@ public class FreehandTool implements Tool {
    * @param c DrawingCanvas tool will interact with.
    * @param f Factory for creating new drawable objects.
    */
-  public FreehandTool(DrawingCanvas c, FreeHandFactory f) {
-    factory = f;
+  public FreehandTool(DrawingCanvas c, FreeHandFactory f, String name) {
+	  factory = f;
+	  this.name = name;
   }
 
   
@@ -50,12 +52,12 @@ public class FreehandTool implements Tool {
 		 
   }
 
-  public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+  public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor) 
   {
 	   Graphics graphics = canvas.getimageBufferGraphics();
 		
 	    /* Save the object's color to match the pen's color */
-	   freeHand.set_MainColor(canvas.getpenColor());
+	   freeHand.set_MainColor(finalColor);
 	   
 	    /* Draw final "permanent" object */
 	   freeHand.draw(graphics);
@@ -68,5 +70,11 @@ public class FreehandTool implements Tool {
    }
 
   public void deselected(DrawingCanvas canvas) {}
+
+
+  public String toolName() 
+  {
+	  return this.name;
+  }
   
 }

@@ -9,17 +9,19 @@ import java.util.ArrayList;
  */
 public class TextTool implements KeyboardTool {
    
-  protected TextFactory textFactory;
-  protected Text currentText = null;
+	private String name;
+	protected TextFactory textFactory;
+	protected Text currentText = null;
   
   
      /**
   	  * Create a new TextTool
   	  * @param f Factory that this tool will use to instantiate objects.
   	  */
-  	 public TextTool(TextFactory f) 
+  	 public TextTool(TextFactory f, String name) 
   	 {
-	   textFactory = f;
+  		 this.name = name;
+  		 textFactory = f;
 	 }
 
   	 /**
@@ -92,13 +94,20 @@ public class TextTool implements KeyboardTool {
 		currentText = null;
 	}
 
+    public String toolName() 
+    {
+    	return this.name;
+	}
+    
     
     /**
 	 * Does nothing
 	 */
-     public void mouseReleased(Point p,ArrayList<Shape> shapes, DrawingCanvas canvas) { }
+     public void mouseReleased(Point p,ArrayList<Shape> shapes, DrawingCanvas canvas,Color finalColor) { }
 	 public void mouseDragged(Point p, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
 	 public void keyReleased(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
 	 public void keyPressed(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas)  { }
+
+	
 
 }

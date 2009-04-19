@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -11,11 +12,15 @@ import java.util.ArrayList;
 /* DO NOT rename this class, DrawingCanvas.java depends upon it (line 99) */
 public class EraserTool implements Tool {
    
-
-  /**
-   * Create a new instance of the Eraser tool.
-   */
-  public EraserTool() {}
+	String name;
+	
+	/**
+     * Create a new instance of the Eraser tool.
+     */
+	public EraserTool(String name) 
+	{
+		this.name = name;
+	}
 
   
   /**
@@ -46,12 +51,18 @@ public class EraserTool implements Tool {
   /**
    * This event does nothing for this tool.
    */
-  public void mouseReleased(Point p, ArrayList<Shape> currentShapes,DrawingCanvas canvas) {}
+  public void mouseReleased(Point p, ArrayList<Shape> currentShapes,DrawingCanvas canvas, Color finalColor) {}
 
   
   /**
    * This event does nothing for this tool.
    */
   public void deselected(DrawingCanvas canvas) {}
+
+
+  public String toolName() 
+  {
+	  return name;
+  }
 	
 }

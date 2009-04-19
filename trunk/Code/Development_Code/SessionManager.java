@@ -58,7 +58,7 @@ public class SessionManager extends Thread
 		 */
 		for (int i = 0; i < s.networkMembers.size(); i++)
 		{
-			ServerUtils.checkMessageFromClient(s.networkMembers.get(i), s.localUser);
+			ServerUtils.checkMessageFromClient(s, s.networkMembers.get(i), s.localUser);
 		}
 		
 		/**
