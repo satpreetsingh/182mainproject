@@ -6,12 +6,11 @@ import java.io.Serializable;
  * Creates an abstract class for shapes that
  * are defined by two points.
  * @authors bmhelppi, jjtrapan
- *
  */
 public abstract class TwoPointShape extends Shape implements Serializable
 {
 	 
-	Point2D.Double end;
+	protected Point2D.Double end;
 	
 	/**
 	 * Set the second point.
@@ -75,7 +74,6 @@ public abstract class TwoPointShape extends Shape implements Serializable
 	 }
 
 	 
-	 
 	 Point2D.Double scale(double x1,double x2,double y1,double y2, int deltaX, int deltaY)
 	 {
 		 Point2D.Double result = new Point2D.Double();
@@ -115,22 +113,22 @@ public abstract class TwoPointShape extends Shape implements Serializable
 	 
 	 Point2D.Double pickAnchor (Point2D.Double p)
 	 {
-			Point2D.Double result;
-			
-			double dist1, dist2;
-			dist1 = this.origin.distance(p);
-			dist2 = this.end.distance(p);
-			
-			
-			if (dist1 < dist2)
-			{
-				result = origin;
-			}
-			else
-			{
-				result = end;
-			}
-			return result;
+		Point2D.Double result;
+		
+		double dist1, dist2;
+		dist1 = this.origin.distance(p);
+		dist2 = this.end.distance(p);
+		
+		
+		if (dist1 < dist2)
+		{
+			result = origin;
 		}
+		else
+		{
+			result = end;
+		}
+		return result;
+	}
 	 
 }

@@ -6,6 +6,11 @@
  */
 public class Output {
 
+	/**
+	 * Process a message.
+	 * @param s Message to process.
+	 * @param m Message priority.
+	 */
 	public static void processMessage(String s, Constants.Message_Type m)
 	{
 		

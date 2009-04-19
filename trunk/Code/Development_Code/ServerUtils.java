@@ -97,7 +97,6 @@ public class ServerUtils
 		} 
 		catch (IOException e) 
 		{
-			// TODO Auto-generated catch block
 			Output.processMessage("ServerUtils.buildSession, Unable to build master session", Constants.Message_Type.error);
 			result = null;
 		}
@@ -159,10 +158,15 @@ public class ServerUtils
 		}
 	}
 	
-	
-	public static void genericSend(Session s, Object o, NetworkObject.reason reason)
+	/**
+	 * Helper method to send an object o to all members in s for reason.
+	 * @param s Session  to send message for.  Will be checked for people
+	 * to send message to.
+	 * @param o Object to send.
+	 * @param reason Reason for sending this message.
+	 */
+	private static void genericSend(Session s, Object o, NetworkObject.reason reason)
 	{
-		
 		try
 		{
 			for(int i = 0; i < s.networkMembers.size(); i ++)
@@ -197,6 +201,13 @@ public class ServerUtils
 			
 		}
 	}
+	
+	/**
+	 * Send a mousePress message.
+	 * @param s Session to send message for.
+	 * @param p Point where mousePress occurred.
+	 * @param t Tool selected when this happened.
+	 */
 	public static void sendMousePress(Session s, Point p, Tool t)
 	{
 		ArrayList<Object> data = new ArrayList<Object>();
@@ -208,6 +219,12 @@ public class ServerUtils
 			
 	}
 
+	/**
+	 * Send a mouseRelease message.
+	 * @param s Session to send message for.
+	 * @param p Point event occurred at.
+	 * @param t Tool selected when event occurred.
+	 */
 	public static void sendMouseRelease(Session s, Point p, Tool t)
 	{
 		ArrayList<Object> data = new ArrayList<Object>();
@@ -218,6 +235,12 @@ public class ServerUtils
 		Output.processMessage("Master is sending mouseRelease", Constants.Message_Type.info);
 	}
 
+	/**
+	 * Send a mouseDragged event.
+	 * @param s Session to send message for.
+	 * @param p Point where event occurred.
+	 * @param t Tool selected when event occurred.
+	 */
 	public static void sendMouseDrag(Session s, Point p, Tool t)
 	{
 		ArrayList<Object> data = new ArrayList<Object>();

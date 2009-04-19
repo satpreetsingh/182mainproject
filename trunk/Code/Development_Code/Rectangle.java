@@ -8,15 +8,14 @@ import java.awt.geom.Point2D.Double;
  * @authors bmhelppi, jjtrapan
  *
  */
-
 public class Rectangle extends TwoPointShape
 {
 	
 	/**
 	 * Create a new instance of a rectangle.
-	 * @param x
-	 * @param y
-	 * @param c
+	 * @param x X coordinate.
+	 * @param y Y coordinate.
+	 * @param c Color.
 	 */
 	public Rectangle(int x, int y, Color c) 
 	{
@@ -117,5 +116,4 @@ public class Rectangle extends TwoPointShape
 		return result;
 	
 	}
-		
 }

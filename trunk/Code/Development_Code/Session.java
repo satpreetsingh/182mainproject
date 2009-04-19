@@ -13,7 +13,13 @@ import java.util.Date;
 import java.util.UUID;
 
 
-
+/**
+ * Implements a network session.
+ * Keeps track of members active, who's in charge, and 
+ * manages data.
+ * @author bmhelppi
+ *
+ */
 public class Session {
 
 	
@@ -105,12 +111,20 @@ public class Session {
 		return currentState;
 	}
 	
-	public boolean drawable(NetworkBundle m)
+	/**
+	 * Indicate if the user can draw on the canvas.
+	 * @param m Should be the local user.  Private method to prevent abuse.
+	 * @return Returns indication of if the user can draw on the campus.
+	 */
+	private boolean drawable(NetworkBundle m)
 	{
 		return true;
 	}
 	
 	
+	/**
+	 * Process an event to clear the last selected object.
+	 */
 	public void clearSelection()
 	{
 		if(this.drawable(this.localUser))
@@ -119,6 +133,10 @@ public class Session {
 		}
 	}
 	
+	/**
+	 * Process an event to select a shape.
+	 * @param s Shape to select.
+	 */
 	public void selectShape(Shape s)
 	{
 		if(this.drawable(this.localUser))
@@ -126,6 +144,11 @@ public class Session {
 			this.currentState.setLastSelected(s);
 		}
 	}
+	
+	/**
+	 * Process an event to delete a shape.
+	 * @param s Shape to delete.
+	 */
 	public void deleteShape (Shape s)
 	{
 		if (this.drawable(this.localUser))
@@ -148,10 +171,19 @@ public class Session {
 		}
 	}
 	
+	/**
+	 * Process an event to set the main color of a shape.
+	 * @param s Shape to set.
+	 * @param c Color to set.
+	 */
 	public void setMainColor(Shape s, Color c)
 	{
 		s.set_MainColor(c);
 	}
+	
+	/**
+	 * Process an event to delete all the shapes on the canvas.
+	 */
 	public void clearObjects()
 	{
 		if(this.drawable(this.localUser))
@@ -159,6 +191,7 @@ public class Session {
 			this.currentState.currentShapes().clear();
 		}
 	}
+	
 	public void processKeyTyped(KeyEvent e)
 	{
 		if(this.drawable(this.localUser))
@@ -170,6 +203,7 @@ public class Session {
 			}
 		}
 	}
+	
 	public void processKeyRelease(KeyEvent e)
 	{
 		if(this.drawable(this.localUser))

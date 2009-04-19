@@ -2,6 +2,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+/**
+ * TextTool is an instance of KeyboardTool, capable of creating text objects.
+ * @author bmhelppi
+ *
+ */
 public class TextTool implements KeyboardTool {
    
   protected TextFactory textFactory;
@@ -12,8 +17,8 @@ public class TextTool implements KeyboardTool {
   	  * Create a new TextTool
   	  * @param f Factory that this tool will use to instantiate objects.
   	  */
-	  
-  	 public TextTool(TextFactory f) {
+  	 public TextTool(TextFactory f) 
+  	 {
 	   textFactory = f;
 	 }
 
@@ -36,8 +41,8 @@ public class TextTool implements KeyboardTool {
 	   * When a key is typed, update the text object, 
 	   * if it exists.
 	   */
-     public void keyTyped(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas) {
-    	 
+     public void keyTyped(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas) 
+     {
 	   Graphics graphics;
 		if(currentText != null)
 		{
@@ -86,16 +91,14 @@ public class TextTool implements KeyboardTool {
 		}
 		currentText = null;
 	}
-    /* ------------------------------------------------------- */	
-	/**
+
+    
+    /**
 	 * Does nothing
 	 */
-	
      public void mouseReleased(Point p,ArrayList<Shape> shapes, DrawingCanvas canvas) { }
 	 public void mouseDragged(Point p, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
 	 public void keyReleased(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
 	 public void keyPressed(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas)  { }
-	 /* ------------------------------------------------------- */	
-	
 
 }
