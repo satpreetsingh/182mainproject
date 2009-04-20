@@ -132,58 +132,6 @@ public class Oval extends TwoPointShape
 		
 		}
 		/* ------------------------------------------------------- */	
-
-	    /**
-		 * Resize the shape.
-		 */
-		void resize(Point2D.Double anchor, int deltaX, int deltaY)
-		{
-			 
-			 if (anchor == this.origin)
-			 {				 			 
-				 this.end = scale(this.origin.x,this.end.x,this.origin.y,this.end.y,deltaX, deltaY);
-				 
-				 /* Update the sub points */
-				 this.endorigin.x = this.end.x;
-				 this.originend.y = this.end.y;
-			 }
-			 else if (anchor == this.endorigin){
-				 
-				 this.originend = scale(this.endorigin.x,this.originend.x,this.endorigin.y,this.originend.y,deltaX, deltaY);					 
-				 
-				 /* Update the main endpoints */
-				 this.origin.x = this.originend.x;
-				 this.end.y = this.originend.y;
-				 
-			 }
-			 else if (anchor == this.originend){
-				 this.endorigin = scale(this.originend.x,this.endorigin.x,this.originend.y,this.endorigin.y,deltaX, deltaY);	 
-				 
-				 /* Update the main endpoints */
-				 this.end.x = this.endorigin.x;
-				 this.origin.y = this.endorigin.y;
-			 }
-			 else
-			 {
-				 this.origin = scale(this.end.x,this.origin.x,this.end.y,this.origin.y,deltaX, deltaY);
-				 
-				 /* Update the sub points */
-				 this.originend.x = this.origin.x;
-				 this.endorigin.y = this.origin.y;
-				 
-			 }	 
-		}
-		/* ------------------------------------------------------- */
-		 
-		Point2D.Double scale(double x1,double x2,double y1,double y2, int deltaX, int deltaY)
-		{
-			 Point2D.Double result = new Point2D.Double();
-			 result.x = x2 + deltaX;
-			 result.y = y2 + deltaY;		 
-			 return result;
-			 
-		}
-    	/* ------------------------------------------------------- */
 		
 		Point2D.Double pickAnchor (Point2D.Double p)
 		{
