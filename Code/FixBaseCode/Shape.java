@@ -10,7 +10,8 @@ import java.awt.geom.Point2D;
 public abstract class Shape extends Object
 {
 	  /* Temp, define a common tolerance for nearness, or other such operations */
-	  int nearTol = 10;
+	 // JJT CHANGED 
+	 int nearTol = 5;
 	  double floatTol = 0.0001;
 	  int ListPos;
 	  Point2D.Double origin;

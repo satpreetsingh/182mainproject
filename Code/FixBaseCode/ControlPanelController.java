@@ -27,8 +27,14 @@ public class ControlPanelController
     		canvas.setpenColor(itemToColor(e.getItem()));   
     	}
     	else if(e.getSource().toString().contains("comboType")) {
+    		
     		canvas.setShapeType(itemToType(e.getItem()));
+
     	}
+      
+    	/* Refresh the canvas, which deselects the object */
+    	canvas.refresh();
+      
     }
   }
   /* ------------------------------------------------------- */
