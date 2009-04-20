@@ -114,15 +114,12 @@ public class SelectorTool implements Tool{
 			
 			/* Save the shape's original position */
 			point.setLocation(e.getX(), e.getY());
-			
-			
+						
 			/* Set the color to light gray */
 			graphics.setXORMode(Color.lightGray);
 			
 			/* Redraw the shape */
 			shapeOfInterest.draw(graphics);
-			
-
 			
   			/* Draw selection rectangles */
 			shapeOfInterest.drawHighlightBoxes(graphics);
@@ -131,6 +128,7 @@ public class SelectorTool implements Tool{
 			PrepreviousSelectedObject = previousSelectedObject;
 			previousSelectedObject = shapeOfInterest;
 						
+			
 			/* Determine which part of the object the user clicked */
 			if(shapeOfInterest.exterior(e.getX(), e.getY()))
 			{
@@ -139,6 +137,7 @@ public class SelectorTool implements Tool{
 				eventPoint.y = e.getY();
 				this.anchor = shapeOfInterest.pickAnchor(eventPoint);
 		
+				
 			}
 			else
 			{
@@ -187,10 +186,7 @@ public class SelectorTool implements Tool{
 		if (shapeOfInterest != null) {
 			
 			Graphics graphics = canvas.getimageBufferGraphics();
-		
-          
-            
-            
+         
             deltaX = e.getX() - (int)this.point.x;
   			deltaY = e.getY() - (int)this.point.y;
   			
@@ -210,27 +206,19 @@ public class SelectorTool implements Tool{
   			canvas.refresh();
   			
 			/* Save the shape's latest position */
-			this.point.setLocation(e.getX(), e.getY());
-			
-			
+			this.point.setLocation(e.getX(), e.getY());			
 			
 			/* Set the XOR mode to light gray */
 			graphics.setXORMode(Color.lightGray);
-			
-
-
-			
+		
 			/* Redraw the shape */
-			shapeOfInterest.draw(graphics);
-						
+			shapeOfInterest.draw(graphics);					
   	
 			/* Draw selection rectangles */
 			shapeOfInterest.drawHighlightBoxes(graphics);
 	
 			/* Repaint the canvas to visually select/unselect the object */ 
 	 		canvas.repaint();	
-
-
 					
 			
 		}
