@@ -127,74 +127,7 @@ public class Line extends TwoPointShape
 		
 		}
 		/* ------------------------------------------------------- */
- 	    /**
-		 * Resize the shape.
-		 */
-		void resize(Point2D.Double anchor, int deltaX, int deltaY)
-		{
-			 
-			 double x1,x2,y1,y2;
-			 
-			 
-			 if (anchor == this.origin)
-			 {
-				 x1 = this.origin.x;
-				 y1 = this.origin.y;
-				 
-				 x2 = this.end.x;
-				 y2 = this.end.y;
-				 this.end = scale(x1,x2,y1,y2,deltaX, deltaY);
-			 }
-			 else
-			 {
-				 x2 = this.origin.x;
-				 y2 = this.origin.y;
-				 
-				 x1 = this.end.x;
-				 y1 = this.end.y;
-				 this.origin = scale(x1,x2,y1,y2,deltaX, deltaY);
-			 }	 
-		}
-		/* ------------------------------------------------------- */
-		 
-		Point2D.Double scale(double x1,double x2,double y1,double y2, int deltaX, int deltaY)
-		{
-			 Point2D.Double result = new Point2D.Double();
-			 double distance = Point2D.distance(x1, y1, x2, y2);
-			 double change = deltaX + deltaY;
-			 
-			 if (distance > this.floatTol)
-			 {
-			 double xRatio = Math.abs((x1 - x2) / distance);
-			 double yRatio = Math.abs((y1 - y2) / distance);
-			 
-			 	if (Math.abs(xRatio) > this.floatTol)
-			 	{
-			 		result.x = x2 + xRatio * change;
-			 	}
-			 	else
-			 	{
-			 		result.x = x2;
-			 	}
-				if (Math.abs(yRatio) > this.floatTol)
-			 	{
-			 		result.y = y2 + yRatio * change;
-			 	}
-			 	else
-			 	{
-			 		result.y = y2;
-			 	}
-			 }
-			 else
-			 {
-				 result.setLocation(x2,y2);
-			 }
-			 
-			 return result;
-			 
-		}
-		/* ------------------------------------------------------- */
- 
+
 		Point2D.Double pickAnchor (Point2D.Double p)
 		{
 				Point2D.Double result;
