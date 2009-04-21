@@ -185,6 +185,16 @@ public class Session {
 	}
 	
 	/**
+	 * Process an event to set the main type of a shape.
+	 * @param s Shape to set.
+	 * @param type Int to set.
+	 */
+	public void setMainType(Shape s, int type)
+	{
+		s.set_DrawingType(type);
+	}
+	
+	/**
 	 * Process an event to delete all the shapes on the canvas.
 	 */
 	public void clearObjects()
@@ -192,6 +202,7 @@ public class Session {
 		if(this.drawable(this.localUser))
 		{
 			this.currentState.currentShapes().clear();
+			
 		}
 	}
 	

@@ -14,7 +14,8 @@ interface TwoPointShapeFactory extends Serializable{
 	 * @param yOne Y position.
 	 * @param xTwo Second x position.
 	 * @param yTwo Second y position.
-	 * @param c C base color.
+	 * @param c C base color.	 
+	 * @param type int object type (outline,solid).
 	 * @return Returns an instantiated TwoPointShape.
 	 */
 	public TwoPointShape createShape
@@ -22,5 +23,7 @@ interface TwoPointShapeFactory extends Serializable{
 	 int yOne,
 	 int xTwo,
 	 int yTwo,
-	 Color c);
+	 Color c, 
+	 int type);
+
 }

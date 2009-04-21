@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 /**
@@ -17,10 +18,11 @@ public class Oval extends TwoPointShape
 	 * @param x
 	 * @param y
 	 * @param c
+	 * @param type
 	 */
-	public Oval(int x, int y, Color c)
+	public Oval(int x, int y, Color c, int type)
 	{
-		super(x, y, c);
+		super(x, y, c, type);
 	}
 
 	    
@@ -57,11 +59,26 @@ public class Oval extends TwoPointShape
 	    }
 	    
 	   		g.setColor(shapeColor);
-			g.drawOval (
-					shapeX, 
-					shapeY, 
-					shapeWidth, 
-					shapeHeight);
+
+	   	    /* Draw the outline of a oval on the graphics */
+	   		if (this.DrawingType == 1) {
+		   		g.drawOval(
+						shapeX, 
+						shapeY, 
+						shapeWidth, 
+						shapeHeight);
+	   		}
+	   	    
+	   		/* Draw the solid shape of a oval on the graphics */
+	   		else {
+		   		g.fillOval(
+						shapeX, 
+						shapeY, 
+						shapeWidth, 
+						shapeHeight);
+		   		
+
+	   		}
 	}
 
 	
@@ -116,5 +133,41 @@ public class Oval extends TwoPointShape
 		return result;
 	
 	}
-
+	
+	/**
+	 * Determine the anchor of the object.
+	 */
+	Point2D.Double pickAnchor (Point2D.Double p)
+	{
+			Point2D.Double result;
+			
+			double dist1, dist2, dist3, dist4;
+			dist1 = this.origin.distance(p);
+			dist2 = this.end.distance(p);
+			dist3 = this.endorigin.distance(p);
+			dist4 = this.originend.distance(p);
+			
+			/* Choose the end that is farther away from the mouseclick */				
+			if ((dist4 > dist3) && 
+				(dist4 > dist2) && 
+				(dist4 > dist1)){
+				result = originend;	
+			}
+			else if ((dist3 > dist4) && 
+					(dist3 > dist2) && 
+					(dist3 > dist1)){
+				result = endorigin;	
+			}
+			else if ((dist2 > dist4) && 
+					(dist2 > dist3) && 
+					(dist2 > dist1)){
+				result = end;	
+			}
+			else {
+			  result = origin;	
+			}
+				
+				
+			return result;
+		}
 }

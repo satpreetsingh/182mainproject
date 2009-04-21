@@ -38,7 +38,7 @@ public class DrawState implements Serializable{
 	{
 		for(int i = 0; i < this.currentShapes.size(); i++)
 		{
-			if(s == this.lastSelected)
+			if(s == this.currentShapes.get(i))
 			{
 				this.lastSelected = s;
 			}

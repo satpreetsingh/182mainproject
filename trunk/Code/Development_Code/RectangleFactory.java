@@ -16,9 +16,10 @@ public class RectangleFactory implements TwoPointShapeFactory{
 	 int yOne, 
 	 int xTwo, 
 	 int yTwo,
-	 Color c) 
+	 Color c,
+	 int type) 
 	{
-		Rectangle newRect = new Rectangle(xOne, yOne, c);
+		Rectangle newRect = new Rectangle(xOne, yOne, c, type);
 		return newRect;
 		
 	}

@@ -49,7 +49,8 @@ public class TwoPointShapeTool implements Tool {
 										   p.y,
 										   p.x,
 										   p.y,
-				 						   Color.WHITE);
+				 						   Color.WHITE,
+				 						   canvas.getDrawingType());
 		 shape.draw(graphics);
 		 canvas.repaint();
 	 }
@@ -88,6 +89,9 @@ public class TwoPointShapeTool implements Tool {
 	    /* Save the object's color to match the pen's color */
 	    shape.set_MainColor(finalColor);
 	   
+	    /* Save the object's type */
+	    shape.set_DrawingType(canvas.getDrawingType());
+
 	    /* Draw final "permanent" object */
 	    shape.draw(graphics);
 	    canvas.repaint();   

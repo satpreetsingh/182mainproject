@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 /**
@@ -15,10 +16,11 @@ public class Line extends TwoPointShape
 	 * @param x X coordinate of the line.
 	 * @param y Y coordinate of the line.
 	 * @param c Color of the line.
+	 * @param type Int of the object.
 	 */
-	public Line(int x, int y, Color c) 
+	public Line(int x, int y, Color c, int type) 
 	{
-		super(x, y, c);
+		super(x, y, c, type);
 	}
 	  
 	/**
@@ -127,4 +129,27 @@ public class Line extends TwoPointShape
 		       );
 	
 	}
+	
+	/**
+	 * Determine the anchor of the object.
+	 */
+	Point2D.Double pickAnchor (Point2D.Double p)
+	{
+			Point2D.Double result;
+			
+			double dist1, dist2;
+			dist1 = this.origin.distance(p);
+			dist2 = this.end.distance(p);
+			
+			/* Choose the end that is farther away from the mouseclick */
+			if (dist1 < dist2)
+			{
+				result = end;
+			}
+			else
+			{
+				result = origin;
+			}
+			return result;
+		}
 }

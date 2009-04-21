@@ -13,8 +13,11 @@ public class ControlPanelView extends JPanel {
 	private Session session;
 	private ControlPanelController controller;
 	private JButton clearButton;
-	private JComboBox comboBox;
-  
+	protected JComboBox comboType;
+	protected JComboBox comboColor;
+
+	
+	
 	
 	/**
 	 * Create a new ControlPanelView
@@ -25,17 +28,31 @@ public class ControlPanelView extends JPanel {
 	    session = s;
 	    clearButton = new JButton("Clear");
 	    add(clearButton);
-	    add(new JLabel("Pen color"));
-	    comboBox = new JComboBox();
-	    comboBox.addItem("black");
-	    comboBox.addItem("blue");
-	    comboBox.addItem("green");
-	    comboBox.addItem("red");
-	    add(comboBox);
+	    comboType = new JComboBox();
+	    
+	    /* Make sure the set the name of this component for evaluation in the controller */
+	    comboType.setName("comboType");
+	    
+	    comboType.addItem("outline");
+	    comboType.addItem("solid");
+	    add(comboType);
+	    
+	    
+	    comboColor = new JComboBox();
+	    
+	    /* Make sure the set the name of this component for evaluation in the controller */
+	    comboColor.setName("comboColor");
+	    comboColor.addItem("black");
+	    comboColor.addItem("blue");
+	    comboColor.addItem("green");
+	    comboColor.addItem("red");
+	    add(comboColor);
+
+	    /* Assign the listener to the components */
 	    controller = new ControlPanelController(session);
 	    clearButton.addActionListener((ActionListener)controller);
-	    comboBox.addItemListener((ItemListener)controller);
-
+	    comboColor.addItemListener((ItemListener)controller);
+	    comboType.addItemListener((ItemListener)controller);
 	}
 	
 	/**

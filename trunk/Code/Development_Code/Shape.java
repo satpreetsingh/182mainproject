@@ -11,13 +11,16 @@ import java.io.Serializable;
 public abstract class Shape extends Object implements Serializable
 {
 	  /* Temp, define a common tolerance for nearness, or other such operations */
-	  int nearTol = 10;
+	  int nearTol = 5;
 	  double floatTol = 0.0001;
 	  int ListPos;
 	  Point2D.Double origin;
 	  Color shapeColor;
 	
-	
+	  /* Determine the shape of the object.  1 = Outline mode; 2 = Solid mode */
+	  int DrawingType;
+	  
+	  
 	  /**
 		 * Requires a class implementing this class
 		 * to define how to draw itself.
@@ -82,6 +85,15 @@ public abstract class Shape extends Object implements Serializable
 		void set_MainColor(Color c)
 		{
 			shapeColor = c;
+		}
+		
+		/**
+		 * Set the type of drawing scheme of the shape.
+		 * @param Mode
+		 */
+		void set_DrawingType(int Mode)
+		{
+			DrawingType = Mode;
 		}
 		
 		/**

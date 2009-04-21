@@ -11,6 +11,12 @@ public abstract class TwoPointShape extends Shape implements Serializable
 {
 	 
 	protected Point2D.Double end;
+
+	/* endorigin.x is same as end.x; endorigin.y is the same as origin.y */
+	/* These points serve as secondary locations for the bases of anchor/resizing for 2D shapes */
+	protected Point2D.Double endorigin;
+	protected Point2D.Double originend;
+	
 	
 	/**
 	 * Set the second point.
@@ -20,6 +26,12 @@ public abstract class TwoPointShape extends Shape implements Serializable
 	 void setSecondPoint(double x, double y) {
 		 this.end.x = x;
 		 this.end.y = y;
+		 
+		 
+		 this.endorigin.x = x;
+		 this.endorigin.y = this.origin.y;
+		 this.originend.x = this.origin.x;
+		 this.originend.y = y;
 	 }
 	 
 	 /**
@@ -28,10 +40,13 @@ public abstract class TwoPointShape extends Shape implements Serializable
 	  * @param y Y origin for two point shape.
 	  * @param c C initial color of the shape.
 	  */
-	 public TwoPointShape(int x, int y, Color c) {
+	 public TwoPointShape(int x, int y, Color c, int type) {
 		 this.origin = new Point2D.Double(x,y);
 		 this.end = new Point2D.Double(x,y);
+		 this.endorigin = new Point2D.Double(x,y);
+		 this.originend = new Point2D.Double(x,y);
 		 this.shapeColor = c;
+		 this.DrawingType = type;
 	 }
 	 
 	 /**
@@ -42,93 +57,62 @@ public abstract class TwoPointShape extends Shape implements Serializable
 		 this.origin.setLocation(this.origin.x + x, this.origin.y + y);
 		 this.end.setLocation(this.end.x + x, this.end.y + y);
 			
-		 
+		  /* Update the non-endpoint points */	
+		 this.endorigin.x = this.end.x + x;
+	     this.endorigin.y = this.origin.y + y;	
+		 this.originend.x = this.origin.x + x;
+	     this.originend.y = this.end.y + y;			 
 	 }
 	 
 	 /**
 	  * Resize the shape.
 	  */
-	 void resize(Point2D.Double point, int deltaX, int deltaY)
-	 {
-		 Point2D.Double pointOne = pickAnchor(point);
-		 double x1,x2,y1,y2;
-		 
-		 if (pointOne == this.origin)
-		 {
-			 x1 = this.origin.x;
-			 y1 = this.origin.y;
+	void resize(Point2D.Double anchor, int deltaX, int deltaY)
+	{
 			 
-			 x2 = this.end.x;
-			 y2 = this.end.y;
-			 this.end = scale(x1,x2,y1,y2,deltaX, deltaY);
-		 }
-		 else
-		 {
-			 x2 = this.origin.x;
-			 y2 = this.origin.y;
-			 
-			 x1 = this.end.x;
-			 y1 = this.end.y;
-			 this.origin = scale(x1,x2,y1,y2,deltaX, deltaY);
-		 }	 
-	 }
-
-	 
-	 Point2D.Double scale(double x1,double x2,double y1,double y2, int deltaX, int deltaY)
-	 {
-		 Point2D.Double result = new Point2D.Double();
-		 double distance = Point2D.distance(x1, y1, x2, y2);
-		 double change = deltaX + deltaY;
-		 
-		 if (distance > this.floatTol)
-		 {
-		 double xRatio = Math.abs((x1 - x2) / distance);
-		 double yRatio = Math.abs((y1 - y2) / distance);
-		 
-		 	if (Math.abs(xRatio) > this.floatTol)
-		 	{
-		 		result.x = x2 + xRatio * change;
-		 	}
-		 	else
-		 	{
-		 		result.x = x2;
-		 	}
-			if (Math.abs(yRatio) > this.floatTol)
-		 	{
-		 		result.y = y2 + yRatio * change;
-		 	}
-		 	else
-		 	{
-		 		result.y = y2;
-		 	}
-		 }
-		 else
-		 {
-			 result.setLocation(x2,y2);
-		 }
-		 
-		 return result;
-		 
-	 }
-	 
-	 Point2D.Double pickAnchor (Point2D.Double p)
-	 {
-		Point2D.Double result;
-		
-		double dist1, dist2;
-		dist1 = this.origin.distance(p);
-		dist2 = this.end.distance(p);
-		
-		
-		if (dist1 < dist2)
-		{
-			result = origin;
-		}
-		else
-		{
-			result = end;
-		}
-		return result;
+			 if (anchor == this.origin)
+			 {				 			 
+				 this.end = scale(this.origin.x,this.end.x,this.origin.y,this.end.y,deltaX, deltaY);
+				 
+				 /* Update the sub points */
+				 this.endorigin.x = this.end.x;
+				 this.originend.y = this.end.y;
+			 }
+			 else if (anchor == this.endorigin){
+				 
+				 this.originend = scale(this.endorigin.x,this.originend.x,this.endorigin.y,this.originend.y,deltaX, deltaY);					 
+				 
+				 /* Update the main endpoints */
+				 this.origin.x = this.originend.x;
+				 this.end.y = this.originend.y;
+				 
+			 }
+			 else if (anchor == this.originend){
+				 this.endorigin = scale(this.originend.x,this.endorigin.x,this.originend.y,this.endorigin.y,deltaX, deltaY);	 
+				 
+				 /* Update the main endpoints */
+				 this.end.x = this.endorigin.x;
+				 this.origin.y = this.endorigin.y;
+			 }
+			 else
+			 {
+				 this.origin = scale(this.end.x,this.origin.x,this.end.y,this.origin.y,deltaX, deltaY);
+				 
+				 /* Update the sub points */
+				 this.originend.x = this.origin.x;
+				 this.endorigin.y = this.origin.y;
+				 
+			 }	 
 	}
-	 
+		 
+	Point2D.Double scale(double x1,double x2,double y1,double y2, int deltaX, int deltaY)
+	{
+			 Point2D.Double result = new Point2D.Double();
+			 result.x = x2 + deltaX;
+			 result.y = y2 + deltaY;		 
+			 return result;
+			 
+	}
+
+	
 }
