@@ -4,55 +4,37 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
 public class SimpleChatPeer
 {
-	JTextArea incoming;
-	JTextField outgoing;
-	static BufferedReader reader;
-	static PrintWriter writer;
-	Socket sock;
+	JTextArea incomingTextArea;
+	JTextField outgoingTextField;
 
 	private static CopyOnWriteArrayList<Socket> myPeers = new CopyOnWriteArrayList<Socket>();
-	private static ServerSocket peerServerSocket;
-
-	public static void main(String[] args) throws IOException {
-
-		// Setup own ServerSocket on a free port
-		// Write (IP + Socket) to console
-
-		// Spawn off ServerSocketListener
-		// Spawn off GUI 
-
-		// Loop
-		// If user want's to manually connect to a peer, 
-		// take Socket+IP from console input, make a socket and add to list of myPeers
-
-		// PARALLEL   	
-		// If received a connect request, add to the list of connected peers (myPeers)
-		// Read/Get server IP+Port of this new peer and connect to that?
-
-
-		// PARALLEL
-		// Setup GUI
-		// When button clicked, send msg to all connected peers
-
-
+	private static ServerSocket myServerSocket;
+	private static CopyOnWriteArrayList<PrintWriter> peerOutputStreams = new CopyOnWriteArrayList<PrintWriter>();
+	
+	public static void main(String[] args) {
 		System.out.println("ChatPeer");
 
 		// Find an free socket to listen on
-		peerServerSocket = new ServerSocket(0);
+		try {
+			myServerSocket = new ServerSocket(0);
+			// Print self IP [address + socket] other peer(s) to connect to
+			System.out.println("Listening on port " + myServerSocket.getLocalPort() 
+					+ " on " + InetAddress.getLocalHost().getHostAddress());    	
+		} catch (IOException e) {
+			System.out.println("No free Socket available"); 
+			return;
+		}
 
-		// Print self IP [address + socket] other peer(s) to connect to
-		System.out.println("Listening on port " + peerServerSocket.getLocalPort() 
-				+ " on " + InetAddress.getLocalHost().getHostAddress());    	
-
-		// Spawn off GUI + Incoming Socket Listener + ServerSocketListener/Acceptor
+		// Spawn off GUI + ServerSocketListener/Acceptor
 		new SimpleChatPeer().go(); 
 
-		// Read new connect requests from console-input
+		// Connect to new peer from console-input
 		String ipaddr;
 		int socketnumber;
 
@@ -65,99 +47,124 @@ public class SimpleChatPeer
 			System.out.println("Connecting to: " + ipaddr + " : " + socketnumber);
 			in.close(); 
 
-			setUpNewSocket(ipaddr, socketnumber);
+			// Setup & Launch peerSocketHandler thread
+			Socket newPeerSocket;
+			try {
+				newPeerSocket = new Socket(ipaddr, socketnumber);
+				System.out.println("Established connection with " + ipaddr + ":" + socketnumber);
+
+				PrintWriter newPeerWriter = new PrintWriter(newPeerSocket.getOutputStream());
+				peerOutputStreams.add(newPeerWriter);            
+				
+				Thread t = new Thread(new PeerSocketHandler(newPeerSocket));
+				t.start();
+
+//				} catch (UnknownHostException e) {
+//				System.out.print(" UnknownHostException ");
+//				//e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 
 	}
 
-	private static void setUpNewSocket(String ipaddr, int socketnumber) {
-		try {
-			Socket sock = new Socket(ipaddr, socketnumber);
-			InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
-			reader = new BufferedReader(streamReader);
-			writer = new PrintWriter(sock.getOutputStream());
-			System.out.println("Established connection with " + ipaddr + ":" + socketnumber);
-		}
-		catch(IOException ex) {
-			ex.printStackTrace();
-		}
-	}
 
 	public void go() {
 		// Setup GUI
 		JFrame frame = new JFrame("Ludicrously Simple Chat Client");
 		JPanel mainPanel = new JPanel();
-		incoming = new JTextArea(15, 50);
-		incoming.setLineWrap(true);
-		incoming.setWrapStyleWord(true);
-		incoming.setEditable(false);
-		JScrollPane qScroller = new JScrollPane(incoming);
+		incomingTextArea = new JTextArea(15, 50);
+		incomingTextArea.setLineWrap(true);
+		incomingTextArea.setWrapStyleWord(true);
+		incomingTextArea.setEditable(false);
+		JScrollPane qScroller = new JScrollPane(incomingTextArea);
 		qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		outgoing = new JTextField(20);
+		outgoingTextField = new JTextField(20);
 		JButton sendButton = new JButton("Send");
 		sendButton.addActionListener(new SendButtonListener());
 		mainPanel.add(qScroller);
-		mainPanel.add(outgoing);
+		mainPanel.add(outgoingTextField);
 		mainPanel.add(sendButton);
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
 
-		// Setup & Launch peerSocketsReader thread
-		Thread peerSocketsReader = new Thread(new peerSocketsReader());
-		peerSocketsReader.start();
-
 		// Setup & Launch myServerSocketListener thread
-		Thread myServerSocketAcceptor = new Thread(new myServerSocketAcceptor());
-		myServerSocketAcceptor.start();
+		Thread serverSocketListener = new Thread(new ServerSocketListener());
+		serverSocketListener.start();
 
 		// Show GUI
 		frame.setSize(650, 500);
 		frame.setVisible(true);
 	}
 
+	// GUI - SendButtonListener
+	// When button clicked, send text to everyone
 	public class SendButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
+			tellEveryone(outgoingTextField.getText());
+			outgoingTextField.setText("");
+			outgoingTextField.requestFocus();
+		}
+	}
+	public void tellEveryone(String message) {
+		Iterator it = peerOutputStreams.iterator();
+		while (it.hasNext()) {
 			try {
-				writer.println(outgoing.getText());
+				PrintWriter writer = (PrintWriter) it.next();
+				writer.println(message);
 				writer.flush();
-			}
-			catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			outgoing.setText("");
-			outgoing.requestFocus();
+			} catch (Exception ex) { ex.printStackTrace(); }
 		}
 	}
 
 
-	class peerSocketsReader implements Runnable {
+	// THREAD: Listens to the peerSocket for incoming messages
+	//		   When something found, put on GUI
+	// 		   When connection lost, print so on GUI
+	class PeerSocketHandler implements Runnable {
+		BufferedReader peerSocketReader;
+		Socket peerSocket;
+
+		public PeerSocketHandler(Socket newPeerSocket) {
+			try {
+				peerSocket = newPeerSocket;
+				InputStreamReader isReader = new InputStreamReader(peerSocket.getInputStream());
+				peerSocketReader = new BufferedReader(isReader);
+			} catch (Exception ex) { ex.printStackTrace(); }
+		}
+
 		public void run() {
 			String message;
 			try {
-				while ((message = reader.readLine()) != null) {
-					System.out.println("client read " + message);
-					incoming.append(message + "\n");
+				while ((message = peerSocketReader.readLine()) != null) {
+					// TODO: Print on GUI instead
+					System.out.println("[" + peerSocket.getInetAddress() + "] : " + message);
 				}
-			} catch (IOException ex)
-			{
-				ex.printStackTrace();
-			}
+			} catch (Exception ex) { ex.printStackTrace(); }
 		}
 	}
 
-	class myServerSocketAcceptor implements Runnable {
+
+	// THREAD: Listens to server-socket for incoming connection requests
+	//		   Accepts requests and spawns off new peerSocketHandler
+	class ServerSocketListener implements Runnable {
 		public void run() {
-			String message;
 			try {
-				while ((message = reader.readLine()) != null) {
-					System.out.println("client read " + message);
-					incoming.append(message + "\n");
+				while(true) {
+					Socket newPeerSocket = myServerSocket.accept();
+					PrintWriter newPeerWriter = new PrintWriter(newPeerSocket.getOutputStream());
+					peerOutputStreams.add(newPeerWriter);
+
+					Thread t = new Thread(new PeerSocketHandler(newPeerSocket));
+					t.start();
+					// TODO: Print on GUI instead
+					System.out.println("New Peer connected: " + newPeerSocket.getInetAddress() + " : " 
+							+ newPeerSocket.getRemoteSocketAddress());
 				}
-			} catch (IOException ex)
-			{
-				ex.printStackTrace();
-			}
+			} catch (Exception ex) { ex.printStackTrace(); }
 		}
 	}
 
