@@ -30,22 +30,35 @@ public class ControlPanelController
 	  {
 		  session.clearObjects();
 	  }
+	  
+	  session.canvas.clearCanvas();
+	  
   }
-  
+ 
   /**
    * The color of the pen changed, update it.
    */
   public void itemStateChanged(ItemEvent e)  
-  {
-    if (e.getStateChange() == ItemEvent.SELECTED)
-    {
-    	if(session != null)
-    	{
-    		session.canvas.setpenColor(itemToColor(e.getItem()));
-    	}
-    }
+  {    
+	if ((e.getStateChange() == ItemEvent.SELECTED) && 
+		(session != null)){ 
+	   	
+		if(e.getSource().toString().contains("comboColor")) { 
+			session.canvas.setpenColor(itemToColor(e.getItem()));   
+		}
+		else if(e.getSource().toString().contains("comboType")) {
+			session.canvas.setShapeType(itemToType(e.getItem()));
+
+		}
+    
+		/* Refresh the canvas, which deselects the object */
+		session.canvas.refresh();
+    
+	}
+	  
+
   }
-  
+ 
   /**
    * Change the Session that this Controller focuses on.
    * @param s Session to focus on.
@@ -73,5 +86,16 @@ public class ControlPanelController
     	return Color.red;
     }
   }
-  
+
+  protected int itemToType(Object item) {
+	  
+		/* By default, we always return 1 (draw outline) */     
+		if("solid".equals(item)) {
+		  return 2;	
+		}
+		else {
+		  return 1;	
+		}	  
+  }  
+
 } 

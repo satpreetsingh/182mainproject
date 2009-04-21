@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 /**
@@ -16,10 +17,11 @@ public class Rectangle extends TwoPointShape
 	 * @param x X coordinate.
 	 * @param y Y coordinate.
 	 * @param c Color.
+	 * @param type
 	 */
-	public Rectangle(int x, int y, Color c) 
+	public Rectangle(int x, int y, Color c, int type) 
 	{
-		super(x, y, c);
+		super(x, y, c, type);
 	}
 	
 	
@@ -54,12 +56,25 @@ public class Rectangle extends TwoPointShape
 	    
    		g.setColor(shapeColor);
 		
-   	    /* Draw the rectangle on the graphics */
-   		g.drawRect(
-				shapeX, 
-				shapeY, 
-				shapeWidth, 
-				shapeHeight);
+   	    /* Draw the outline of a rectangle on the graphics */
+   		if (this.DrawingType == 1) {
+	   		g.drawRect(
+					shapeX, 
+					shapeY, 
+					shapeWidth, 
+					shapeHeight);
+   		}
+   	    
+   		/* Draw the solid shape of a rectangle on the graphics */
+   		else {
+	   		g.fillRect(
+					shapeX, 
+					shapeY, 
+					shapeWidth, 
+					shapeHeight);
+	   		
+
+   		}
 	}
 
 	
@@ -116,4 +131,41 @@ public class Rectangle extends TwoPointShape
 		return result;
 	
 	}
+	
+	/**
+	 * Determine the anchor of the object.
+	 */
+	Point2D.Double pickAnchor (Point2D.Double p)
+	{
+			Point2D.Double result;
+			
+			double dist1, dist2, dist3, dist4;
+			dist1 = this.origin.distance(p);
+			dist2 = this.end.distance(p);
+			dist3 = this.endorigin.distance(p);
+			dist4 = this.originend.distance(p);
+			
+			/* Choose the end that is farther away from the mouseclick */				
+			if ((dist4 > dist3) && 
+				(dist4 > dist2) && 
+				(dist4 > dist1)){
+				result = originend;	
+			}
+			else if ((dist3 > dist4) && 
+					(dist3 > dist2) && 
+					(dist3 > dist1)){
+				result = endorigin;	
+			}
+			else if ((dist2 > dist4) && 
+					(dist2 > dist3) && 
+					(dist2 > dist1)){
+				result = end;	
+			}
+			else {
+			  result = origin;	
+			}
+				
+				
+			return result;
+		}
 }

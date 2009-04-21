@@ -28,7 +28,10 @@ public class FreehandTool implements Tool {
   
   public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas)  
   {
-	freeHand = factory.createFreeHand(p.x, p.y, Color.WHITE);
+	freeHand = factory.createFreeHand(p.x, 
+									  p.y, 
+									  Color.WHITE,
+									  canvas.getDrawingType());
 		 
 	Graphics graphics = canvas.getimageBufferGraphics();
 	graphics.setXORMode(Color.lightGray);

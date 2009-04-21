@@ -15,8 +15,8 @@ public class FreeHandFactory implements Serializable {
 	 * @param c Color of new shape.
 	 * @return Returns an instantiated shape.
 	 */
-  public FreeHandObject createFreeHand(int x, int y, Color c){
-		FreeHandObject o = new FreeHandObject(x,y,c);
+  public FreeHandObject createFreeHand(int x, int y, Color c, int type){
+		FreeHandObject o = new FreeHandObject(x,y,c,type);
 		return o;
   }
 }

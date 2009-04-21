@@ -19,6 +19,7 @@ public class DrawingCanvas extends JComponent
 	private int canvasWidth = 0;
 	private int canvasHeight = 0;
 	private Color penColor = Color.black;
+    protected int drawingType = 1;
 	private Tool currentTool = null; 
 	protected Session session = null;
     
@@ -103,7 +104,26 @@ public class DrawingCanvas extends JComponent
     	  repaint();
       }
     }  
-  
+    
+    /**
+     * Set the object type.
+     * @param int type objects will be drawn in.
+     */
+    public void setShapeType(int type) {
+        
+    	drawingType = type;  	
+    
+        if (session != null)
+        {
+      	  /* If we have an object that has been selected */
+      	  if (session.currentState.lastSelected() != null)
+      	  {
+      		  session.setMainType(session.currentState.lastSelected(), type);
+      	  }
+      	  repaint();
+        }
+      }  
+    
     /**
      * Get the current color that the canvas will use for 
      * new/selected objects.
@@ -113,6 +133,16 @@ public class DrawingCanvas extends JComponent
     	return penColor;
     }
   
+    /**
+     * Get the current type of object that the canvas will use for 
+     * new/selected objects.
+     * @return int type.
+     */
+    public int getDrawingType() {
+    	return drawingType;
+    }
+    
+    
     /**
      * Update the current tool that will interface with the canvas.
      * Also sends a deselect event to the last tool used if one

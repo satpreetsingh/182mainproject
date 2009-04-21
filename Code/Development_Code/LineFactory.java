@@ -16,10 +16,11 @@ public class LineFactory implements TwoPointShapeFactory, Serializable{
 	 int yOne, 
 	 int xTwo, 
 	 int yTwo,
-	 Color c) 
+	 Color c,
+	 int type) 
 	{
 
-		Line newLine = new Line(xOne, yOne, c);
+		Line newLine = new Line(xOne, yOne, c, type);
 		newLine.setSecondPoint(xTwo, yTwo);
 		
 		return newLine;

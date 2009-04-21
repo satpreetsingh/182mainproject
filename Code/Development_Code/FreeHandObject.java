@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
@@ -14,18 +15,22 @@ public class FreeHandObject extends Shape{
 	
 	private ArrayList <Line> segments;
 	private Color color;
+	private int drawingType;
+	
 	
 	/**
 	 * Create a new FreeHandObject.
 	 * @param x X point for origin.
 	 * @param y Y point for origin.
  	 * @param c Color of object.
+ 	 * @param type int of object.
 	 */
-	public FreeHandObject(int x, int y, Color c)
+	public FreeHandObject(int x, int y, Color c, int type)
 	{
-		Line newLine = new Line(x,y,c);
+		Line newLine = new Line(x,y,c,type);
 		segments = new ArrayList<Line>();
 		color = c;
+		drawingType = type;
 		
 		segments.add(newLine);
 	}
@@ -140,7 +145,8 @@ public class FreeHandObject extends Shape{
 		Line l = new Line
 		((int)prior.end.x, 
 		 (int)prior.end.y, 
-		 color);
+		 color,
+		 drawingType);
 		l.setSecondPoint(p.x, p.y);
 		segments.add(l);
 	}
