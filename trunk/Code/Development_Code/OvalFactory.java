@@ -17,9 +17,10 @@ public class OvalFactory implements TwoPointShapeFactory{
 	 int yOne, 
 	 int xTwo, 
 	 int yTwo,
-	 Color c) 
+	 Color c,
+	 boolean IsOutline) 
 	{
-		Oval newOval = new Oval(xOne, yOne, c);
+		Oval newOval = new Oval(xOne, yOne, c, IsOutline);
 		return newOval;
 		
 	}

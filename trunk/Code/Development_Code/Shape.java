@@ -18,7 +18,7 @@ public abstract class Shape extends Object implements Serializable
 	  Color shapeColor;
 	
 	  /* Determine the shape of the object.  1 = Outline mode; 2 = Solid mode */
-	  int DrawingType;
+	  boolean IsOutline;
 	  
 	  
 	  /**
@@ -91,9 +91,9 @@ public abstract class Shape extends Object implements Serializable
 		 * Set the type of drawing scheme of the shape.
 		 * @param Mode
 		 */
-		void set_DrawingType(int Mode)
+		void set_DrawingType(boolean isoutline)
 		{
-			DrawingType = Mode;
+			IsOutline = isoutline;
 		}
 		
 		/**

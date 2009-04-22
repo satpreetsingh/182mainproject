@@ -17,9 +17,9 @@ public class RectangleFactory implements TwoPointShapeFactory{
 	 int xTwo, 
 	 int yTwo,
 	 Color c,
-	 int type) 
+	 boolean IsOutline) 
 	{
-		Rectangle newRect = new Rectangle(xOne, yOne, c, type);
+		Rectangle newRect = new Rectangle(xOne, yOne, c, IsOutline);
 		return newRect;
 		
 	}

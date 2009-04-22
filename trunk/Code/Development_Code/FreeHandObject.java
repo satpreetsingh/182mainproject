@@ -15,7 +15,7 @@ public class FreeHandObject extends Shape{
 	
 	private ArrayList <Line> segments;
 	private Color color;
-	private int drawingType;
+	private boolean IsOutline;
 	
 	
 	/**
@@ -25,12 +25,12 @@ public class FreeHandObject extends Shape{
  	 * @param c Color of object.
  	 * @param type int of object.
 	 */
-	public FreeHandObject(int x, int y, Color c, int type)
+	public FreeHandObject(int x, int y, Color c, boolean isoutline)
 	{
-		Line newLine = new Line(x,y,c,type);
+		Line newLine = new Line(x,y,c,isoutline);
 		segments = new ArrayList<Line>();
 		color = c;
-		drawingType = type;
+		IsOutline = isoutline;
 		
 		segments.add(newLine);
 	}
@@ -146,7 +146,7 @@ public class FreeHandObject extends Shape{
 		((int)prior.end.x, 
 		 (int)prior.end.y, 
 		 color,
-		 drawingType);
+		 IsOutline);
 		l.setSecondPoint(p.x, p.y);
 		segments.add(l);
 	}

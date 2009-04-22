@@ -40,13 +40,13 @@ public abstract class TwoPointShape extends Shape implements Serializable
 	  * @param y Y origin for two point shape.
 	  * @param c C initial color of the shape.
 	  */
-	 public TwoPointShape(int x, int y, Color c, int type) {
+	 public TwoPointShape(int x, int y, Color c, boolean IsOutline) {
 		 this.origin = new Point2D.Double(x,y);
 		 this.end = new Point2D.Double(x,y);
 		 this.endorigin = new Point2D.Double(x,y);
 		 this.originend = new Point2D.Double(x,y);
 		 this.shapeColor = c;
-		 this.DrawingType = type;
+		 this.IsOutline = IsOutline;
 	 }
 	 
 	 /**
