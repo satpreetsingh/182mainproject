@@ -19,9 +19,9 @@ public class Rectangle extends TwoPointShape
 	 * @param c Color.
 	 * @param type
 	 */
-	public Rectangle(int x, int y, Color c, int type) 
+	public Rectangle(int x, int y, Color c, boolean IsOutline) 
 	{
-		super(x, y, c, type);
+		super(x, y, c, IsOutline);
 	}
 	
 	
@@ -57,7 +57,7 @@ public class Rectangle extends TwoPointShape
    		g.setColor(shapeColor);
 		
    	    /* Draw the outline of a rectangle on the graphics */
-   		if (this.DrawingType == 1) {
+   		if (this.IsOutline == true) {
 	   		g.drawRect(
 					shapeX, 
 					shapeY, 

@@ -87,14 +87,14 @@ public class ControlPanelController
     }
   }
 
-  protected int itemToType(Object item) {
+  protected boolean itemToType(Object item) {
 	  
 		/* By default, we always return 1 (draw outline) */     
 		if("solid".equals(item)) {
-		  return 2;	
+		  return false;	
 		}
 		else {
-		  return 1;	
+		  return true;	
 		}	  
   }  
 

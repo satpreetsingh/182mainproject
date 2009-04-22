@@ -187,11 +187,11 @@ public class Session {
 	/**
 	 * Process an event to set the main type of a shape.
 	 * @param s Shape to set.
-	 * @param type Int to set.
+	 * @param IsOutline boolean to set.
 	 */
-	public void setMainType(Shape s, int type)
+	public void setMainType(Shape s, boolean isoutline)
 	{
-		s.set_DrawingType(type);
+		s.set_DrawingType(isoutline);
 	}
 	
 	/**

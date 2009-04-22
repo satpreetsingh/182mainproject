@@ -18,9 +18,9 @@ public class Line extends TwoPointShape
 	 * @param c Color of the line.
 	 * @param type Int of the object.
 	 */
-	public Line(int x, int y, Color c, int type) 
+	public Line(int x, int y, Color c, boolean IsOutline) 
 	{
-		super(x, y, c, type);
+		super(x, y, c, IsOutline);
 	}
 	  
 	/**

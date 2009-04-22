@@ -19,7 +19,7 @@ public class DrawingCanvas extends JComponent
 	private int canvasWidth = 0;
 	private int canvasHeight = 0;
 	private Color penColor = Color.black;
-    protected int drawingType = 1;
+    protected boolean IsOutline = true;
 	private Tool currentTool = null; 
 	protected Session session = null;
     
@@ -109,16 +109,16 @@ public class DrawingCanvas extends JComponent
      * Set the object type.
      * @param int type objects will be drawn in.
      */
-    public void setShapeType(int type) {
+    public void setShapeType(boolean isoutline) {
         
-    	drawingType = type;  	
+    	IsOutline = isoutline;  	
     
         if (session != null)
         {
       	  /* If we have an object that has been selected */
       	  if (session.currentState.lastSelected() != null)
       	  {
-      		  session.setMainType(session.currentState.lastSelected(), type);
+      		  session.setMainType(session.currentState.lastSelected(), isoutline);
       	  }
       	  repaint();
         }
@@ -138,8 +138,8 @@ public class DrawingCanvas extends JComponent
      * new/selected objects.
      * @return int type.
      */
-    public int getDrawingType() {
-    	return drawingType;
+    public boolean getDrawingType() {
+    	return IsOutline;
     }
     
     

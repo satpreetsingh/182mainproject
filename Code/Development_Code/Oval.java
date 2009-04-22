@@ -18,11 +18,11 @@ public class Oval extends TwoPointShape
 	 * @param x
 	 * @param y
 	 * @param c
-	 * @param type
+	 * @param IsOutline
 	 */
-	public Oval(int x, int y, Color c, int type)
+	public Oval(int x, int y, Color c, boolean IsOutline)
 	{
-		super(x, y, c, type);
+		super(x, y, c, IsOutline);
 	}
 
 	    
@@ -61,7 +61,7 @@ public class Oval extends TwoPointShape
 	   		g.setColor(shapeColor);
 
 	   	    /* Draw the outline of a oval on the graphics */
-	   		if (this.DrawingType == 1) {
+	   		if (this.IsOutline == true) {
 		   		g.drawOval(
 						shapeX, 
 						shapeY, 

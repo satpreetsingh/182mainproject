@@ -24,6 +24,6 @@ interface TwoPointShapeFactory extends Serializable{
 	 int xTwo,
 	 int yTwo,
 	 Color c, 
-	 int type);
+	 boolean IsOutline);
 
 }
