@@ -142,7 +142,7 @@ public class ServerUtils
 			Tool tool = (Tool)networkData.get(1);
 			Color color = (Color)networkData.get(2);
 			
-			s.processMouseRelease(point, true, tool, color);
+			s.processMouseRelease(point, true, tool, color, false);
 		}
 		catch (Exception e)
 		{
@@ -158,7 +158,7 @@ public class ServerUtils
 			Point point = (Point)networkData.get(0);
 			Tool tool = (Tool)networkData.get(1);
 			
-			s.processMousePress(point, true, tool);
+			s.processMousePress(point, true, tool, false);
 		}
 		catch (Exception e)
 		{
@@ -311,6 +311,29 @@ public class ServerUtils
 		
 		genericSend(s, data, NetworkObject.reason.mouseDrag);
 		Output.processMessage("Master is sending mouseDrag", Constants.Message_Type.info);
+	}
+
+	public static void sendKeyTyped(KeyboardTool tool, char keyPressed,
+			Session session) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void sendKeyReleased(KeyboardTool tool, char keyPressed,
+			Session session) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void sendKeyPressed(KeyboardTool tool, char keyPress,
+			Session session) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void sendClearObjects(Session session) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

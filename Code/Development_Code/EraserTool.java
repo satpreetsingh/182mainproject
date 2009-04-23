@@ -33,7 +33,7 @@ public class EraserTool implements Tool {
    * When mouse pressed, check list of shapes, and if one
    * is found, delete it, and redraw the canvas.
    */
-  public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
+  public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill) {
     Shape shape;
     for (int i = 0; i < currentShapes.size(); i++) 
     {
@@ -51,7 +51,7 @@ public class EraserTool implements Tool {
   /**
    * This event does nothing for this tool.
    */
-  public void mouseReleased(Point p, ArrayList<Shape> currentShapes,DrawingCanvas canvas, Color finalColor) {}
+  public void mouseReleased(Point point, ArrayList<Shape> currentShapes,DrawingCanvas canvas, Color finalColor, boolean filled) {}
 
   
   /**

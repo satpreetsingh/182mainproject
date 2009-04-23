@@ -12,23 +12,23 @@ public interface KeyboardTool extends Tool{
 	
 	/**
 	 * Accept a keyPressed event.
-	 * @param e The event.
+	 * @param keyPressed The key.
 	 * @param shapes Current list of shapes on the canvas.
 	 */
-  void keyPressed(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas);
+  void keyPressed(char keyPressed, ArrayList<Shape> shapes, DrawingCanvas canvas);
   
   /**
    * Accept a keyReleased event
-   * @param e The event.
+   * @param keyPress The key.
    * @param shapes Current list of shapes on the canvas.
    */
-  void keyReleased(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas);
+  void keyReleased(char keyPress, ArrayList<Shape> shapes, DrawingCanvas canvas);
   
   /**
    * Accept a keyTyped event.
-   * TODO: Is this like a mouse click, compared to press?
-   * @param e
+   * @param keyPressed The key
    * @param shapes Current list of shapes on the canvas.
    */
-  void keyTyped(KeyEvent e, ArrayList<Shape> shapes, DrawingCanvas canvas);
+  void keyTyped(char keyPressed, ArrayList<Shape> shapes, DrawingCanvas canvas);
+  
 }

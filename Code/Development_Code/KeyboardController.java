@@ -30,7 +30,7 @@ public class KeyboardController
 	{
 		if (session != null)
 		{
-			session.processKeyPress(e);
+			session.processKeyPress(e.getKeyChar(), false, null);
 		}
 	}
 
@@ -40,7 +40,7 @@ public class KeyboardController
 	public void keyReleased(KeyEvent e) { 
 		if(session != null)
 		{
-			session.processKeyRelease(e);
+			session.processKeyRelease(e.getKeyChar(), false, null);
 		}
 	}  
 
@@ -50,7 +50,7 @@ public class KeyboardController
 	public void keyTyped(KeyEvent e) {
 		if(session != null)
 		{
-			session.processKeyTyped(e);
+			session.processKeyTyped(e.getKeyChar(), false, null);
 		}
 	}
 		

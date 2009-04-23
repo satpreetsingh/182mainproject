@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -196,46 +195,92 @@ public class Session {
 	
 	/**
 	 * Process an event to delete all the shapes on the canvas.
+	 * @param networkEvent TODO
 	 */
-	public void clearObjects()
+	public void clearObjects(boolean networkEvent)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
+			if (networkEvent)
+			{
+				ServerUtils.sendClearObjects(this);
+			}
 			this.currentState.currentShapes().clear();
 			
 		}
 	}
 	
-	public void processKeyTyped(KeyEvent e)
+	public void processKeyTyped(char keyPressed, boolean networkEvent, Tool networkTool)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
-			KeyboardTool tool = (KeyboardTool)canvas.getcurrentTool();
+			
+			KeyboardTool tool; 
+				
+			if (networkEvent)
+			{
+				tool = (KeyboardTool)convertNetworkTool(networkTool);
+			}
+			else
+			{
+				tool = (KeyboardTool)canvas.getcurrentTool();
+				ServerUtils.sendKeyTyped(tool, keyPressed, this);
+			}
+				
+				
 			if(tool != null) 
 			{
-				tool.keyTyped(e, this.currentState.currentShapes(), this.canvas);
+				tool.keyTyped(keyPressed, this.currentState.currentShapes(), this.canvas);
 			}
 		}
 	}
 	
-	public void processKeyRelease(KeyEvent e)
+	public void processKeyRelease(char keyPressed, boolean networkEvent, Tool networkTool)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
-			KeyboardTool tool = (KeyboardTool)canvas.getcurrentTool();
-			if(tool != null) {
-				tool.keyReleased(e,this.currentState.currentShapes(), this.canvas);
+			
+			KeyboardTool tool; 
+				
+			if (networkEvent)
+			{
+				tool = (KeyboardTool)convertNetworkTool(networkTool);
+			}
+			else
+			{
+				tool = (KeyboardTool)canvas.getcurrentTool();
+				ServerUtils.sendKeyReleased(tool, keyPressed, this);
+			}
+				
+				
+			if(tool != null) 
+			{
+				tool.keyReleased(keyPressed, this.currentState.currentShapes(), this.canvas);
 			}
 		}
 	}
-	public void processKeyPress(KeyEvent e)
+	
+	public void processKeyPress(char keyPress, boolean networkEvent, Tool networkTool)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
-			KeyboardTool tool = (KeyboardTool)canvas.getcurrentTool();
-			if (tool != null) 
+			
+			KeyboardTool tool; 
+				
+			if (networkEvent)
 			{
-				tool.keyPressed(e, this.currentState.currentShapes(), this.canvas);
+				tool = (KeyboardTool)convertNetworkTool(networkTool);
+			}
+			else
+			{
+				tool = (KeyboardTool)canvas.getcurrentTool();
+				ServerUtils.sendKeyPressed(tool, keyPress, this);
+			}
+				
+				
+			if(tool != null) 
+			{
+				tool.keyPressed(keyPress, this.currentState.currentShapes(), this.canvas);
 			}
 		}
 	}
@@ -275,17 +320,20 @@ public class Session {
 	 * @param p Point where event occurred.
 	 * @param networkEvent If true, event came from network.
 	 * @param networkTool If NetworkEvent is true, then it is expected that this will exist.
+	 * @param networkFill TODO
 	 */
-	public void processMouseRelease(Point p, boolean networkEvent, Tool networkTool, Color networkColor)
+	public void processMouseRelease(Point p, boolean networkEvent, Tool networkTool, Color networkColor, boolean networkFill)
 	{
 		if(this.drawable(this.localUser))
 		{
 			Tool tool;
 			Color color;
+			boolean fill;
 			if(networkEvent == false)
 			{
 				tool = canvas.getcurrentTool();
 				color = canvas.getpenColor();
+				fill = canvas.getDrawingType();
 				ServerUtils.sendMouseRelease(this, p, tool, color);
 				
 			}
@@ -293,34 +341,38 @@ public class Session {
 			{
 				tool = convertNetworkTool(networkTool);
 				color = networkColor;
+				fill = networkFill;
 			}
 			
 			
 			if(tool != null) 
 			{
-				tool.mouseReleased(p, this.currentState.currentShapes(), this.canvas, color);
+				tool.mouseReleased(p, this.currentState.currentShapes(), this.canvas, color, fill);
 			}
 	  }
 	}
 	
 	/**
 	 * Process a mousePress event.
-	 * @param p Point where event occurred.
+	 * @param point Point where event occurred.
 	 * @param networkEvent If true, event came from network.
 	 * @param networkTool If NetworkEvent is true, then it is expected that this will exist.
 	 */
-	public void processMousePress(Point p, boolean networkEvent, Tool networkTool)
+	public void processMousePress(Point point, boolean networkEvent, Tool networkTool, boolean networkFill)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
 			Tool tool;
+			boolean fill;
 			if(networkEvent == false)
 			{
 				tool = canvas.getcurrentTool();
-				ServerUtils.sendMousePress(this, p, tool);
+				fill = canvas.getDrawingType();
+				ServerUtils.sendMousePress(this, point, tool);
 			}
 			else
 			{
+				fill = networkFill;
 				tool = convertNetworkTool(networkTool);
 			}
 			
@@ -332,12 +384,18 @@ public class Session {
 			}
 			if (tool != null) 
 			{
-				tool.mousePressed(p,this.currentState.currentShapes(), this.canvas);
+				tool.mousePressed(point,this.currentState.currentShapes(), this.canvas, fill);
 			}
 		}
 	}
 	
 	
+	/**
+	 * Converts a network tool object to a local tool object.
+	 * @param networkTool Tool received with event.
+	 * @return Returns a local tool.  
+	 * Works as long as each tool has a unique name.
+	 */
 	private Tool convertNetworkTool(Tool networkTool)
 	{
 		Tool localTool = null;;

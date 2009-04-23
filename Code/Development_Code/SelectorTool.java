@@ -40,7 +40,7 @@ public class SelectorTool implements Tool
 	 * When the mouse is pressed, highlight the first shape that 
 	 * is near the point if one is, and consider it for future shape manipulations.
 	 */
-	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill) 
 	{
 		/* Declare local vars to start the list with the latest object */
 		int LastListPos;
@@ -232,7 +232,7 @@ public class SelectorTool implements Tool
 		
 	}
 
-	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor) 
+	public void mouseReleased(Point point, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor, boolean filled) 
 	{
 		
 		if (shapeOfInterest != null)

@@ -38,7 +38,7 @@ public class TwoPointShapeTool implements Tool {
 	   * For a TwoPointShapeTool, when the mouse is pressed,
 	   * create a new TwoPointShape on the canvas.
 	   */
-	 public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) {
+	 public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill) {
 	
 		 Graphics graphics = canvas.getimageBufferGraphics();
 		 graphics.setXORMode(Color.lightGray);
@@ -50,7 +50,7 @@ public class TwoPointShapeTool implements Tool {
 										   p.x,
 										   p.y,
 				 						   Color.WHITE,
-				 						   canvas.getDrawingType());
+				 						   fill);
 		 shape.draw(graphics);
 		 canvas.repaint();
 	 }
@@ -82,7 +82,7 @@ public class TwoPointShapeTool implements Tool {
 	  * then handed over to the CanvasController for future 
 	  * manipulation. 
 	  */
-	 public void mouseReleased(Point p,ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor) { 
+	 public void mouseReleased(Point point,ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor, boolean filled) { 
 	    
 		Graphics graphics = canvas.getimageBufferGraphics();
 	

@@ -22,17 +22,19 @@ public interface Tool extends Serializable {
 	 * @param p Point where mousePress occurred.
 	 * @param currentShapes ArrayList of drawable shapes in the current context.
 	 * @param canvas Canvas to draw on.
+	 * @param fill TODO
 	 */
-	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
+	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill);
  
 	/**
      * Any instance of the Tool interface must handle mouseReleased events.
-     * @param p Point where the event occurred.
-     * @param currentShapes ArrayList of drawable shapes in the current context.
-     * @param canvas Canvas to draw on.
-     * @param finalColor The color the shape should be.
+     * @param point Point where the event occurred.
+	 * @param currentShapes ArrayList of drawable shapes in the current context.
+	 * @param canvas Canvas to draw on.
+	 * @param finalColor The color the shape should be.
+	 * @param filled TODO
      */
-	public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor);
+	public void mouseReleased(Point point, ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor, boolean filled);
   
 	/**
      * Any instance of the Tool interface must handle mouseDragged events.
