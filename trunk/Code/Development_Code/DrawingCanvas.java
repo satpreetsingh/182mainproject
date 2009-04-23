@@ -197,7 +197,7 @@ public class DrawingCanvas extends JComponent
     {
 	  if(session != null)
 	  {
-		  session.clearObjects();
+		  session.clearObjects(false);
 	  }
    
 	  /* Set the new rectangle color to white */

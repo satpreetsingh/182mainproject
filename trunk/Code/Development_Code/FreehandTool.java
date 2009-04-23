@@ -26,7 +26,7 @@ public class FreehandTool implements Tool {
   }
 
   
-  public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas)  
+  public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill)  
   {
 	freeHand = factory.createFreeHand(p.x, 
 									  p.y, 
@@ -55,7 +55,7 @@ public class FreehandTool implements Tool {
 		 
   }
 
-  public void mouseReleased(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor) 
+  public void mouseReleased(Point point, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor, boolean filled) 
   {
 	   Graphics graphics = canvas.getimageBufferGraphics();
 		

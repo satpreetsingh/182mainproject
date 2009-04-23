@@ -54,7 +54,7 @@ public class MouseController
   {
 	  if (session != null)
 	  {
-		  session.processMousePress(e.getPoint(), false,null);
+		  session.processMousePress(e.getPoint(), false,null, false);
 	  }
   }
 
@@ -66,7 +66,7 @@ public class MouseController
   { 
 	  if (session != null)
 	  {
-		  session.processMouseRelease(e.getPoint(), false,null, null);
+		  session.processMouseRelease(e.getPoint(), false,null, null, false);
 	  }
   }
   
