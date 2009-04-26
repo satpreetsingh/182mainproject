@@ -356,7 +356,7 @@ public class Session {
 	 */
 	public void processMouseRelease(Point p, boolean networkEvent, Tool networkTool, Color networkColor, boolean networkFill)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
 			Tool tool;
 			Color color;
