@@ -29,7 +29,11 @@ import javax.swing.JTextField;
 	  JTextField txtUN2;
 	  JTabbedPane tabbedPane;
 	  
-	  
+      protected String username = "", ip = "";
+      protected int port = 3000;
+      protected boolean IsSlave;
+  		  
+  		  
 	  /**
   	   * Create a new instance of the Controller.
   	   */
@@ -55,10 +59,6 @@ import javax.swing.JTextField;
   	   * ask Session to delete objects.
   	   */
   	  public void actionPerformed(ActionEvent e) {
-
-  		  
-  		  String username = "", ip = "", port = "";
-  		  boolean IsSlave;
   		  
   		  
   		  /* If cancel button was clicked, exit application */
@@ -78,7 +78,7 @@ import javax.swing.JTextField;
   			if (IsSlave) {
   	 			username = txtUN.getText();
         		ip		 = txtIP.getText();
-        		port	 = txtPort.getText();    		
+        		port	 = Integer.valueOf(txtPort.getText()).intValue();   		
     		}
     		
     		else{
@@ -105,7 +105,7 @@ import javax.swing.JTextField;
           		  			JOptionPane.INFORMATION_MESSAGE); 
           			
     		}		
-            else if ((port.trim().equals("")) && 
+            else if ((port > 0) && 
                      (IsSlave)){
               			JOptionPane.showMessageDialog(
               		  			null,

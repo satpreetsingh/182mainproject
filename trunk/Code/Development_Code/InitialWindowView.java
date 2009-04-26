@@ -44,14 +44,14 @@ public class InitialWindowView {
 		JTextField txtUN = new JTextField(20);
 		pnlOne.add(txtUN);
 		
-		JLabel lblIP = new JLabel("Enter your IP to join a session: ");
+		JLabel lblIP = new JLabel("Enter their IP to join a session: ");
 		pnlOne.add(lblIP);
 		JTextField txtIP = new JTextField(20);
 		pnlOne.add(txtIP);
 		
 		
 		
-		JLabel lblPort = new JLabel("Enter your port: ");
+		JLabel lblPort = new JLabel("Enter their port: ");
 		pnlOne.add(lblPort);
 		JTextField txtPort = new JTextField(10);
 		pnlOne.add(txtPort);
@@ -112,8 +112,18 @@ public class InitialWindowView {
 	}
 	
 
-	
-	
+	boolean getSlaveMaster(){
+		return IWC.IsSlave;
+	}
+	String getUserName(){
+		return IWC.username;
+	}
+	String getIP(){
+		return IWC.ip;
+	}	
+	int getPort(){
+		return IWC.port;
+	}
 	
 	
 	  /* Inner class AppCLoser for terminating application  */
