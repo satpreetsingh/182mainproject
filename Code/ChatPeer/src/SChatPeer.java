@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class SimpleChatPeer
+public class SChatPeer
 {
 	JTextArea incomingTextArea;
 	JTextField outgoingTextField;
