@@ -39,13 +39,11 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 
- public class oldGUI
+ public class GUI
  {
-     public static void main(String[] args)
+     public static JMenuBar MenuBar()
      {
-         JFrame frame = new JFrame("Multi-Draw");
-
- // First: MenuBar
+          // First: MenuBar
 
          //Menu aka Toolbar (in Swing it's a "Menubar")
          // [  File ][  Tool ][  Control ][  Session ][  Help ]
@@ -117,9 +115,11 @@ import javax.swing.border.TitledBorder;
          menubar.add(sessionMenu);
          menubar.add(helpMenu);
 
-         //Now let's actually place the menubar at the top of the page.
-         //frame.add(menubar,BorderLayout.NORTH);
+         return menubar;
+     }
 
+     public static JToolBar ToolBar()
+     {
          // Vertical Toolbar
          // How to add a new Tool icon:
          // very similar to professor Kuhl's example.
@@ -158,8 +158,11 @@ import javax.swing.border.TitledBorder;
          JButton eraserBTN = new JButton(new ImageIcon("eraser.jpg"));
          toolbar.add(eraserBTN);
 
-         frame.getContentPane().add(toolbar,BorderLayout.WEST);
+         return toolbar;
+     }
 
+     public static JTabbedPane TabbedPane()
+     {
          // Tab Implementation (to be commented out)
          // We could try this for sessions later, if we wanted, but simply
          //replace our static number 1 and 2 dynamically when a new
@@ -167,7 +170,7 @@ import javax.swing.border.TitledBorder;
          //connected.
 
          JTabbedPane tab = new JTabbedPane();
-         frame.add(tab,BorderLayout.CENTER);
+
          //"Session Canvas 1" would display session 1
          JButton tabBTN = new JButton("Canvas for session 1");
          tab.add("Session 1", tabBTN);
@@ -175,9 +178,27 @@ import javax.swing.border.TitledBorder;
          tabBTN  = new JButton("Canvas for session 2");
          tab.add("Session 2", tabBTN);
 
+         return tab;
+     }
+     public static String[] getUsers(int amt)
+     {
+     	// This is eventually going to get a list of users from the chat section
+     	// Possibly in array form??
+     	// Right now there are dummy values for this in an array, please adjust as needed
+		int amtUsers = amt; // constant here, this would be retrieved
+     	String[] users = new String[amtUsers];
+        users[0] = "Amanda";
+        users[1] = "Ben";
+        users[2] = "Joe";
+        users[3] = "Mark";
+        users[4] = "Satpreet";
 
-         JTabbedPane chat = new JTabbedPane();
-         frame.add(chat,BorderLayout.EAST);
+     	return users;
+     }
+     public static JToolBar ChatPane()
+     {
+         JToolBar chat = new JToolBar("Chat", JToolBar.VERTICAL);
+
          //Users
          //JButton userBTN = new JButton(getUsers());
          //chat.add("User List", userBTN);
@@ -185,34 +206,116 @@ import javax.swing.border.TitledBorder;
          //int pos = 5;
          //users.insert("anything", pos);
          //Display Chat
-         JButton chatBTN = new JButton("Chat");
-         chat.add("Chat Text here", chatBTN);
+         int amtUsers = 5;
+         String[] users = new String[amtUsers];
 
+         users = getUsers(5);
 
+         JLabel list0 = new JLabel(users[0]);
+         JLabel list1 = new JLabel(users[1]);
+         JLabel list2 = new JLabel(users[2]);
+         JLabel list3 = new JLabel(users[3]);
+         JLabel list4 = new JLabel(users[4]);
+         
+         chat.add(list0);
+         chat.add(list1);
+         chat.add(list2);
+         chat.add(list3);
+         chat.add(list4);
+         chat.addSeparator();
+
+         JTextArea chatbox = new JTextArea( "This is where chats should be sent");
+
+         JScrollPane scrollPane = new JScrollPane(chatbox, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                    chatbox.setEditable(false);
+        chatbox.setFont(new Font("Serif", Font.BOLD, 16));
+        chatbox.setLineWrap(true);
+        chatbox.setWrapStyleWord(true);
+
+        JScrollPane areaScrollPane = new JScrollPane(chatbox);
+        areaScrollPane.setVerticalScrollBarPolicy(
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            areaScrollPane.setPreferredSize(new Dimension(250, 250));
+
+         chat.add(chatbox);
+
+         chat.addSeparator();
+         JTextArea mychat = new JTextArea(1,20);
+         JScrollPane scrollPane2 = new JScrollPane(mychat, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                    mychat.setEditable(true);
+
+         chat.add(mychat);
+
+         JButton chatBTN = new JButton("Send");
+         chat.add(chatBTN);
+
+         return chat;
+     }
+
+     public static String getClientIP()
+     {
+        String clientip = "12.345.67.890";
+        return clientip;
+     }
+
+     public static String getHostIP()
+     {
+        String hostip = "09.876.54.321";
+        return hostip;
+     }
+
+     public static int getHostPort()
+     {
+        int port = 1234;
+        return port;
+     }
+     public static Panel panel()
+     {
          //Chat window that can be removed like the western toolbar
-
-
-
          // IP, Port and Font, etc.
          // This will take up the southern part of the screen
          // [------------][Font][Color][-------------] | [Chat input]
          // My IP :  [IP: ###...###]
          // Host IP: [IP: ###...###] Port: [####]
 
+
          //First let's make the southern box frame
          Panel panel = new Panel();
 
          // IP Section:
          // This accepts a String for the Client's IP
-         String clientip = "12.345.67.890";
-         String hostip = "11.222.33.444";
-         int port = 1234;
+         String clientip = getClientIP();
+         String hostip = getHostIP();
+         int port = getHostPort();
 
          JLabel myIP = new JLabel("My IP: " + clientip);
          JLabel theirIP = new JLabel("Host IP: " + hostip + " : " + port);
 
          panel.add(myIP);
+         
          panel.add(theirIP);
+
+         return panel;
+     }
+     public static void main(String[] args)
+     {
+         JFrame frame = new JFrame("Multi-Draw");
+
+         JMenuBar menubar = MenuBar();
+
+         //Now let's actually place the menubar at the top of the page.
+         frame.add(menubar,BorderLayout.NORTH);
+
+         JToolBar toolbar = ToolBar();
+         frame.getContentPane().add(toolbar,BorderLayout.WEST);
+
+         JTabbedPane tab = TabbedPane();
+         frame.add(tab,BorderLayout.CENTER);
+
+         JToolBar chat = ChatPane();
+         frame.add(chat,BorderLayout.EAST);
+
+         Panel panel = panel();
          frame.add(panel,BorderLayout.SOUTH);
 
 
@@ -224,9 +327,8 @@ import javax.swing.border.TitledBorder;
          frame.setUndecorated(true);
          frame.getRootPane().setWindowDecorationStyle(JRootPane.PLAIN_DIALOG);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         frame.setSize(700,700);
+         frame.setSize(800,600);
          frame.setVisible(true);
     }
 
  }
-
