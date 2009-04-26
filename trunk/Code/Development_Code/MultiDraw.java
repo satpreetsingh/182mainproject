@@ -8,7 +8,7 @@ import java.net.*;
 
 public class MultiDraw extends JApplet  {
 
-	private boolean isMaster = true;
+	private boolean isSlave;
 	
 	
 	private SessionManager sessionMgr;
@@ -52,18 +52,12 @@ public class MultiDraw extends JApplet  {
 			   * so that Object draw functionality will work.
 			   */
 			  String tempName;
-		    if(isMaster)
-		    {
-		    	tempName = "Ben_Master";
-		    }
-		    else
-		    {
-		    	tempName = "Ben_Slave";
-		    }
-		    	Member temp = new Member(tempName);
+			isSlave = initialwindow.getSlaveMaster();
+	
+		    Member temp = new Member(initialwindow.getUserName());
 			  
 			  Session tempAuto;
-			  if (initialwindow.getSlaveMaster())
+			  if (isSlave == false)
 			  {
 				  tempAuto = ServerUtils.buildSession(temp,canvas, tools);
 			  }
