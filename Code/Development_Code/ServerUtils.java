@@ -141,8 +141,9 @@ public class ServerUtils
 			Point point = (Point)networkData.get(0);
 			Tool tool = (Tool)networkData.get(1);
 			Color color = (Color)networkData.get(2);
+			boolean fillObject= (Boolean)networkData.get(3);
 			
-			s.processMouseRelease(point, true, tool, color, false);
+			s.processMouseRelease(point, true, tool, color, fillObject);
 		}
 		catch (Exception e)
 		{
@@ -157,8 +158,9 @@ public class ServerUtils
 			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
 			Point point = (Point)networkData.get(0);
 			Tool tool = (Tool)networkData.get(1);
+			boolean fill = (Boolean)networkData.get(2);
 			
-			s.processMousePress(point, true, tool, false);
+			s.processMousePress(point, true, tool, fill);
 		}
 		catch (Exception e)
 		{
@@ -180,6 +182,131 @@ public class ServerUtils
 		{
 			Output.processMessage("Defective mouseRelease message recieved", Constants.Message_Type.error);
 		}
+	}
+
+	private static void	processKeyPressed(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			char key = (Character)networkData.get(0);
+			Tool tool = (Tool)networkData.get(1);
+			
+			session.processKeyPress(key, true, tool);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective keyPressed message recieved", Constants.Message_Type.error);
+		}
+
+	
+	}
+	private static void processKeyReleased(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			char key = (Character)networkData.get(0);
+			Tool tool = (Tool)networkData.get(1);
+			
+			session.processKeyRelease(key, true, tool);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective keyRelease message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	private static void processKeyTyped(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			char key = (Character)networkData.get(0);
+			Tool tool = (Tool)networkData.get(1);
+			
+			session.processKeyTyped(key, true, tool);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective keyTyped message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	private static void processClear(Session session, NetworkObject data)
+	{
+		session.clearObjects(true);
+	}
+
+	private static void processClearSelection(Session session, NetworkObject data)
+	{
+		session.clearSelection(true);
+	}
+	private static void processSelectShape(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			Shape shape= (Shape)networkData.get(0);
+			
+			session.selectShape(shape, true);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective selectShape message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	
+	private static void processSetShapeFill(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			Shape shape= (Shape)networkData.get(0);
+			boolean isFill = (Boolean)networkData.get(1);
+			
+			session.setShapeFill(shape, isFill, true);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective set ShapeFill message recieved", Constants.Message_Type.error);
+		}
+
+	}
+
+	private static void processSetShapeColor(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			Shape shape= (Shape)networkData.get(0);
+			Color color = (Color)networkData.get(1);
+			
+			session.setMainColor(shape, color, true);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective set shapeColor message recieved", Constants.Message_Type.error);
+		}
+
+	}
+
+	
+	private static void processDeleteShape(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			Shape shape= (Shape)networkData.get(0);
+			
+			session.deleteShape(shape, true);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective set shapeColor message recieved", Constants.Message_Type.error);
+		}
+
 	}
 
 	
@@ -208,7 +335,43 @@ public class ServerUtils
 				{
 					processMouseDrag(session, data);
 				}
-					
+				else if (data.objectReason == NetworkObject.reason.keyPressed)
+				{
+					processKeyPressed(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.keyReleased)
+				{
+					processKeyReleased(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.keyTyped)
+				{
+					processKeyTyped(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.clearCanvas)
+				{
+					processClear(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.clearSelection)
+				{
+					processClearSelection(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.selectShape)
+				{
+					processSelectShape(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.setShapeFill)
+				{
+					processSetShapeFill(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.setShapeColor)
+				{
+					processSetShapeColor(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.deleteShape)
+				{
+					processDeleteShape(session, data);
+				}
+		
 				
 			} 
 			catch (Exception e) 
@@ -268,12 +431,14 @@ public class ServerUtils
 	 * @param s Session to send message for.
 	 * @param p Point where mousePress occurred.
 	 * @param t Tool selected when this happened.
+	 * @param fillObject TODO
 	 */
-	public static void sendMousePress(Session s, Point p, Tool t)
+	public static void sendMousePress(Session s, Point p, Tool t, boolean fillObject)
 	{
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(p);
 		data.add(t);
+		data.add(fillObject);
 		
 		genericSend(s, data, NetworkObject.reason.mousePress);
 		Output.processMessage("Master is sending mousePress", Constants.Message_Type.info);
@@ -285,13 +450,15 @@ public class ServerUtils
 	 * @param s Session to send message for.
 	 * @param p Point event occurred at.
 	 * @param t Tool selected when event occurred.
+	 * @param fillObject TODO
 	 */
-	public static void sendMouseRelease(Session s, Point p, Tool t, Color c)
+	public static void sendMouseRelease(Session s, Point p, Tool t, Color c, boolean fillObject)
 	{
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(p);
 		data.add(t);
 		data.add(c);
+		data.add(fillObject);
 		
 		genericSend(s, data, NetworkObject.reason.mouseRelease);
 		Output.processMessage("Master is sending mouseRelease", Constants.Message_Type.info);
@@ -313,27 +480,97 @@ public class ServerUtils
 		Output.processMessage("Master is sending mouseDrag", Constants.Message_Type.info);
 	}
 
-	public static void sendKeyTyped(KeyboardTool tool, char keyPressed,
-			Session session) {
-		// TODO Auto-generated method stub
+	public static void sendKeyTyped
+	(KeyboardTool tool, 
+			char keyPressed,
+			Session session) 
+	{
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(keyPressed);
+		data.add(tool);
+		genericSend(session, data, NetworkObject.reason.keyTyped);
+		
+		Output.processMessage("Master is sending keyTyped", Constants.Message_Type.info);
 		
 	}
 
 	public static void sendKeyReleased(KeyboardTool tool, char keyPressed,
 			Session session) {
-		// TODO Auto-generated method stub
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(keyPressed);
+		data.add(tool);
+		genericSend(session, data, NetworkObject.reason.keyReleased);
+		
+		Output.processMessage("Master is sending keyReleased", Constants.Message_Type.info);
+
 		
 	}
 
 	public static void sendKeyPressed(KeyboardTool tool, char keyPress,
 			Session session) {
-		// TODO Auto-generated method stub
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(keyPress);
+		data.add(tool);
+		genericSend(session, data, NetworkObject.reason.keyPressed);
+		
+		Output.processMessage("Master is sending keyPressed", Constants.Message_Type.info);
+
 		
 	}
 
 	public static void sendClearObjects(Session session) {
-		// TODO Auto-generated method stub
+		ArrayList<Object> data = new ArrayList<Object>();
+		genericSend(session, data, NetworkObject.reason.clearCanvas);
 		
+		Output.processMessage("Master is sending clear", Constants.Message_Type.info);
+
+	}
+
+	public static void sendClearSelection(Session session) {
+		ArrayList<Object> data = new ArrayList<Object>();
+		genericSend(session, data, NetworkObject.reason.clearSelection);
+		
+		Output.processMessage("Master is sending clearSelection", Constants.Message_Type.info);
+	
+	}
+
+	public static void selectShape(Shape s, Session session) {
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(s);
+		genericSend(session, data, NetworkObject.reason.selectShape);
+		
+		Output.processMessage("Master is sending selectShape", Constants.Message_Type.info);
+		
+	}
+
+	public static void sendDeleteShape(Shape s, Session session) {
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(s);
+		genericSend(session, data, NetworkObject.reason.deleteShape);
+		
+		Output.processMessage("Master is sending deleteShape", Constants.Message_Type.info);
+	
+	}
+
+	public static void setMainColor(Shape s, Color c, Session session) {
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(s);
+		data.add(c);
+		genericSend(session, data, NetworkObject.reason.setShapeColor);
+		
+		Output.processMessage("Master is sending set Color", Constants.Message_Type.info);
+	
+	}
+
+	public static void setDrawingType(Shape shape, boolean isoutline,
+			Session session) {
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(shape);
+		data.add(isoutline);
+		genericSend(session, data, NetworkObject.reason.setShapeFill);
+		
+		Output.processMessage("Master is sending set fill", Constants.Message_Type.info);
+	
 	}
 
 

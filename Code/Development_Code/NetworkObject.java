@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.Serializable;
 
 
@@ -29,8 +30,20 @@ public class NetworkObject implements Serializable {
 	 chat,
 	 mousePress,
 	 mouseDrag,
-	 mouseRelease};
+	 mouseRelease,
+	 keyTyped,
+	 keyReleased,
+	 keyPressed,
+	 clearCanvas,
+	 clearSelection,
+	 selectShape,
+	 deleteShape,
+	 setShapeColor,
+	 setShapeFill
+	 };
 	 
+	 
+
 	 
 	 /**
 	  * Create a new NetworkObject.

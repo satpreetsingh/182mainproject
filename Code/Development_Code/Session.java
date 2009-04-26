@@ -126,11 +126,16 @@ public class Session {
 	
 	/**
 	 * Process an event to clear the last selected object.
+	 * @param networkEvent TODO
 	 */
-	public void clearSelection()
+	public void clearSelection(boolean networkEvent)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
+			if(networkEvent == false)
+			{
+				ServerUtils.sendClearSelection(this);
+			}
 			this.currentState.clearLastSelectedObject();
 		}
 	}
@@ -138,11 +143,16 @@ public class Session {
 	/**
 	 * Process an event to select a shape.
 	 * @param s Shape to select.
+	 * @param networkEvent TODO
 	 */
-	public void selectShape(Shape s)
+	public void selectShape(Shape s, boolean networkEvent)
 	{
-		if(this.drawable(this.localUser))
+		if(this.drawable(this.localUser) || networkEvent)
 		{
+			if(networkEvent == false)
+			{
+				ServerUtils.selectShape(s, this);
+			}
 			this.currentState.setLastSelected(s);
 		}
 	}
@@ -150,11 +160,16 @@ public class Session {
 	/**
 	 * Process an event to delete a shape.
 	 * @param s Shape to delete.
+	 * @param networkEvent TODO
 	 */
-	public void deleteShape (Shape s)
+	public void deleteShape (Shape s, boolean networkEvent)
 	{
 		if (this.drawable(this.localUser))
 		{
+			if(networkEvent == false)
+			{
+				ServerUtils.sendDeleteShape(s, this);
+			}
 			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
 			
 			if (drawableShapes != null)
@@ -177,20 +192,37 @@ public class Session {
 	 * Process an event to set the main color of a shape.
 	 * @param s Shape to set.
 	 * @param c Color to set.
+	 * @param networkEvent TODO
 	 */
-	public void setMainColor(Shape s, Color c)
+	public void setMainColor(Shape s, Color c, boolean networkEvent)
 	{
-		s.set_MainColor(c);
+		if(this.drawable(this.localUser) || networkEvent)
+		{
+			if(networkEvent == false)
+			{
+				ServerUtils.setMainColor(s, c, this);
+			}
+			s.set_MainColor(c);
+		}
 	}
 	
 	/**
 	 * Process an event to set the main type of a shape.
-	 * @param s Shape to set.
+	 * @param shape Shape to set.
+	 * @param networkEvent TODO
 	 * @param IsOutline boolean to set.
 	 */
-	public void setMainType(Shape s, boolean isoutline)
+	public void setShapeFill(Shape shape, boolean isoutline, boolean networkEvent)
 	{
-		s.set_DrawingType(isoutline);
+		if(this.drawable(this.localUser) || networkEvent)
+		{
+			if(networkEvent == false)
+			{
+				ServerUtils.setDrawingType(shape, isoutline, this);
+			}
+			shape.set_DrawingType(isoutline);
+		}
+		
 	}
 	
 	/**
@@ -201,7 +233,7 @@ public class Session {
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
-			if (networkEvent)
+			if (networkEvent == false)
 			{
 				ServerUtils.sendClearObjects(this);
 			}
@@ -217,7 +249,7 @@ public class Session {
 			
 			KeyboardTool tool; 
 				
-			if (networkEvent)
+			if (networkEvent == false)
 			{
 				tool = (KeyboardTool)convertNetworkTool(networkTool);
 			}
@@ -334,7 +366,7 @@ public class Session {
 				tool = canvas.getcurrentTool();
 				color = canvas.getpenColor();
 				fill = canvas.getDrawingType();
-				ServerUtils.sendMouseRelease(this, p, tool, color);
+				ServerUtils.sendMouseRelease(this, p, tool, color, fill);
 				
 			}
 			else
@@ -368,7 +400,7 @@ public class Session {
 			{
 				tool = canvas.getcurrentTool();
 				fill = canvas.getDrawingType();
-				ServerUtils.sendMousePress(this, point, tool);
+				ServerUtils.sendMousePress(this, point, tool, fill);
 			}
 			else
 			{
