@@ -507,7 +507,8 @@ public class ServerUtils
 	}
 
 	public static void sendKeyPressed(KeyboardTool tool, char keyPress,
-			Session session) {
+			Session session) 
+	{
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(keyPress);
 		data.add(tool);
