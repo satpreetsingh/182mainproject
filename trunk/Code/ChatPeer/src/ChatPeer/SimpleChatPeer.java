@@ -1,3 +1,5 @@
+package ChatPeer;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -7,6 +9,8 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
+//import ChatMessageObject;
 
 public class SimpleChatPeer
 {
@@ -76,27 +80,7 @@ public class SimpleChatPeer
 
 	}
 
-//	private void setUpManualPeerSocket(String ipaddr, int socketnumber) {
-//	Socket newPeerSocket = null;
-//	try {
-//	newPeerSocket = new Socket(ipaddr, socketnumber);
-//	System.out.println("Established connection with " + ipaddr + ":" + socketnumber);
-
-//	PrintWriter newPeerWriter = new PrintWriter(newPeerSocket.getOutputStream());
-//	peerOutputStreams.add(newPeerWriter);            
-
-//	} catch (UnknownHostException e) {
-//	System.out.print(" UnknownHostException ");
-//	//e.printStackTrace();
-//	} catch (IOException e) {
-//	// TODO Auto-generated catch block
-//	e.printStackTrace();
-//	}
-
-//	Thread t = new Thread(new PeerSocketHandler(newPeerSocket));
-//	t.start();
-//	}
-
+	// THREAD -- GUI
 	public void go() {
 		// Setup GUI
 		JFrame frame = new JFrame("ChatPeer -- " + "Listening on " + myOpenPortString );
@@ -164,9 +148,10 @@ public class SimpleChatPeer
 		}
 
 		public void run() {
-			String message;
+			//String message;
+			ChatMessageObject message;
 			try {
-				while ((message = peerSocketReader.readLine()) != null) {
+				while ((message = (ChatMessageObject)(Object)peerSocketReader.readLine()) != null) {
 					// TODO: Print on GUI instead
 					incomingTextArea.append("\n[" + peerSocket.getRemoteSocketAddress() + "] : " + message);
 //					System.out.println("\n[" + peerSocket.getRemoteSocketAddress() + "] : " + message);
