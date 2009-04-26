@@ -7,7 +7,12 @@ import java.util.ArrayList;
  * @author bmhelppi
  *
  */
-public interface KeyboardTool extends Tool{
+
+import java.io.Serializable;
+
+
+public interface KeyboardTool extends Tool, Serializable
+{
 
 	
 	/**
