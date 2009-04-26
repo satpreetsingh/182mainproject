@@ -99,7 +99,7 @@ public class DrawingCanvas extends JComponent
     	  /* If we have an object that has been selected */
     	  if (session.currentState.lastSelected() != null)
     	  {
-    		  session.setMainColor(session.currentState.lastSelected(), c);
+    		  session.setMainColor(session.currentState.lastSelected(), c, false);
     	  }
     	  repaint();
       }
@@ -118,7 +118,7 @@ public class DrawingCanvas extends JComponent
       	  /* If we have an object that has been selected */
       	  if (session.currentState.lastSelected() != null)
       	  {
-      		  session.setMainType(session.currentState.lastSelected(), isoutline);
+      		  session.setShapeFill(session.currentState.lastSelected(), isoutline, false);
       	  }
       	  repaint();
         }
@@ -165,7 +165,7 @@ public class DrawingCanvas extends JComponent
     		{  
     			if(session != null)
     			{
-    				session.deleteShape(session.currentState.lastSelected());
+    				session.deleteShape(session.currentState.lastSelected(), false);
     			}
     			this.refresh();
     		}
