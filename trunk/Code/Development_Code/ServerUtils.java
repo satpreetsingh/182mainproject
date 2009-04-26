@@ -435,10 +435,11 @@ public class ServerUtils
 	 */
 	public static void sendMousePress(Session s, Point p, Tool t, boolean fillObject)
 	{
+		Boolean netBool = new Boolean(fillObject);
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(p);
 		data.add(t);
-		data.add(fillObject);
+		data.add(netBool);
 		
 		genericSend(s, data, NetworkObject.reason.mousePress);
 		Output.processMessage("Master is sending mousePress", Constants.Message_Type.info);
@@ -454,11 +455,12 @@ public class ServerUtils
 	 */
 	public static void sendMouseRelease(Session s, Point p, Tool t, Color c, boolean fillObject)
 	{
+		Boolean netBool = new Boolean(fillObject);
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(p);
 		data.add(t);
 		data.add(c);
-		data.add(fillObject);
+		data.add(netBool);
 		
 		genericSend(s, data, NetworkObject.reason.mouseRelease);
 		Output.processMessage("Master is sending mouseRelease", Constants.Message_Type.info);
@@ -485,8 +487,9 @@ public class ServerUtils
 			char keyPressed,
 			Session session) 
 	{
+		Character networkChar = new Character(keyPressed);
 		ArrayList<Object> data = new ArrayList<Object>();
-		data.add(keyPressed);
+		data.add(networkChar);
 		data.add(tool);
 		genericSend(session, data, NetworkObject.reason.keyTyped);
 		
@@ -496,8 +499,9 @@ public class ServerUtils
 
 	public static void sendKeyReleased(KeyboardTool tool, char keyPressed,
 			Session session) {
+		Character networkChar = new Character(keyPressed);
 		ArrayList<Object> data = new ArrayList<Object>();
-		data.add(keyPressed);
+		data.add(networkChar);
 		data.add(tool);
 		genericSend(session, data, NetworkObject.reason.keyReleased);
 		
@@ -509,8 +513,9 @@ public class ServerUtils
 	public static void sendKeyPressed(KeyboardTool tool, char keyPress,
 			Session session) 
 	{
+		Character networkChar = new Character(keyPress);
 		ArrayList<Object> data = new ArrayList<Object>();
-		data.add(keyPress);
+		data.add(networkChar);
 		data.add(tool);
 		genericSend(session, data, NetworkObject.reason.keyPressed);
 		
@@ -565,9 +570,10 @@ public class ServerUtils
 
 	public static void setDrawingType(Shape shape, boolean isoutline,
 			Session session) {
+		Boolean networkBool = new Boolean(isoutline);
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(shape);
-		data.add(isoutline);
+		data.add(networkBool);
 		genericSend(session, data, NetworkObject.reason.setShapeFill);
 		
 		Output.processMessage("Master is sending set fill", Constants.Message_Type.info);
