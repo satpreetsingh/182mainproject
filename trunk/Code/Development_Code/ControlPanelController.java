@@ -31,7 +31,7 @@ public class ControlPanelController
 		  session.clearObjects(false);
 	  }
 	  
-	  session.canvas.clearCanvas();
+	 
 	  
   }
  

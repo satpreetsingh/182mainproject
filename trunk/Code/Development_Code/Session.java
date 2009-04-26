@@ -238,7 +238,7 @@ public class Session {
 				ServerUtils.sendClearObjects(this);
 			}
 			this.currentState.currentShapes().clear();
-			
+			this.canvas.clearCanvas();
 		}
 	}
 	
