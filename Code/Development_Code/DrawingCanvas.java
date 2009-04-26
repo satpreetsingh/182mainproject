@@ -195,10 +195,6 @@ public class DrawingCanvas extends JComponent
      */
     public void clearCanvas() 
     {
-	  if(session != null)
-	  {
-		  session.clearObjects(false);
-	  }
    
 	  /* Set the new rectangle color to white */
 	  imageBufferGraphics.setColor(Color.WHITE);
