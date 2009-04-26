@@ -1,0 +1,32 @@
+GUI:
+
+Status: 
+Incomplete.
+
+IMPLEMENTED:
+
+1. Basic frame.
+2. File, Tool, Control, Session empty listings in the MenuBar. No listeners attached.
+3. Toolbar with icons.
+4. Chat panel with tabs (easily removed if they're not needed).
+5. Eastern chat panel is implemented by not complete. User list is not implemented.
+6. Southern IP status bar currently shows a dummy string address.
+
+
+NOT IMPLEMENTED: 
+(either completely or not fully implemented)
+
+1. Login screen (though there is a fine example of one)
+2. User list
+3. Chat panel needs to be removable
+4. Font/Color in the southern border
+5. Chat text input and send button
+
+
+TO-DO:
+Currently the only completely working and stable version has everything in the main class method. This is actively being moved outside of the one class method but is not done. 
+
+Also need to implement the chat text box and user list. In the stable version this is just a tab. In the non-stable version it's in the process of being upgraded to a moveable box.
+
+Additionally need to add the font/color bar to the SOUTH border.
+
