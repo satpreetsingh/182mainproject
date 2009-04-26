@@ -249,7 +249,7 @@ public class Session {
 			
 			KeyboardTool tool; 
 				
-			if (networkEvent == false)
+			if (networkEvent)
 			{
 				tool = (KeyboardTool)convertNetworkTool(networkTool);
 			}
