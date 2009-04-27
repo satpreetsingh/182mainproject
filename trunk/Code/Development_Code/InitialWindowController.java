@@ -105,14 +105,7 @@ import javax.swing.JTextField;
           		  			JOptionPane.INFORMATION_MESSAGE); 
           			
     		}		
-            else if ((port > 0) && 
-                     (IsSlave)){
-              			JOptionPane.showMessageDialog(
-              		  			null,
-              		  			"You must enter a port.",
-              		  			"Input Error",
-              		  			JOptionPane.INFORMATION_MESSAGE);           			
-            }
+ 
     		
    
             else{
