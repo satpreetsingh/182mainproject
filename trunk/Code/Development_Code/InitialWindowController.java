@@ -95,8 +95,6 @@ import javax.swing.JTextField;
     		else{
 	   			username = txtUN2.getText();
     		}
-
-  			System.out.println(username.trim());
   			
   			/* Check the user inputs to make sure they are valid */
     		if (username.trim().equals("")){
