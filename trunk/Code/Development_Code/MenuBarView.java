@@ -1,21 +1,29 @@
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 
 /**
  * Implements a MenuBar.
- * @author ben
+ * @author ben, jjtrapan
  *
  */
 public class MenuBarView extends JMenuBar 
 {
-  
+	private MenuBarController controller;
+		
+	
 	/**
 	 * Create a new MenuBar.
-	 * @param actions Actions the Menubar can perform.
+	 * @param s Session passed to controller.
 	 */
 	MenuBarView(ArrayList<ToolController> actions) 
 	{
+
+		/* Create a new controller that handles most of the menu item clicks */
+		controller = new MenuBarController();
+		
+		
         /* --------------------- FILE MenuItems -------------------------- */
         JMenu fileMenu = new JMenu("File");
          
@@ -67,7 +75,6 @@ public class MenuBarView extends JMenuBar
         add(ctrlMenu);
         
         /* --------------------- SESSION MenuItems -------------------------- */
-
         JMenu sessionMenu = new JMenu ("Session");
 
         /* Create File menu items */
@@ -87,6 +94,12 @@ public class MenuBarView extends JMenuBar
 
         /* Create File menu items */
         JMenuItem helpItem1 = new JMenuItem("About");
+        
+        /* Set the name of the object */
+        helpItem1.setName("helpItem1");
+        
+        /* Add a listener */
+        helpItem1.addActionListener((ActionListener)controller);
         
         /* Add Help menu items */
         helpMenu.add(helpItem1);

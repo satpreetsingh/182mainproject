@@ -78,7 +78,18 @@ import javax.swing.JTextField;
   			if (IsSlave) {
   	 			username = txtUN.getText();
         		ip		 = txtIP.getText();
-        		port	 = Integer.valueOf(txtPort.getText()).intValue();   		
+        		
+        		
+        		/** Attempt to convert the text into an integer.  
+        		 * If it fails, then set the port to 3000.
+        		 */
+        		try{
+        			port	 = Integer.valueOf(txtPort.getText()).intValue();   			
+        		}
+        		catch(NumberFormatException e1) {
+        			port 	 = 3000;
+        		}
+        		
     		}
     		
     		else{
@@ -93,7 +104,7 @@ import javax.swing.JTextField;
       		  			null,
       		  			"You must enter a valid username.",
       		  			"Input Error",
-      		  			JOptionPane.INFORMATION_MESSAGE);   			
+      		  			JOptionPane.ERROR_MESSAGE);   			
     		}
     		
     		else if ((ip.trim().equals("")) && 
@@ -102,7 +113,7 @@ import javax.swing.JTextField;
           		  			null,
           		  			"You must enter a IP address.",
           		  			"Input Error",
-          		  			JOptionPane.INFORMATION_MESSAGE); 
+          		  			JOptionPane.ERROR_MESSAGE); 
           			
     		}		
  
