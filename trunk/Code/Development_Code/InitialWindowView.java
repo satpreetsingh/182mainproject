@@ -112,6 +112,7 @@ public class InitialWindowView {
 	}
 	
 
+	/* Methods the pass the value to MultiDraw.java */
 	boolean getSlaveMaster(){
 		return IWC.IsSlave;
 	}

@@ -1,5 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 
@@ -12,6 +14,19 @@ import javax.swing.JOptionPane;
 public class MenuBarController implements ActionListener {
 
 	
+	protected DrawingCanvas canvas;
+	protected JFileChooser FileChooser;
+	
+	
+	
+	/**
+	 * Constuctor passes canvas into the controller.
+	 * @param DrawingCanvas c
+	 */
+	MenuBarController (DrawingCanvas c){
+		canvas = c;
+	}
+	
 	
     /**
      * If user selected a menu item, perform the assigned action.
@@ -19,8 +34,60 @@ public class MenuBarController implements ActionListener {
      */
 	public void actionPerformed(ActionEvent e) {
 	
-		/* Help -> About option was selected */
-		if (e.getSource().toString().contains("helpItem1")){
+		/* Initialize the filename path string */
+		String filename = "";
+		
+		
+		
+		/* We want to SAVE a session */
+		if (e.getSource().toString().contains("sessionItem1")) {
+			
+			/* Create the JFileChooser component, and set the directory to the user directory */
+			FileChooser = new JFileChooser(System.getProperty("user.dir"));
+			
+		
+			/* If the user clicked OK, get the path */
+			if  (FileChooser.showDialog(null, "Save") == JFileChooser.APPROVE_OPTION) {
+		
+				/* Get the absolute path of the file the user entered in from the dialog window */
+				filename = FileChooser.getSelectedFile().getAbsolutePath();
+				 
+				
+				/* Add the results as optional output (defined by user preferences) */
+				Output.processMessage("Filepath = " + filename, Constants.Message_Type.info);
+
+			  //canvas.doSave(filename);
+			}
+			
+		
+		}
+		
+		
+		
+		/* We want to SAVE a session */
+		else if (e.getSource().toString().contains("sessionItem2")){
+			
+			/* Create the JFileChooser component, and set the directory to the user directory */
+			FileChooser = new JFileChooser(System.getProperty("user.dir"));
+			
+		
+			/* If the user clicked OK, get the path */
+			if  (FileChooser.showDialog(null, "Open") == JFileChooser.APPROVE_OPTION) {
+			
+				/* Get the absolute path of the file the user entered in from the dialog window */
+				filename = FileChooser.getSelectedFile().getAbsolutePath();
+				
+				/* Add the results as optional output (defined by user preferences) */
+				Output.processMessage("Filepath = " + filename, Constants.Message_Type.info);
+				
+				 //canvas.doLoad(filename);
+			}
+			
+		}	
+		
+		
+		/* Help -> About option was selected, display a message dialog with project info */
+		else if (e.getSource().toString().contains("helpItem1")){
         	JOptionPane.showMessageDialog(
         			null,
         			"MultiDraw Development Team:  " + "\n" +

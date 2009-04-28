@@ -17,11 +17,11 @@ public class MenuBarView extends JMenuBar
 	 * Create a new MenuBar.
 	 * @param s Session passed to controller.
 	 */
-	MenuBarView(ArrayList<ToolController> actions) 
+	MenuBarView(DrawingCanvas canvas, ArrayList<ToolController> actions) 
 	{
 
 		/* Create a new controller that handles most of the menu item clicks */
-		controller = new MenuBarController();
+		controller = new MenuBarController(canvas);
 		
 		
         /* --------------------- FILE MenuItems -------------------------- */
@@ -81,7 +81,14 @@ public class MenuBarView extends JMenuBar
         JMenuItem sessionItem1 = new JMenuItem("Save");
         JMenuItem sessionItem2 = new JMenuItem("Load");
 
+        /* Set the name of the objects */
+        sessionItem1.setName("sessionItem1");
+        sessionItem2.setName("sessionItem2");
         
+        /* Add the listener for the session item menu options */
+        sessionItem1.addActionListener((ActionListener)controller);
+        sessionItem2.addActionListener((ActionListener)controller);
+ 
         /* Add Session menu items */
         sessionMenu.add(sessionItem1);
         sessionMenu.add(sessionItem2);
@@ -98,7 +105,7 @@ public class MenuBarView extends JMenuBar
         /* Set the name of the object */
         helpItem1.setName("helpItem1");
         
-        /* Add a listener */
+        /* Add the listener for the help menu item option */
         helpItem1.addActionListener((ActionListener)controller);
         
         /* Add Help menu items */
