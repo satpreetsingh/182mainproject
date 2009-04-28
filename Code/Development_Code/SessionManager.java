@@ -58,7 +58,7 @@ public class SessionManager extends Thread
 		 */
 		for (int i = 0; i < s.networkMembers.size(); i++)
 		{
-			ServerUtils.checkMessageFromClient(s, s.networkMembers.get(i), s.localUser);
+			SessionUtils.processMessageFromPeer(s, s.networkMembers.get(i), s.localUser);
 		}
 		
 		/**
@@ -80,7 +80,7 @@ public class SessionManager extends Thread
 		
 			if (client != null)
 			{
-				ServerUtils.acceptConn1(client, s);
+				SessionUtils.acceptNewClient(client, s);
 			}
 			
 		}
