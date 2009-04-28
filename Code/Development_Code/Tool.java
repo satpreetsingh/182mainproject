@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Create a generic interface for tools.
@@ -24,7 +25,11 @@ public interface Tool extends Serializable {
 	 * @param canvas Canvas to draw on.
 	 * @param fill TODO
 	 */
-	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill);
+	public void mousePressed(Point p,
+			ArrayList<Shape> currentShapes, 
+			DrawingCanvas canvas, 
+			boolean fill,
+			UUID uniqueId);
  
 	/**
      * Any instance of the Tool interface must handle mouseReleased events.

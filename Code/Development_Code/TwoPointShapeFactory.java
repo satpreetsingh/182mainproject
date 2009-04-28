@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * An interface defining a class for creating TwoPointShape objects.
@@ -15,6 +16,7 @@ interface TwoPointShapeFactory extends Serializable{
 	 * @param xTwo Second x position.
 	 * @param yTwo Second y position.
 	 * @param c C base color.	 
+	 * @param uniqueId TODO
 	 * @param type int object type (outline,solid).
 	 * @return Returns an instantiated TwoPointShape.
 	 */
@@ -24,6 +26,6 @@ interface TwoPointShapeFactory extends Serializable{
 	 int xTwo,
 	 int yTwo,
 	 Color c, 
-	 boolean IsOutline);
+	 boolean IsOutline, UUID uniqueId);
 
 }

@@ -54,7 +54,7 @@ public class MouseController
   {
 	  if (session != null)
 	  {
-		  session.processMousePress(e.getPoint(), false,null, false);
+		  session.processMousePress(e.getPoint(), false,null, false, null);
 	  }
   }
 

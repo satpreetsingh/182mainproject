@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Implements the TwoPointShapeFactory, to create Line objects.
@@ -17,10 +18,10 @@ public class LineFactory implements TwoPointShapeFactory, Serializable{
 	 int xTwo, 
 	 int yTwo,
 	 Color c,
-	 boolean IsOutline) 
+	 boolean IsOutline, UUID uniqueId) 
 	{
 
-		Line newLine = new Line(xOne, yOne, c, IsOutline);
+		Line newLine = new Line(xOne, yOne, c, IsOutline, uniqueId);
 		newLine.setSecondPoint(xTwo, yTwo);
 		
 		return newLine;

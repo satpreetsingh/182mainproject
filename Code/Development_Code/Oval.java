@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.util.UUID;
 
 /**
  * The Oval class implements methods necessary
@@ -20,9 +21,9 @@ public class Oval extends TwoPointShape
 	 * @param c
 	 * @param IsOutline
 	 */
-	public Oval(int x, int y, Color c, boolean IsOutline)
+	public Oval(int x, int y, Color c, boolean IsOutline, UUID uniqueId)
 	{
-		super(x, y, c, IsOutline);
+		super(x, y, c, IsOutline, uniqueId);
 	}
 
 	    

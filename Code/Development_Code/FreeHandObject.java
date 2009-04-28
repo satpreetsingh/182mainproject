@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Implements a freehand drawing segment, which really consists of a bunch of lines.
@@ -25,9 +26,10 @@ public class FreeHandObject extends Shape{
  	 * @param c Color of object.
  	 * @param type int of object.
 	 */
-	public FreeHandObject(int x, int y, Color c, boolean isoutline)
+	public FreeHandObject(int x, int y, Color c, boolean isoutline, UUID uniqueId)
 	{
-		Line newLine = new Line(x,y,c,isoutline);
+		super(uniqueId);
+		Line newLine = new Line(x,y,c,isoutline, uniqueId);
 		segments = new ArrayList<Line>();
 		color = c;
 		IsOutline = isoutline;
@@ -146,7 +148,8 @@ public class FreeHandObject extends Shape{
 		((int)prior.end.x, 
 		 (int)prior.end.y, 
 		 color,
-		 IsOutline);
+		 IsOutline,
+		 UUID.randomUUID());
 		l.setSecondPoint(p.x, p.y);
 		segments.add(l);
 	}

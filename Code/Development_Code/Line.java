@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.util.UUID;
 
 /**
  * The line class implements methods necessary
@@ -18,9 +19,9 @@ public class Line extends TwoPointShape
 	 * @param c Color of the line.
 	 * @param type Int of the object.
 	 */
-	public Line(int x, int y, Color c, boolean IsOutline) 
+	public Line(int x, int y, Color c, boolean IsOutline, UUID uniqueId) 
 	{
-		super(x, y, c, IsOutline);
+		super(x, y, c, IsOutline, uniqueId);
 	}
 	  
 	/**

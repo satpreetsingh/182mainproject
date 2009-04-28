@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Tool for manipulating FreeHandObjects
@@ -26,12 +27,17 @@ public class FreehandTool implements Tool {
   }
 
   
-  public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill)  
+  public void mousePressed(Point p,
+		  ArrayList<Shape> currentShapes,
+DrawingCanvas canvas, 
+boolean fill,
+UUID uniqueId)  
   {
 	freeHand = factory.createFreeHand(p.x, 
 									  p.y, 
 									  Color.WHITE,
-									  canvas.getDrawingType());
+									  canvas.getDrawingType(), 
+									  uniqueId);
 		 
 	Graphics graphics = canvas.getimageBufferGraphics();
 	graphics.setXORMode(Color.lightGray);

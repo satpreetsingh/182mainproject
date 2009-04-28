@@ -98,15 +98,6 @@ public class Session {
 		this.tools = tools;
 	}
 	
-	public void publishEvent()
-	{
-		//TODO:
-	}
-	
-	public void publishState()
-	{
-		//TODO:
-	}
 	
 	public DrawState getCurrentState()
 	{
@@ -126,7 +117,6 @@ public class Session {
 	
 	/**
 	 * Process an event to clear the last selected object.
-	 * @param networkEvent TODO
 	 */
 	public void clearSelection(boolean networkEvent)
 	{
@@ -143,7 +133,6 @@ public class Session {
 	/**
 	 * Process an event to select a shape.
 	 * @param s Shape to select.
-	 * @param networkEvent TODO
 	 */
 	public void selectShape(Shape s, boolean networkEvent)
 	{
@@ -153,14 +142,24 @@ public class Session {
 			{
 				ServerUtils.selectShape(s, this);
 			}
-			this.currentState.setLastSelected(s);
+				
+			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
+			if (drawableShapes != null)
+			{
+				for(int i = 0; i < drawableShapes.size(); i++) 
+				{
+					if ( (drawableShapes.get(i).equals(s))) 
+					{
+						this.currentState.setLastSelected(drawableShapes.get(i));
+					}
+				}	
+			}
 		}
 	}
 	
 	/**
 	 * Process an event to delete a shape.
 	 * @param s Shape to delete.
-	 * @param networkEvent TODO
 	 */
 	public void deleteShape (Shape s, boolean networkEvent)
 	{
@@ -170,18 +169,16 @@ public class Session {
 			{
 				ServerUtils.sendDeleteShape(s, this);
 			}
-			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
 			
+			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
 			if (drawableShapes != null)
 			{
-				/* Scan the list for the object and remove it */
 				for(int i = 0; i < drawableShapes.size(); i++) 
 				{
-					if ( (drawableShapes.get(i) == s)) 
+					if ( (drawableShapes.get(i).equals(s))) 
 					{
-						/* We found the object now remove it from the list */  
 						drawableShapes.remove(i);
-						i = drawableShapes.size();
+						this.canvas.refresh();
 					}
 				}	
 			}
@@ -192,7 +189,6 @@ public class Session {
 	 * Process an event to set the main color of a shape.
 	 * @param s Shape to set.
 	 * @param c Color to set.
-	 * @param networkEvent TODO
 	 */
 	public void setMainColor(Shape s, Color c, boolean networkEvent)
 	{
@@ -202,14 +198,25 @@ public class Session {
 			{
 				ServerUtils.setMainColor(s, c, this);
 			}
-			s.set_MainColor(c);
+			
+			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
+			if (drawableShapes != null)
+			{
+				for(int i = 0; i < drawableShapes.size(); i++) 
+				{
+					if ( (drawableShapes.get(i).equals(s))) 
+					{
+						drawableShapes.get(i).set_MainColor(c);
+						this.canvas.repaint();
+					}
+				}	
+			}
 		}
 	}
 	
 	/**
 	 * Process an event to set the main type of a shape.
 	 * @param shape Shape to set.
-	 * @param networkEvent TODO
 	 * @param IsOutline boolean to set.
 	 */
 	public void setShapeFill(Shape shape, boolean isoutline, boolean networkEvent)
@@ -220,14 +227,25 @@ public class Session {
 			{
 				ServerUtils.setDrawingType(shape, isoutline, this);
 			}
-			shape.set_DrawingType(isoutline);
+			
+			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
+			if (drawableShapes != null)
+			{
+				for(int i = 0; i < drawableShapes.size(); i++) 
+				{
+					if ( (drawableShapes.get(i).equals(shape))) 
+					{
+						drawableShapes.get(i).set_DrawingType(isoutline);
+						this.canvas.refresh();
+					}
+				}	
+			}
 		}
 		
 	}
 	
 	/**
 	 * Process an event to delete all the shapes on the canvas.
-	 * @param networkEvent TODO
 	 */
 	public void clearObjects(boolean networkEvent)
 	{
@@ -352,7 +370,6 @@ public class Session {
 	 * @param p Point where event occurred.
 	 * @param networkEvent If true, event came from network.
 	 * @param networkTool If NetworkEvent is true, then it is expected that this will exist.
-	 * @param networkFill TODO
 	 */
 	public void processMouseRelease(Point p, boolean networkEvent, Tool networkTool, Color networkColor, boolean networkFill)
 	{
@@ -387,23 +404,31 @@ public class Session {
 	/**
 	 * Process a mousePress event.
 	 * @param point Point where event occurred.
+	 * 
 	 * @param networkEvent If true, event came from network.
 	 * @param networkTool If NetworkEvent is true, then it is expected that this will exist.
 	 */
-	public void processMousePress(Point point, boolean networkEvent, Tool networkTool, boolean networkFill)
+	public void processMousePress(Point point, 
+			boolean networkEvent, 
+			Tool networkTool, 
+			boolean networkFill,
+			UUID networkUUID)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
+			UUID objectId;
 			Tool tool;
 			boolean fill;
 			if(networkEvent == false)
 			{
+				objectId = UUID.randomUUID();
 				tool = canvas.getcurrentTool();
 				fill = canvas.getDrawingType();
-				ServerUtils.sendMousePress(this, point, tool, fill);
+				ServerUtils.sendMousePress(this, point, tool, fill, objectId);
 			}
 			else
 			{
+				objectId = networkUUID;
 				fill = networkFill;
 				tool = convertNetworkTool(networkTool);
 			}
@@ -416,7 +441,7 @@ public class Session {
 			}
 			if (tool != null) 
 			{
-				tool.mousePressed(point,this.currentState.currentShapes(), this.canvas, fill);
+				tool.mousePressed(point,this.currentState.currentShapes(), this.canvas, fill,objectId);
 			}
 		}
 	}

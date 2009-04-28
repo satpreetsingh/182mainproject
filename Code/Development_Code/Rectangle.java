@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.util.UUID;
 
 /**
  * The Rectangle class implements methods necessary
@@ -19,9 +20,9 @@ public class Rectangle extends TwoPointShape
 	 * @param c Color.
 	 * @param type
 	 */
-	public Rectangle(int x, int y, Color c, boolean IsOutline) 
+	public Rectangle(int x, int y, Color c, boolean IsOutline,UUID uniqueId) 
 	{
-		super(x, y, c, IsOutline);
+		super(x, y, c, IsOutline,uniqueId);
 	}
 	
 	
