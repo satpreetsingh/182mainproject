@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.rmi.activation.ActivationException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 
 /**
@@ -159,8 +160,8 @@ public class ServerUtils
 			Point point = (Point)networkData.get(0);
 			Tool tool = (Tool)networkData.get(1);
 			boolean fill = (Boolean)networkData.get(2);
-			
-			s.processMousePress(point, true, tool, fill);
+			UUID uniqueId = (UUID)networkData.get(3);
+			s.processMousePress(point, true, tool, fill, uniqueId);
 		}
 		catch (Exception e)
 		{
@@ -433,13 +434,14 @@ public class ServerUtils
 	 * @param t Tool selected when this happened.
 	 * @param fillObject TODO
 	 */
-	public static void sendMousePress(Session s, Point p, Tool t, boolean fillObject)
+	public static void sendMousePress(Session s, Point p, Tool t, boolean fillObject, UUID uniqueId)
 	{
 		Boolean netBool = new Boolean(fillObject);
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(p);
 		data.add(t);
 		data.add(netBool);
+		data.add(uniqueId);
 		
 		genericSend(s, data, NetworkObject.reason.mousePress);
 		Output.processMessage("Master is sending mousePress", Constants.Message_Type.info);

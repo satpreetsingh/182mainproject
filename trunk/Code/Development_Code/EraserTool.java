@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Implements an erasing tool, which will delete objects drawn on the canvas.
@@ -26,14 +27,20 @@ public class EraserTool implements Tool {
   /**
 	* Dragging mouse does nothing for this class.
    */
-  public void mouseDragged(Point p, ArrayList<Shape> currentShapes,DrawingCanvas canvas) {}
+  public void mouseDragged(Point p, 
+		  ArrayList<Shape> currentShapes,
+		  DrawingCanvas canvas) {}
 
   
   /**
    * When mouse pressed, check list of shapes, and if one
    * is found, delete it, and redraw the canvas.
    */
-  public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill) {
+  public void mousePressed(Point p,
+		  ArrayList<Shape> currentShapes,
+		  DrawingCanvas canvas, 
+		  boolean fill,
+		  UUID uniqueId) {
     Shape shape;
     for (int i = 0; i < currentShapes.size(); i++) 
     {

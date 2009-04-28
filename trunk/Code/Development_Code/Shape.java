@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Abstract interface for all Shapes 
@@ -20,6 +21,12 @@ public abstract class Shape extends Object implements Serializable
 	  /* Determine the shape of the object.  1 = Outline mode; 2 = Solid mode */
 	  boolean IsOutline;
 	  
+	  UUID uniqueId = null;
+	  
+	  public Shape(UUID uniqueId)
+	  {
+		  this.uniqueId = uniqueId;
+	  }
 	  
 	  /**
 		 * Requires a class implementing this class
@@ -121,5 +128,10 @@ public abstract class Shape extends Object implements Serializable
 		 * @param y Change in Y.
 		 */
 		abstract void move(int x, int y);
+		
+		public boolean equals(Shape s)
+		{
+			return (this.uniqueId.equals(s.uniqueId));
+		}
 
 }

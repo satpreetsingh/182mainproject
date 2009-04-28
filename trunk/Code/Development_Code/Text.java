@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.util.UUID;
 /**
  * This class implements a Text object,
  * drawing text where it is asked.
@@ -21,9 +22,9 @@ public class Text extends Shape {
 	 * @param f Font to use.
 	 * @param t Initial textSize.
 	 */
-	public Text (int x, int y, Color c, Font f) 
+	public Text (int x, int y, Color c, Font f, UUID uniqueId) 
 	{
-		
+		super(uniqueId);
 		this.origin = new Point2D.Double(x,y);
 		shapeColor = c;
 		font = f;

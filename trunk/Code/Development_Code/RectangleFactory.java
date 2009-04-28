@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.UUID;
 
 /**
  * Implements the TwoPointShapeFactory, to create Rectangle objects.
@@ -17,9 +18,9 @@ public class RectangleFactory implements TwoPointShapeFactory{
 	 int xTwo, 
 	 int yTwo,
 	 Color c,
-	 boolean IsOutline) 
+	 boolean IsOutline, UUID uniqueId) 
 	{
-		Rectangle newRect = new Rectangle(xOne, yOne, c, IsOutline);
+		Rectangle newRect = new Rectangle(xOne, yOne, c, IsOutline, uniqueId);
 		return newRect;
 		
 	}

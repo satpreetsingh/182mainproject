@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * TextTool is an instance of KeyboardTool, capable of creating text objects.
@@ -28,7 +29,11 @@ public class TextTool implements KeyboardTool {
 	  * When mousePressed received, create a new text object,
 	  * finalizing the previous one if it exists.
 	  */
-  	  public void mousePressed(Point p, ArrayList<Shape> shapes, DrawingCanvas canvas, boolean fill) {
+  	  public void mousePressed(Point p, 
+  			  ArrayList<Shape> shapes, 
+  			  DrawingCanvas canvas, 
+  			  boolean fill,
+  			  UUID uniqueId) {
   		  
 		  Graphics graphics = canvas.getimageBufferGraphics();
 		  canvas.requestFocus();
@@ -36,7 +41,7 @@ public class TextTool implements KeyboardTool {
 		  graphics.setColor(Color.white);
 			 
 		  finalizeText(canvas);
-		  currentText = textFactory.createShape(p.x,p.y, Color.WHITE);
+		  currentText = textFactory.createShape(p.x,p.y, Color.WHITE, uniqueId);
 	 }
 
   	  /**

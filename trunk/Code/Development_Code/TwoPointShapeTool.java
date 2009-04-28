@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Generic tool that manipulates objects that have two points.
@@ -38,7 +39,13 @@ public class TwoPointShapeTool implements Tool {
 	   * For a TwoPointShapeTool, when the mouse is pressed,
 	   * create a new TwoPointShape on the canvas.
 	   */
-	 public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill) {
+	 public void mousePressed
+	 (Point p, 
+			 ArrayList<Shape> currentShapes, 
+			 DrawingCanvas canvas, 
+			 boolean fill,
+			 UUID uniqueId)
+	 {
 	
 		 Graphics graphics = canvas.getimageBufferGraphics();
 		 graphics.setXORMode(Color.lightGray);
@@ -50,7 +57,7 @@ public class TwoPointShapeTool implements Tool {
 										   p.x,
 										   p.y,
 				 						   Color.WHITE,
-				 						   fill);
+				 						   fill, uniqueId);
 		 shape.draw(graphics);
 		 canvas.repaint();
 	 }

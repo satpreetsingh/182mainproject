@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.UUID;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -40,7 +41,11 @@ public class SelectorTool implements Tool
 	 * When the mouse is pressed, highlight the first shape that 
 	 * is near the point if one is, and consider it for future shape manipulations.
 	 */
-	public void mousePressed(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas, boolean fill) 
+	public void mousePressed(Point p,
+			ArrayList<Shape> currentShapes, 
+			DrawingCanvas canvas, 
+			boolean fill,
+			UUID uniqueId) 
 	{
 		/* Declare local vars to start the list with the latest object */
 		int LastListPos;

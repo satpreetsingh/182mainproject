@@ -101,7 +101,7 @@ public class DrawingCanvas extends JComponent
     	  {
     		  session.setMainColor(session.currentState.lastSelected(), c, false);
     	  }
-    	  repaint();
+    	  
       }
     }  
     
@@ -167,7 +167,6 @@ public class DrawingCanvas extends JComponent
     			{
     				session.deleteShape(session.currentState.lastSelected(), false);
     			}
-    			this.refresh();
     		}
 	    }	
 	  }
