@@ -94,7 +94,7 @@ public class MultiDraw extends JApplet  {
 	}
   
 	protected MenuBarView createMenuBarView(ArrayList<ToolController> toolList) {
-		return new MenuBarView(toolList);
+		return new MenuBarView(canvas, toolList);
 	}
 
 	
