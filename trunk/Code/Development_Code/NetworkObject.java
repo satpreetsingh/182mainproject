@@ -21,11 +21,12 @@ public class NetworkObject implements Serializable {
 	enum reason 
 	{joinRequest,
 	 joinRequestResponse,
+	 peerListUpdate,
 	 leaveNotification,
-		keepAlivePing, 
+	 keepAlivePing, 
 	 keepAliveResponse,
-	 event, //Any canvasEvent, transfer ownership
-	 dataState,  //What objects are drawn on canvas.
+	 event, 		//Any canvasEvent, transfer ownership
+	 dataState,  	//What objects are drawn on canvas.
 	 networkState,
 	 chat,
 	 mousePress,

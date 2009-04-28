@@ -22,7 +22,7 @@ import java.util.UUID;
 public class Session {
 
 	
-	public ArrayList <NetworkBundle>  networkMembers;
+	public ArrayList<NetworkBundle>  networkMembers;
 	public ArrayList<ToolController> tools;
 	
 	public NetworkBundle localUser;
@@ -70,7 +70,7 @@ public class Session {
 			this.master = masterBundle;
 			networkMembers.add(this.master);
 			
-			ServerUtils.acceptConn2(this);
+			SessionUtils.requestSessionJoin(this);
 		} 
 		catch (IOException e) 
 		{
@@ -124,7 +124,7 @@ public class Session {
 		{
 			if(networkEvent == false)
 			{
-				ServerUtils.sendClearSelection(this);
+				SessionUtils.sendClearSelection(this);
 			}
 			this.currentState.clearLastSelectedObject();
 		}
@@ -140,7 +140,7 @@ public class Session {
 		{
 			if(networkEvent == false)
 			{
-				ServerUtils.selectShape(s, this);
+				SessionUtils.selectShape(s, this);
 			}
 				
 			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
@@ -167,7 +167,7 @@ public class Session {
 		{
 			if(networkEvent == false)
 			{
-				ServerUtils.sendDeleteShape(s, this);
+				SessionUtils.sendDeleteShape(s, this);
 			}
 			
 			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
@@ -196,7 +196,7 @@ public class Session {
 		{
 			if(networkEvent == false)
 			{
-				ServerUtils.setMainColor(s, c, this);
+				SessionUtils.setMainColor(s, c, this);
 			}
 			
 			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
@@ -225,7 +225,7 @@ public class Session {
 		{
 			if(networkEvent == false)
 			{
-				ServerUtils.setDrawingType(shape, isoutline, this);
+				SessionUtils.setDrawingType(shape, isoutline, this);
 			}
 			
 			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
@@ -253,7 +253,7 @@ public class Session {
 		{
 			if (networkEvent == false)
 			{
-				ServerUtils.sendClearObjects(this);
+				SessionUtils.sendClearObjects(this);
 			}
 			this.currentState.currentShapes().clear();
 			this.canvas.clearCanvas();
@@ -274,7 +274,7 @@ public class Session {
 			else
 			{
 				tool = (KeyboardTool)canvas.getcurrentTool();
-				ServerUtils.sendKeyTyped(tool, keyPressed, this);
+				SessionUtils.sendKeyTyped(tool, keyPressed, this);
 			}
 				
 				
@@ -299,7 +299,7 @@ public class Session {
 			else
 			{
 				tool = (KeyboardTool)canvas.getcurrentTool();
-				ServerUtils.sendKeyReleased(tool, keyPressed, this);
+				SessionUtils.sendKeyReleased(tool, keyPressed, this);
 			}
 				
 				
@@ -324,7 +324,7 @@ public class Session {
 			else
 			{
 				tool = (KeyboardTool)canvas.getcurrentTool();
-				ServerUtils.sendKeyPressed(tool, keyPress, this);
+				SessionUtils.sendKeyPressed(tool, keyPress, this);
 			}
 				
 				
@@ -349,7 +349,7 @@ public class Session {
 			if(networkEvent == false)
 			{
 				tool = canvas.getcurrentTool();
-				ServerUtils.sendMouseDrag(this,p, tool);
+				SessionUtils.sendMouseDrag(this,p, tool);
 				
 			}
 			else
@@ -383,7 +383,7 @@ public class Session {
 				tool = canvas.getcurrentTool();
 				color = canvas.getpenColor();
 				fill = canvas.getDrawingType();
-				ServerUtils.sendMouseRelease(this, p, tool, color, fill);
+				SessionUtils.sendMouseRelease(this, p, tool, color, fill);
 				
 			}
 			else
@@ -424,7 +424,7 @@ public class Session {
 				objectId = UUID.randomUUID();
 				tool = canvas.getcurrentTool();
 				fill = canvas.getDrawingType();
-				ServerUtils.sendMousePress(this, point, tool, fill, objectId);
+				SessionUtils.sendMousePress(this, point, tool, fill, objectId);
 			}
 			else
 			{
