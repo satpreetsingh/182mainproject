@@ -1,33 +1,11 @@
-import java.awt.event.*;
-import java.util.EventListener;
-import javax.swing.*;
-import java.awt.GridLayout;
-import java.awt.Color;
-import java.awt.Container;
-import javax.swing.JTextField;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.BorderLayout;
-import java.lang.*;
-import java.util.*;
-import java.awt.event.*;
-
-import javax.swing.JTextArea;
-
-import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
+
 
 
 /**
