@@ -310,9 +310,6 @@ public class DrawingCanvas extends JComponent implements Serializable
     public void doSave(String filename) throws java.io.NotSerializableException{
     	
         try {
-
-        	/* Erase all objects off the canvas as well as array list */
-        	clearCanvas();
         	
         	
         	Output.processMessage("Creating File/Object output stream...", Constants.Message_Type.info);
@@ -379,7 +376,8 @@ public class DrawingCanvas extends JComponent implements Serializable
 
         /* Redraw all the shapes on the canvas */
         refresh();
-                        
+
+        
         in.close();
         fileIn.close();
             
