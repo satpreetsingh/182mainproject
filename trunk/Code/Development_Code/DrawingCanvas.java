@@ -15,7 +15,7 @@ import java.util.EventListener;
 
 /**
  * DrawingCanvas is the actual drawing surface.
- * @author bmhelppi, jjtrapan, mark
+ * @authors bmhelppi, jjtrapan
  *
  */
 public class DrawingCanvas extends JComponent implements Serializable
@@ -349,7 +349,11 @@ public class DrawingCanvas extends JComponent implements Serializable
      * HTExample.ser.
      */
     public void doLoad(String filename) throws FileNotFoundException, IOException {
-                
+          
+    	
+    	/* Clear off the object list */
+    	clearCanvas();
+    	
     	/* Set the input streams to the user selected file name */
         FileInputStream fileIn = new FileInputStream(filename);
         ObjectInputStream in = new ObjectInputStream(fileIn);
