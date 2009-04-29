@@ -329,7 +329,9 @@ public class DrawingCanvas extends JComponent implements Serializable
             
 
             Output.processMessage("Closing all output streams...", Constants.Message_Type.info);
+            out.flush();
             out.close();
+            fileOut.flush();
             fileOut.close();
 
         } catch(FileNotFoundException e) {
@@ -349,7 +351,9 @@ public class DrawingCanvas extends JComponent implements Serializable
           
     	
     	/* Clear off the object list */
-    	clearCanvas();
+    	session.clearObjects(false);
+    	
+    	refresh();
     	
     	/* Set the input streams to the user selected file name */
         FileInputStream fileIn = new FileInputStream(filename);
