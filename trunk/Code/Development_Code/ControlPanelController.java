@@ -69,21 +69,49 @@ public class ControlPanelController
   }
   private Color itemToColor(Object item) {
     
-    if("black".equals(item)) 
+    if("dark gray".equals(item))
     {
-      return Color.black;
+        return Color.darkGray;
     }
-    else if("blue".equals(item)) 
+    else if("blue".equals(item))
     {
       return Color.blue;
+    }
+    else if("cyan".equals(item))
+    {
+        return Color.cyan;
     }
     else if("green".equals(item)) 
     {
     	return Color.green;
     }
+    else if("magenta".equals(item))
+    {
+        return Color.magenta;
+    }
+    else if("red".equals(item))
+    {
+        return Color.red;
+    }
+    else if("orange".equals(item))
+    {
+        return Color.orange;
+    }
+    else if("pink".equals(item))
+    {
+        return Color.pink;
+    }
+    else if("yellow".equals(item))
+    {
+        return Color.yellow;
+    }
+    else if("light gray".equals(item))
+    {
+        return Color.lightGray;
+    }
     else 
     {
-    	return Color.red;
+    	return Color.black;
     }
   }
 
