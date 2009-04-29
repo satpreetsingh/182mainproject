@@ -1,6 +1,15 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -16,7 +25,6 @@ public class MenuBarController implements ActionListener {
 	
 	protected DrawingCanvas canvas;
 	protected JFileChooser FileChooser;
-	
 	
 	
 	/**
@@ -56,13 +64,16 @@ public class MenuBarController implements ActionListener {
 				/* Add the results as optional output (defined by user preferences) */
 				Output.processMessage("Filepath = " + filename, Constants.Message_Type.info);
 
-			  //canvas.doSave(filename);
-			}
-			
-		
+				try {
+					
+					/* Save the canvas state to a user defined text file */
+					canvas.doSave(filename);
+					
+				} catch (Exception ex) {              
+					/* Do nothing */
+				}		
+			}      		
 		}
-		
-		
 		
 		/* We want to SAVE a session */
 		else if (e.getSource().toString().contains("sessionItem2")){
@@ -80,7 +91,17 @@ public class MenuBarController implements ActionListener {
 				/* Add the results as optional output (defined by user preferences) */
 				Output.processMessage("Filepath = " + filename, Constants.Message_Type.info);
 				
-				 //canvas.doLoad(filename);
+				
+				try{
+				
+					/* Perform the loading of the canvas */
+					canvas.doLoad(filename);
+				
+				} catch (Exception ex) {              
+					/* Do nothing */
+				}	
+			
+				
 			}
 			
 		}	
@@ -107,10 +128,6 @@ public class MenuBarController implements ActionListener {
         			"About",
         			JOptionPane.INFORMATION_MESSAGE);			
 		}
-	
-	
-	
 	}
-	
 	
 }
