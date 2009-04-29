@@ -19,7 +19,7 @@ public class NetworkObject implements Serializable {
 	public int messageNumber; //FIFO??? nice for debug?
 	
 	enum reason 
-	{joinRequest,
+	{joinSessionRequest,
 	 joinRequestResponse,
 	 peerListUpdate,
 	 leaveNotification,

@@ -71,7 +71,7 @@ public class SessionUtils
 			(s.localUser.person,
 					s.master.person,
 					data,
-					NetworkObject.reason.joinRequest,
+					NetworkObject.reason.joinSessionRequest,
 					1
 			);
 
@@ -316,6 +316,37 @@ public class SessionUtils
 
 	}
 
+	/* Runs on only a CLIENT */
+	private static void processPeerListUpdate(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			System.out.println("Peers: " + networkData.toString());
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective peerListUpdate message recieved", Constants.Message_Type.error);
+		}
+
+	}
+
+	/* Runs on only the MASTER */
+	private static void acceptJoinSessionRequest(Session session, NetworkObject data) 
+	{
+		try
+		{
+			System.out.println("Processing Join Session Request " + data.toString());
+			System.out.println("Sending PeerList to all peers ");
+			sendPeerListToAllPeers(session);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective JoinSessionRequest message recieved", Constants.Message_Type.error);
+		}
+	}
+
+	
 	/* This can run on either MASTER or CLIENT */
 	protected static void processMessageFromPeer(Session session, NetworkBundle client, NetworkBundle local)
 	{
@@ -331,8 +362,6 @@ public class SessionUtils
 				if(data.objectReason == NetworkObject.reason.mouseRelease)
 				{
 					processMouseRelease(session, data);
-
-
 				}
 				else if (data.objectReason == NetworkObject.reason.mousePress)
 				{
@@ -377,6 +406,14 @@ public class SessionUtils
 				else if (data.objectReason == NetworkObject.reason.deleteShape)
 				{
 					processDeleteShape(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.joinSessionRequest)
+				{
+					acceptJoinSessionRequest(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.peerListUpdate)
+				{
+					processPeerListUpdate(session, data);
 				}
 
 
@@ -437,7 +474,7 @@ public class SessionUtils
 	 * Send a peerListUpdate message (containing networkMembers<>) to all peers.
 	 * @param s Session to send message for.
 	 */
-	private void sendPeerListToAllPeers(Session s) 
+	private static void sendPeerListToAllPeers(Session s) 
 	{
 		ArrayList<Object> currentPeerList = new ArrayList<Object>();
 		currentPeerList.add(s.networkMembers);
