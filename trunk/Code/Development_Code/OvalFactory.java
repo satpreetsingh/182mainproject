@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -8,7 +9,7 @@ import java.util.UUID;
  *
  */
 
-public class OvalFactory implements TwoPointShapeFactory{
+public class OvalFactory implements TwoPointShapeFactory, Serializable{
 
 	/**
 	 * Create a new Oval from a generic TwoPointShape.

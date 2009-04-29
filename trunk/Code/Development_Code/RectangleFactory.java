@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -6,7 +7,7 @@ import java.util.UUID;
  * @author bmhelppi
  *
  */
-public class RectangleFactory implements TwoPointShapeFactory{
+public class RectangleFactory implements TwoPointShapeFactory, Serializable{
 
 
 	/**

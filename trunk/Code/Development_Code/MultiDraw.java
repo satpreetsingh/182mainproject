@@ -51,7 +51,8 @@ public class MultiDraw extends JApplet  {
 			   * This is temp code, it automatically creates a new session,
 			   * so that Object draw functionality will work.
 			   */
-			  String tempName;
+			String tempName;
+			
 			isSlave = initialwindow.getSlaveMaster();
 	
 		    Member temp = new Member(initialwindow.getUserName());

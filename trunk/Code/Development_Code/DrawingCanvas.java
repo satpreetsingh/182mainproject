@@ -1,15 +1,24 @@
 import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javax.swing.*;
 import java.util.EventListener;
 
 /**
  * DrawingCanvas is the actual drawing surface.
- * @author bmhelppi
+ * @author bmhelppi, jjtrapan, mark
  *
  */
-public class DrawingCanvas extends JComponent 
+public class DrawingCanvas extends JComponent implements Serializable
 {
 	
 	private MouseController mouseController = null;
@@ -22,7 +31,8 @@ public class DrawingCanvas extends JComponent
     protected boolean IsOutline = true;
 	private Tool currentTool = null; 
 	protected Session session = null;
-    
+	
+	
     /**
      * Create a new DrawingCanvas.
      */
@@ -58,8 +68,8 @@ public class DrawingCanvas extends JComponent
      */
     protected void addMouseListeneer(EventListener listener) 
     {
-    	addMouseListener((MouseListener) listener);
-    	addMouseMotionListener((MouseMotionListener) listener);
+    	addMouseListener ((MouseListener) listener);
+    	addMouseMotionListener ((MouseMotionListener) listener);
     }
   
   
@@ -68,7 +78,7 @@ public class DrawingCanvas extends JComponent
      * @param listener Listener to add.
      */
     protected void addKeyboardListener(EventListener listener) {
-    	addKeyListener( (KeyListener)listener);
+    	addKeyListener ((KeyListener)listener);
     }
   
   
@@ -289,4 +299,89 @@ public class DrawingCanvas extends JComponent
 		this.keyController.updateSesion(s);
 	}
 
+
+    
+    
+    
+	/**
+	 * Save the session to a text file
+	 * @param filename String determines where to save the object list.
+	 */
+    public void doSave(String filename) throws java.io.NotSerializableException{
+    	
+        try {
+
+        	/* Erase all objects off the canvas as well as array list */
+        	clearCanvas();
+        	
+        	
+        	Output.processMessage("Creating File/Object output stream...", Constants.Message_Type.info);
+
+            /* Create a file output stream and a object output stream.  
+             * This will have the object list written to it */
+        	FileOutputStream fileOut = new FileOutputStream(filename);
+
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+
+            Output.processMessage("Writing ArrayList Object...", Constants.Message_Type.info);
+
+            /* Loop through the list of objects */
+            for (int index = 0; index < session.currentState.currentShapes().size(); index++) {
+            	out.writeObject(session.currentState.currentShapes().get(index));
+            }
+            
+
+            Output.processMessage("Closing all output streams...", Constants.Message_Type.info);
+            out.close();
+            fileOut.close();
+
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }	
+    
+    
+
+    /**
+     * Loads the contents of a previously serialized object from a file called
+     * HTExample.ser.
+     */
+    public void doLoad(String filename) throws FileNotFoundException, IOException {
+                
+    	/* Set the input streams to the user selected file name */
+        FileInputStream fileIn = new FileInputStream(filename);
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+
+        boolean FoundEOF = false;
+        
+        try{
+        	
+        	while (!FoundEOF) {
+        		
+        		/* Read in the objects from the serialized text file */
+        		session.currentState.currentShapes().add((Shape)in.readObject());
+        	}
+        }catch(EOFException  e){
+        	Output.processMessage("EOF found for file: " + filename, Constants.Message_Type.debug);
+        }catch (ClassNotFoundException e) {
+        	e.printStackTrace();
+        } catch(FileNotFoundException e) {
+        	e.printStackTrace();
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }
+
+        /* Redraw all the shapes on the canvas */
+        refresh();
+                        
+        in.close();
+        fileIn.close();
+            
+   
+    }
+    
+    
+      
 }
