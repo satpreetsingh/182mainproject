@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.activation.ActivationException;
@@ -21,7 +22,7 @@ import java.util.UUID;
  */
 public class Session {
 
-	
+	public ArrayList<PeerThread> threads = new ArrayList<PeerThread>();
 	public ArrayList<NetworkBundle>  networkMembers;
 	public ArrayList<ToolController> tools;
 	
@@ -63,14 +64,17 @@ public class Session {
 			Socket masterSocket = new Socket(ip, port);
 			ObjectOutputStream oos = new ObjectOutputStream(masterSocket.getOutputStream());
 			ObjectInputStream ois = new ObjectInputStream(masterSocket.getInputStream());
-			Member master = null;
-			
-			NetworkBundle masterBundle = new NetworkBundle(master, ois,oos,masterSocket);
+			Member master = new Member(Member.nullName);
+			NetworkBundle masterBundle = new NetworkBundle(master, ois,oos,masterSocket, ip , masterSocket.getPort());
 			
 			this.master = masterBundle;
 			networkMembers.add(this.master);
 			
-			SessionUtils.requestSessionJoin(this);
+			PeerThread p = new PeerThread(this, this.localUser, this.master);
+			this.threads.add(p);
+			p.start();
+			
+			SessionUtils.requestSessionJoin(this, masterBundle, NetworkObject.reason.joinSessionRequest);
 		} 
 		catch (IOException e) 
 		{
@@ -464,6 +468,23 @@ public class Session {
 			}
 		}
 		return localTool;
+	}
+	
+	public void chatMessage(String message)
+	{
+		
+	}
+	
+	public void transferOwnership(NetworkBundle newOwner)
+	{
+		
+	}
+	
+	public void requestOwnership()
+	{
+		//Step 1 Joe call this
+		//Step 2 Ben Network this
+		//Step 3 Joe add popup confirm/deny.
 	}
 
 }

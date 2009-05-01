@@ -16,6 +16,7 @@ public class NetworkBundle implements Serializable{
 	public ObjectOutputStream oos = null;
 	public Socket sock = null;
 	
+	
 	/**
 	 * Create a new network bundle.
 	 * Note, most are null if the network bundle is for ones self.
@@ -28,8 +29,12 @@ public class NetworkBundle implements Serializable{
 	(Member m,	 
 	 ObjectInputStream ois,
 	 ObjectOutputStream oos,
-	 Socket sock)
+	 Socket sock,
+	 String ipAddress,
+	 int port)
 	{
+		m.ipAddress = ipAddress;
+		m.port = port;
 		person = m;
 		this.ois = ois;
 		this.oos = oos;

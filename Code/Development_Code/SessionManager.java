@@ -13,6 +13,7 @@ public class SessionManager extends Thread
 {
 	
 	private ArrayList <Session> activeSessions;
+	
 	private Session sessionInFocus = null;
 	//TODO: Add canvas, etc... that change focus.
 	private DrawingCanvas canvas;
@@ -53,13 +54,6 @@ public class SessionManager extends Thread
 	 */
 	private void updateActiveSession(Session s)
 	{
-		/**
-		 * Part One
-		 */
-		for (int i = 0; i < s.networkMembers.size(); i++)
-		{
-			SessionUtils.processMessageFromPeer(s, s.networkMembers.get(i), s.localUser);
-		}
 		
 		/**
 		 * Part Two
@@ -73,6 +67,7 @@ public class SessionManager extends Thread
 		{
 			s.serverSock.setSoTimeout(1);
 			Socket client = s.serverSock.accept();
+			
 			
 			Output.processMessage("Accepted a connection from: "+
 		        		client.getInetAddress(), Constants.Message_Type.debug);

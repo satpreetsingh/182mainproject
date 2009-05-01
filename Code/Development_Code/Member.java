@@ -10,8 +10,12 @@ import java.util.UUID;
  */
 public class Member implements Serializable {
 
+	public static final String nullName = "the_Nameless";
+	
 	public UUID	id;
 	public String name;
+	public String ipAddress = "";
+	public int port = 0;
 	
 	/**
 	 * Create a new member.
