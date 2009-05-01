@@ -3,11 +3,15 @@ import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.rmi.activation.ActivationException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -19,7 +23,8 @@ import java.util.UUID;
 public class SessionUtils
 {
 
-
+	private static final int basePort = 3000;
+	private static final double range = 32000.0;
 	/**
 	 * Runs on SERVER
 	 * Sever got a connection.
@@ -38,11 +43,18 @@ public class SessionUtils
 		{
 			ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
 			ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
-			Member m = null;
-
-			NetworkBundle newConn = new NetworkBundle(m, ois, oos, client);
+			Member m = new Member(Member.nullName);
+			String ipAddress = client.getInetAddress().getHostAddress();
+			NetworkBundle newConn = new NetworkBundle(m, ois, oos, client, ipAddress, client.getLocalPort());
+			
+			PeerThread p = new PeerThread(s, s.localUser,newConn);
+			
+			
+			s.threads.add(p);
 			s.networkMembers.add(newConn);
 			Output.processMessage("Server accepted conn, no data yet", Constants.Message_Type.info);
+			
+			p.start();
 		}
 		catch (Exception e)
 		{
@@ -53,26 +65,27 @@ public class SessionUtils
 
 	/**
 	 * Runs on CLIENT
-	 * Client connected to server.
+	 * Client connected to another machine.
 	 * Client is trying to send a message to say 
 	 * "Hi, I'm here, and my name is ***"
 	 * @param s A session where the localUser, and master objects are mostly setup.
+	 * @param reason Why we are making connection.  Join Session, or Join Peer are valid reasons.
 	 */
-	public static void requestSessionJoin(Session s)
+	public static void requestSessionJoin(Session s, NetworkBundle peer, NetworkObject.reason reason)
 	{
 		try 
 		{
-			ObjectOutputStream masterStream = s.master.oos;
+			ObjectOutputStream masterStream = peer.oos;
 
 			ArrayList<Object> data = new ArrayList<Object>();
 			data.add(s.localUser.person);
 
 			NetworkObject hello = new NetworkObject
 			(s.localUser.person,
-					s.master.person,
-					data,
-					NetworkObject.reason.joinSessionRequest,
-					1
+			 peer.person,
+			 data,
+			 reason,
+			 1
 			);
 
 			masterStream.writeObject(hello);
@@ -96,11 +109,31 @@ public class SessionUtils
 	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools)
 	{
 		Session result;
+		boolean portNotFound = true;
+		Random gen = new Random();
+		int port = 0;
+		ServerSocket serverSock = null;
 		try 
 		{
-			ServerSocket serverSock = new ServerSocket(3000);
-			NetworkBundle creater = new NetworkBundle(m, null, null, null);
+			while(portNotFound)
+			{
+				try
+				{
+					port = basePort + (int)(gen.nextFloat() * range);
+					serverSock = new ServerSocket(port);
+					portNotFound = false;
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+			String ipAddress = java.net.InetAddress.getLocalHost().getHostAddress();
+			
+			NetworkBundle creater = new NetworkBundle(m, null, null, null, ipAddress, port);
 			result = new Session(serverSock, creater, c, tools);
+			Output.processMessage("Built session " + ipAddress + "@" + port, Constants.Message_Type.info);
+			
 		} 
 		catch (IOException e) 
 		{
@@ -122,13 +155,30 @@ public class SessionUtils
 	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools)
 	{
 		Session result;
+		int localPort = 0;
+		boolean portNotFound = true;
+		Random gen = new Random();
+		ServerSocket serverSock = null;
 		try
 		{
-			ServerSocket serverSock = new ServerSocket(3001);
-			NetworkBundle local = new NetworkBundle(m,null,null,null);
-
+			while(portNotFound)
+			{
+				try
+				{
+					localPort = basePort + (int)(gen.nextFloat() * range);
+					serverSock = new ServerSocket(localPort);
+					portNotFound = false;
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+			String localIp = java.net.InetAddress.getLocalHost().getHostAddress();
+			NetworkBundle local = new NetworkBundle(m,null,null,null, localIp, localPort);
+			
 			result = new Session(local, serverSock, c, ip, port,tools);
-
+			Output.processMessage("Built session " + localIp + "@" + localPort, Constants.Message_Type.info);
 		}
 		catch(Exception e)
 		{
@@ -321,7 +371,57 @@ public class SessionUtils
 	{
 		try
 		{
-			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			ArrayList<Member> networkData = (ArrayList<Member>)data.data;
+			session.master.person.id = data.Originator.id;
+			session.localUser.person.id = data.Recipient.id;
+			
+			int myself = networkData.size() + 1;
+			for(int i = 0 ; i < networkData.size(); i++)
+			{
+				boolean doesNotExist = true;
+				Member fromNewList = networkData.get(i);
+				for(int j = 0; j < session.networkMembers.size(); j++)
+				{
+					
+					Member fromOldList = session.networkMembers.get(j).person;
+					
+					if(fromNewList.id.equals(session.localUser.person.id))
+					{
+						doesNotExist = false;
+						j = session.networkMembers.size() + 1;
+						myself = i;
+					}
+					else if(fromNewList.id.equals(fromOldList.id))
+					{
+						fromOldList.name = fromNewList.name;
+						doesNotExist = false;
+						j = session.networkMembers.size() + 1;
+					}
+				}
+				
+				if (doesNotExist && myself < i)
+				{
+					Socket newGuySocket = new Socket(fromNewList.ipAddress, fromNewList.port);
+					ObjectOutputStream oos = new ObjectOutputStream(newGuySocket.getOutputStream());
+					ObjectInputStream ois = new ObjectInputStream(newGuySocket.getInputStream());
+					Member newGuy = fromNewList;
+					NetworkBundle newGuyBundle = new NetworkBundle
+					(newGuy, ois,oos,newGuySocket, fromNewList.ipAddress , newGuySocket.getPort());
+					
+					session.networkMembers.add(newGuyBundle);
+					requestSessionJoin(session, newGuyBundle, NetworkObject.reason.joinPeerRequest);
+
+					//TODO: This needs to create an instance of peer thread, to listen to messages.
+					
+					//This guy doesn't exist, but I've been around longer.  I'll say hello.
+				}
+				else if(doesNotExist && myself < i)
+				{
+					//This guy doesn't exist, but he is older.  I'll wait for him to say hello.
+					
+				}
+			}
+			
 			System.out.println("Peers: " + networkData.toString());
 		}
 		catch (Exception e)
@@ -332,13 +432,23 @@ public class SessionUtils
 	}
 
 	/* Runs on only the MASTER */
-	private static void acceptJoinSessionRequest(Session session, NetworkObject data) 
+	private static void acceptJoinSessionRequest(NetworkBundle client, Session session, NetworkObject data) 
 	{
 		try
 		{
 			System.out.println("Processing Join Session Request " + data.toString());
-			System.out.println("Sending PeerList to all peers ");
-			sendPeerListToAllPeers(session);
+			if(client.person.name.equals(Member.nullName) && client.person.ipAddress.equals(data.Originator.ipAddress))
+			{
+				client.person = data.Originator;
+				
+				System.out.println("Sending PeerList to all peers ");
+				sendPeerListToAllPeers(session);
+			}
+			else
+			{
+				Output.processMessage("Defective join session", Constants.Message_Type.error);
+			}
+		
 		}
 		catch (Exception e)
 		{
@@ -358,6 +468,7 @@ public class SessionUtils
 			try 
 			{
 				NetworkObject data = (NetworkObject)client.ois.readObject();
+				
 				Output.processMessage("Got message of type " + data.objectReason.toString(), Constants.Message_Type.info);
 				if(data.objectReason == NetworkObject.reason.mouseRelease)
 				{
@@ -409,17 +520,29 @@ public class SessionUtils
 				}
 				else if (data.objectReason == NetworkObject.reason.joinSessionRequest)
 				{
-					acceptJoinSessionRequest(session, data);
+					acceptJoinSessionRequest(client, session, data);
 				}
 				else if (data.objectReason == NetworkObject.reason.peerListUpdate)
 				{
 					processPeerListUpdate(session, data);
 				}
 
-
 			} 
+			catch (SocketTimeoutException sockTime)
+			{
+				
+			}
+			catch (StreamCorruptedException streamCorr)
+			{
+				Output.processMessage("CorruptSocket", Constants.Message_Type.error);
+			}
+			catch (SocketException sock)
+			{
+				//TODO: RESET PEERS
+			}
 			catch (Exception e) 
 			{
+				
 				Output.processMessage("ServerUtils.checkMessageFromClient unable to get network object", Constants.Message_Type.error);
 			}
 
@@ -476,8 +599,11 @@ public class SessionUtils
 	 */
 	private static void sendPeerListToAllPeers(Session s) 
 	{
-		ArrayList<Object> currentPeerList = new ArrayList<Object>();
-		currentPeerList.add(s.networkMembers);
+		ArrayList<Member> currentPeerList = new ArrayList<Member>();
+		for(int i = 0; i < s.networkMembers.size(); i++)
+		{
+			currentPeerList.add(s.networkMembers.get(i).person);
+		}
 
 		genericSendToAllPeers(s, currentPeerList, NetworkObject.reason.peerListUpdate);
 		Output.processMessage("Master is sending peerListUpdate", Constants.Message_Type.info);

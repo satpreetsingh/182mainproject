@@ -20,6 +20,7 @@ public class NetworkObject implements Serializable {
 	
 	enum reason 
 	{joinSessionRequest,
+	 joinPeerRequest,
 	 joinRequestResponse,
 	 peerListUpdate,
 	 leaveNotification,
@@ -57,8 +58,8 @@ public class NetworkObject implements Serializable {
 	  * @param messageNumber Nice debug??
 	  */
 	 public NetworkObject(
-		 Member Originator,
-		 Member Recipient,
+		Member Originator,
+		Member Recipient,
 		 Object data,
 		 reason objectReason,
 		 int messageNumber)
