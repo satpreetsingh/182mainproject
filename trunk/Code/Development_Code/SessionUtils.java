@@ -85,8 +85,7 @@ public class SessionUtils
 			(s.localUser.person,
 			 peer.person,
 			 data,
-			 reason,
-			 1
+			 reason
 			);
 
 			masterStream.writeObject(hello);
@@ -191,6 +190,21 @@ public class SessionUtils
 	}
 
 
+	private static void processUpdateToBaseline(Session session, NetworkObject data)
+	{
+		try
+		{
+			DrawState baseline = (DrawState)data.data;
+			session.setBaseline(baseline);
+		}
+		catch(Exception e)
+		{
+			Output.processMessage("Defective baseline message recieved", Constants.Message_Type.error);
+			
+		}
+		
+	}
+	
 	private static void processChat(Session s, NetworkObject data)
 	{
 		try
@@ -540,7 +554,7 @@ public class SessionUtils
 		{
 			Output.processMessage("Defective peerListUpdate message recieved", Constants.Message_Type.error);
 		}
-
+		session.updatePeerListOnScreen();
 	}
 
 	/* Runs on only the MASTER */
@@ -555,6 +569,8 @@ public class SessionUtils
 				
 				System.out.println("Sending PeerList to all peers ");
 				sendPeerListToAllPeers(session);
+				genericSendToAllPeers(session, session.currentState, NetworkObject.reason.updateToBaseline, client);
+				session.updatePeerListOnScreen();
 			}
 			else
 			{
@@ -662,6 +678,10 @@ public class SessionUtils
 				{
 					processCanvasOwnershipSupportRebellion(session, data);
 				}
+				else if (data.objectReason == NetworkObject.reason.updateToBaseline)
+				{
+					processUpdateToBaseline(session, data);
+				}
 			
 			} 
 			catch (SocketTimeoutException sockTime)
@@ -678,7 +698,6 @@ public class SessionUtils
 				session.networkMembers.remove(p.target);
 				p.target = null;
 				p = null;
-				//TODO: RESET PEERS
 			}
 			catch (Exception e) 
 			{
@@ -709,15 +728,15 @@ public class SessionUtils
 					(s.localUser.person,
 							specialTarget.person,
 							o,
-							reason,
-							1
+							reason
 					);
 
 					ObjectOutputStream stream = specialTarget.oos;
 
 					stream.writeObject(genericObject);
 					stream.flush();
-					}
+				}
+		
 				catch(Exception e)
 				{
 					Output.processMessage("Error in generic send for a person", Constants.Message_Type.error);
@@ -740,8 +759,7 @@ public class SessionUtils
 							(s.localUser.person,
 									target.person,
 									o,
-									reason,
-									1
+									reason
 							);
 		
 							ObjectOutputStream stream = target.oos;

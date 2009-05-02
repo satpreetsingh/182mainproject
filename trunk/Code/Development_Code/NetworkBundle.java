@@ -6,10 +6,12 @@ import java.net.Socket;
 
 /**
  * Macro class, puts some things together for convenient management.
+ * Note that this class is absolutely not serializable.  
+ * Sockets, and Objects streams do not serialize.
  * @author ben
  *
  */
-public class NetworkBundle implements Serializable{
+public class NetworkBundle {
 
 	public Member person;
 	public ObjectInputStream ois = null;

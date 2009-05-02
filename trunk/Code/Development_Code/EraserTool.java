@@ -13,7 +13,7 @@ import java.util.UUID;
 /* DO NOT rename this class, DrawingCanvas.java depends upon it (line 99) */
 public class EraserTool implements Tool {
    
-	String name;
+	private String name;
 	
 	/**
      * Create a new instance of the Eraser tool.
@@ -24,34 +24,35 @@ public class EraserTool implements Tool {
 	}
 
   
-  /**
-	* Dragging mouse does nothing for this class.
-   */
-  public void mouseDragged(Point p, 
+	/**
+	 * Dragging mouse does nothing for this class.
+	 */
+	public void mouseDragged(Point p, 
 		  ArrayList<Shape> currentShapes,
 		  DrawingCanvas canvas) {}
 
   
-  /**
-   * When mouse pressed, check list of shapes, and if one
-   * is found, delete it, and redraw the canvas.
-   */
-  public void mousePressed(Point p,
+	/**
+	 * When mouse pressed, check list of shapes, and if one
+	 * is found, delete it, and redraw the canvas.
+	 */
+	public void mousePressed(Point p,
 		  ArrayList<Shape> currentShapes,
 		  DrawingCanvas canvas, 
 		  boolean fill,
-		  UUID uniqueId) {
-    Shape shape;
-    for (int i = 0; i < currentShapes.size(); i++) 
-    {
-      shape = currentShapes.get(i);
-      if (shape.near(p.x, p.y)) 
-      {
-        currentShapes.remove(i);
-        i = currentShapes.size();
-        canvas.refresh();
-      }
-    }
+		  UUID uniqueId) 
+	{
+	    Shape shape;
+	    for (int i = 0; i < currentShapes.size(); i++) 
+	    {
+	    	shape = currentShapes.get(i);
+	    	if (shape.near(p.x, p.y)) 
+	    	{
+	    		currentShapes.remove(i);
+	    		i = currentShapes.size();
+	    		canvas.refresh();
+	    	}
+	    }
   }
   
   
@@ -66,7 +67,9 @@ public class EraserTool implements Tool {
    */
   public void deselected(DrawingCanvas canvas) {}
 
-
+  /**
+   * Return name of this tool.
+   */
   public String toolName() 
   {
 	  return name;

@@ -16,7 +16,6 @@ public class NetworkObject implements Serializable {
 	public Object data;
 	public reason objectReason;
 	
-	public int messageNumber; //FIFO??? nice for debug?
 	
 	enum reason 
 	{joinSessionRequest,
@@ -46,7 +45,8 @@ public class NetworkObject implements Serializable {
 	 canvasOwnershipConfirm,
 	 canvasOwnershipDeny,
 	 canvasOwnershipRebel,
-	 canvasOwnershipSupportRebellion
+	 canvasOwnershipSupportRebellion,
+	 updateToBaseline
 	 };
 	 
 	 
@@ -60,19 +60,16 @@ public class NetworkObject implements Serializable {
 	  * @param objectReason Reason the object was made.  
 	  * 	Helps for deconstructing object, 
 	  * 	as data is packed a standard way for each event.
-	  * @param messageNumber Nice debug??
 	  */
 	 public NetworkObject(
 		Member Originator,
 		Member Recipient,
 		 Object data,
-		 reason objectReason,
-		 int messageNumber)
+		 reason objectReason)
 	 {
 		 this.Originator = Originator;
 		 this.Recipient = Recipient;
 		 this.data = data;
 		 this.objectReason = objectReason;
-		 this.messageNumber = messageNumber;
 	 }
 }

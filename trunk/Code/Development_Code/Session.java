@@ -116,7 +116,10 @@ public class Session
 		this.chatPanel = chatPanel;
 	}
 	
-	
+	/**
+	 * Get the current canvas state.
+	 * @return Returns the current canvas state.
+	 */
 	public DrawState getCurrentState()
 	{
 		return currentState;
@@ -278,6 +281,12 @@ public class Session
 		}
 	}
 	
+	/**
+	 * Process a key typed event.
+	 * @param keyPressed The key.
+	 * @param networkEvent Is this event from another machine?
+	 * @param networkTool If networkevent is true, this must exist.
+	 */
 	public void processKeyTyped(char keyPressed, boolean networkEvent, Tool networkTool)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
@@ -303,6 +312,12 @@ public class Session
 		}
 	}
 	
+	/**
+	 * Process a key release event.
+	 * @param keyPressed The key
+	 * @param networkEvent If event from network
+	 * @param networkTool If networkEvent is true, must exist.
+	 */
 	public void processKeyRelease(char keyPressed, boolean networkEvent, Tool networkTool)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
@@ -328,6 +343,12 @@ public class Session
 		}
 	}
 	
+	/**
+	 * Process a keypress event
+	 * @param keyPress The key.
+	 * @param networkEvent If event from network.
+	 * @param networkTool If networkEvent, this must exist.
+	 */
 	public void processKeyPress(char keyPress, boolean networkEvent, Tool networkTool)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
@@ -484,6 +505,11 @@ public class Session
 		return localTool;
 	}
 	
+	/**
+	 * Process a chat message.
+	 * @param message The message.
+	 * @param networkEvent If event from over network.
+	 */
 	public void processChatMessage(String message, boolean networkEvent)
 	{
 		if(networkEvent == false)
@@ -496,6 +522,11 @@ public class Session
 		}
 	}
 	
+	/**
+	 * Process an event to set a different canvas owner.
+	 * @param newOwner The new owner.
+	 * @param networkEvent Indicates if this is local/network
+	 */
 	public void processTransferOwnership(NetworkBundle newOwner, boolean networkEvent)
 	{
 		this.master = newOwner;
@@ -506,6 +537,11 @@ public class Session
 		}
 	}
 	
+	/**
+	 * Process an event to reject an ownership request.
+	 * @param newOwner The person who doesn't get to own canvas.
+	 * @param networkEvent indicate if network event.
+	 */
 	public void processRejectOwnership(NetworkBundle newOwner, boolean networkEvent)
 	{
 		if(networkEvent == false)
@@ -518,6 +554,11 @@ public class Session
 		}
 	}
 	
+	/**
+	 * Process a request to own the session.
+	 * @param requestor Person who wants to own session.
+	 * @param networkEvent Indicate if local/remote event.
+	 */
 	public void processRequestOwnership(Member requestor, boolean networkEvent)
 	{
 		//Step 1 Joe call this
@@ -555,12 +596,19 @@ public class Session
 			
 	}
 	
+	/**
+	 * Attempt to wrest control from owner if enough people agree.
+	 */
 	public void processInciteRebellion()
 	{
 		this.rebellionCount = 0;
 		SessionUtils.sendInciteRebellionRequest(this);
 	}
 	
+	/**
+	 * Accept an event to vote for a rebellion/not.
+	 * @param rebel Person who started it.
+	 */
 	public void processRespondtoRebellion(Member rebel)
 	{
 		/* If controller accepts giving up control */
@@ -579,6 +627,10 @@ public class Session
     	}
 	}
 	
+	/**
+	 * Process votes for a rebellion, if enough,
+	 * hand control to yourself.
+	 */
 	public void processRebellionVotes()
 	{
 		this.rebellionCount = this.rebellionCount + 1;
@@ -586,6 +638,16 @@ public class Session
 		{
 			this.processTransferOwnership(this.localUser, false);
 		}
+	}
+
+	public void setBaseline(DrawState baseline)
+	{
+		this.currentState = baseline;
+		
+	}
+
+	public void updatePeerListOnScreen() {
+		this.chatPanel.refreshUsersList();
 	}
 
 }
