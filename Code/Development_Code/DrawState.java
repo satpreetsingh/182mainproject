@@ -55,6 +55,9 @@ public class DrawState implements Serializable{
 		return this.lastSelected;
 	}
 	
+	/**
+	 * Clear the last selected object.
+	 */
 	public void clearLastSelectedObject()
 	{
 		this.lastSelected = null;
