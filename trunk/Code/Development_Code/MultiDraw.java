@@ -33,12 +33,12 @@ public class MultiDraw extends JApplet  {
 			
 		controlPanelController = new ControlPanelController();
 		getContentPane().setLayout(new BorderLayout());
-		canvas = createDrawingCanvas();
+		canvas = new DrawingCanvas();
 		getContentPane().add(canvas, BorderLayout.CENTER);
 	    chatPanelView = new ChatPanelView();
 	    chatPanelController = new ChatPanelController(chatPanelView);
 	    getContentPane().add(chatPanelView,BorderLayout.EAST);
-		controlPanel = createControlPanelView();
+		controlPanel = new ControlPanelView(controlPanelController);
 		getContentPane().add(controlPanel, BorderLayout.SOUTH);
 		tools = createTools();
 		toolBar = createToolBarView(tools);
@@ -70,23 +70,6 @@ public class MultiDraw extends JApplet  {
         sessionMgr.start();
 
 	}
-
-
-	
-	/* Factory methods  */
- 
-	protected static InitialWindowView createInitialWindowView() {
-		return new InitialWindowView();
-	}	
-	
-	protected DrawingCanvas createDrawingCanvas() {
-		return new DrawingCanvas();
-	}
-  
-	protected ControlPanelView createControlPanelView() {
-		return new ControlPanelView(null); 
-	}
-
  
 	protected ToolBarView createToolBarView(ArrayList<ToolController> toolList) {
 		return new ToolBarView(toolList);
@@ -166,7 +149,7 @@ public class MultiDraw extends JApplet  {
    */
   public static void main(String[] args) {
     
-	  initialwindow = createInitialWindowView();
+	  initialwindow = new InitialWindowView();
 
   }
 
