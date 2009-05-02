@@ -41,27 +41,29 @@ public class ControlPanelView extends JPanel {
 	    /* Make sure the set the name of this component for evaluation in the controller */
         comboType = new JComboBox();
 	    comboType.setName("comboType");
-        //Line type
-	    comboType.addItem("outline");
-	    comboType.addItem("solid");
+        
+	    /* Set the possible shape types */
+	    comboType.addItem("Outline");
+	    comboType.addItem("Solid");
+	    
 	    add(comboType);
+	    
 	    
 	    
 	    comboColor = new JComboBox();
 	    
 	    /* Make sure the set the name of this component for evaluation in the controller */
 	    comboColor.setName("comboColor");
-        comboColor.addItem("dark gray");
-        comboColor.addItem("blue");
-        comboColor.addItem("cyan");
-        comboColor.addItem("green");
-        comboColor.addItem("magenta");
-	    comboColor.addItem("red");
-        comboColor.addItem("orange");
-        comboColor.addItem("pink");
-        comboColor.addItem("yellow");
-        comboColor.addItem("light grey");
-   	    comboColor.addItem("black");
+	    comboColor.addItem("Black");
+        comboColor.addItem("Blue");
+        comboColor.addItem("Cyan");
+        comboColor.addItem("Green");
+        comboColor.addItem("Magenta");
+	    comboColor.addItem("Red");
+        comboColor.addItem("Orange");
+        comboColor.addItem("Pink");
+        comboColor.addItem("Yellow");
+   	    
 	    add(comboColor);
 
 	    
