@@ -69,56 +69,40 @@ public class ControlPanelController
   }
   private Color itemToColor(Object item) {
     
-    if("dark gray".equals(item))
-    {
-        return Color.darkGray;
+	  
+    if("Blue".equals(item)) {
+      return Color.BLUE;
     }
-    else if("blue".equals(item))
-    {
-      return Color.blue;
+    else if("Cyan".equals(item)) {
+        return Color.CYAN;
     }
-    else if("cyan".equals(item))
-    {
-        return Color.cyan;
+    else if("Green".equals(item)) {
+    	return Color.GREEN;
     }
-    else if("green".equals(item)) 
-    {
-    	return Color.green;
+    else if("Magenta".equals(item)) {
+        return Color.MAGENTA;
     }
-    else if("magenta".equals(item))
-    {
-        return Color.magenta;
+    else if("Red".equals(item)) {
+        return Color.RED;
     }
-    else if("red".equals(item))
-    {
-        return Color.red;
+    else if("Orange".equals(item)) {
+        return Color.ORANGE;
     }
-    else if("orange".equals(item))
-    {
-        return Color.orange;
+    else if("Pink".equals(item)) {
+        return Color.PINK;
     }
-    else if("pink".equals(item))
-    {
-        return Color.pink;
+    else if("Yellow".equals(item)) {
+        return Color.YELLOW;
     }
-    else if("yellow".equals(item))
-    {
-        return Color.yellow;
-    }
-    else if("light gray".equals(item))
-    {
-        return Color.lightGray;
-    }
-    else 
-    {
-    	return Color.black;
+    else {
+    	return Color.BLACK;
     }
   }
 
   protected boolean itemToType(Object item) {
 	  
 		/* By default, we always return 1 (draw outline) */     
-		if("solid".equals(item)) {
+		if("Solid".equals(item)) {
 		  return false;	
 		}
 		else {
