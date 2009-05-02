@@ -7,33 +7,23 @@ import java.awt.event.*;
  *
  */
 public class ControlPanelController
-	implements ActionListener, ItemListener 
+	implements ActionListener, ItemListener, SessionListener
 {
-
-  Session session;
+    
+	private Session session = null;
   
-  /**
-   * Create a new instance of the Controller, with the session it should be interacting with.
-   * @param s Session to interact with.
-   */
-  ControlPanelController(Session s) 
-  {
-	  session = s;
-  }
 
-  /**
-   * The clearObjects button received an event,
-   * ask Session to delete objects.
-   */
-  public void actionPerformed(ActionEvent e) {
-	  if(session != null)
-	  {
-		  session.processClearObjects(false);
-	  }
-	  
-	 
-	  
-  }
+	/**
+     * The clearObjects button received an event,
+     * ask Session to delete objects.
+     */
+    public void actionPerformed(ActionEvent e) 
+    {
+    	if(session != null)
+    	{
+    		session.processClearObjects(false);
+    	}
+    }
  
   /**
    * The color of the pen changed, update it.
@@ -55,19 +45,11 @@ public class ControlPanelController
 		session.canvas.refresh();
     
 	}
-	  
+  }
 
-  }
- 
-  /**
-   * Change the Session that this Controller focuses on.
-   * @param s Session to focus on.
-   */
-  public void updateSession(Session s)
+  
+  private Color itemToColor(Object item) 
   {
-	  session = s;
-  }
-  private Color itemToColor(Object item) {
     
 	  
     if("Blue".equals(item)) {
@@ -99,15 +81,29 @@ public class ControlPanelController
     }
   }
 
-  protected boolean itemToType(Object item) {
-	  
+  	protected boolean itemToType(Object item) 
+  	{
+  		
 		/* By default, we always return 1 (draw outline) */     
-		if("Solid".equals(item)) {
+		if("Solid".equals(item)) 
+		{
 		  return false;	
 		}
-		else {
+		else 
+		{
 		  return true;	
 		}	  
-  }  
+  	}
+
+	@Override
+	public Session getSession() {
+		return session;
+	}
+	
+	@Override
+	public void setSession(Session s) {
+		session = s;
+		
+	}  
 
 } 

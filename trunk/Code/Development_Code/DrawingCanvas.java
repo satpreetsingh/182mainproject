@@ -23,6 +23,7 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
 	
 	private MouseController mouseController = null;
 	private KeyboardController keyController = null;
+	
 	private Image imageBuffer = null;
 	private Graphics imageBufferGraphics = null;
 	private int canvasWidth = 0;
@@ -39,48 +40,8 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
     public DrawingCanvas() 
     {
 	    setBackground(Color.white);
-	    mouseController = createDrawingCanvasController();
-	    addMouseListeneer(mouseController);
-	    keyController = createKeyboardController();
-	    addKeyboardListener(keyController);
+	
     }
-  
-    /**
-     * Create a MouseController.
-     * @return Returns the instantiated controller.
-     */
-    protected MouseController
-               createDrawingCanvasController() {
-      return new MouseController(session);
-    }
-  
-    /**
-     * Create a keyboard controller.
-     * @return Returns the instantiated controller.
-     */
-    protected KeyboardController createKeyboardController() {
-      return new KeyboardController(session);
-    }
-  
-    /**
-     * Add mouse listener to the Canvas.
-     * @param listener Listener to add.
-     */
-    protected void addMouseListeneer(EventListener listener) 
-    {
-    	addMouseListener ((MouseListener) listener);
-    	addMouseMotionListener ((MouseMotionListener) listener);
-    }
-  
-  
-    /**
-     * Add keyboard listener to the canvas.
-     * @param listener Listener to add.
-     */
-    protected void addKeyboardListener(EventListener listener) {
-    	addKeyListener ((KeyListener)listener);
-    }
-  
   
     /**
      * Updates are done by painting the canvas.
@@ -398,6 +359,15 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
 	public void setSession(Session s) {
 		session = s;
 		this.refresh();
+		
+	    mouseController = new MouseController(session);
+	    addMouseListener((MouseListener)(mouseController));
+	    addMouseMotionListener((MouseMotionListener)(mouseController));
+	    
+	    keyController = new KeyboardController(session);
+	    addKeyListener((KeyListener)(keyController));
+   
+		
 	}
     
     
