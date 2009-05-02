@@ -15,7 +15,7 @@ public class MenuBarView extends JMenuBar
 	
 	/**
 	 * Create a new MenuBar.
-	 * @param s Session passed to controller.
+	 * @param canvas Canvas passed to controller.
 	 */
 	MenuBarView(DrawingCanvas canvas, ArrayList<ToolController> actions) 
 	{
@@ -30,6 +30,14 @@ public class MenuBarView extends JMenuBar
         /* Create File menu items */
         JMenuItem fileItem1 = new JMenuItem("New");
         JMenuItem fileItem2 = new JMenuItem("Quit");       
+        
+        /* Set the file name and listener */
+        fileItem1.setName("fileItem1");
+        fileItem2.setName("fileItem2");
+                
+        fileItem1.addActionListener((ActionListener)controller);
+        fileItem2.addActionListener((ActionListener)controller);
+          
         
         /* Add File menu items */
         fileMenu.add(fileItem1);
@@ -52,10 +60,14 @@ public class MenuBarView extends JMenuBar
         
         /* Additional tool menu items */
         JMenuItem toolItem1 = new JMenuItem("Add Tool");
-        JMenuItem toolItem2 = new JMenuItem("Share Tool");
 
+        /* Set the tool name and listener */
+        toolItem1.setName("toolItem1");
+        
+        toolItem1.addActionListener((ActionListener)controller);
+        
         toolMenu.add(toolItem1);
-        toolMenu.add(toolItem2);      
+     
         
 		/* Add the toolMenu to the MenuBar */
 		add(toolMenu);
@@ -67,6 +79,14 @@ public class MenuBarView extends JMenuBar
         JMenuItem ctrlItem1 = new JMenuItem("Request");
         JMenuItem ctrlItem2 = new JMenuItem("Relinquish");
         
+        /* Set the name of the objects */
+        ctrlItem1.setName("ctrlItem1");
+        ctrlItem2.setName("ctrlItem2");
+        
+        /* Add the listener for the session item menu options */
+        ctrlItem1.addActionListener((ActionListener)controller);
+        ctrlItem2.addActionListener((ActionListener)controller);
+ 
         /* Add Control menu items */
         ctrlMenu.add(ctrlItem1);
         ctrlMenu.add(ctrlItem2);

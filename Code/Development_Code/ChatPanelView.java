@@ -1,10 +1,10 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 
 
@@ -13,17 +13,17 @@ import javax.swing.JTextArea;
  * @author ben
  *
  */
-public class ChatPanelView extends JPanel
+public class ChatPanelView extends JToolBar
 {
     private Session session;
     private ChatPanelController controller;
 
-    public ChatPanelView(Session s)
-    {
-        session = s;
-        JToolBar chat = new JToolBar("Chat", JToolBar.VERTICAL);
-
-                 int amtUsers = 5;
+    public ChatPanelView(Session s) {
+    	
+    	
+         session = s;
+        
+         int amtUsers = 5;
          String[] users = new String[amtUsers];
 
          users = getUsers(5);
@@ -33,14 +33,14 @@ public class ChatPanelView extends JPanel
          JLabel list2 = new JLabel(users[2]);
          JLabel list3 = new JLabel(users[3]);
          JLabel list4 = new JLabel(users[4]);
-
-         chat.add(list0);
-         chat.add(list1);
-         chat.add(list2);
-         chat.add(list3);
-         chat.add(list4);
-         chat.addSeparator();
-
+      
+         add(list0);
+         add(list1);
+         add(list2);
+         add(list3);
+         add(list4);
+         addSeparator();
+         
         //get a list of users and display them
 
         //display chat messages
@@ -57,17 +57,19 @@ public class ChatPanelView extends JPanel
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             areaScrollPane.setPreferredSize(new Dimension(250, 250));
 
-         chat.add(chatbox);
-
-         chat.addSeparator();
-         JTextArea mychat = new JTextArea(1,20);
-         JScrollPane scrollPane2 = new JScrollPane(mychat, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                    mychat.setEditable(true);
-
-         chat.add(mychat);
-
+            
+         add(chatbox);
+         addSeparator(); 
+                    
+         JTextField txtMsg = new JTextField(20);
+         add(txtMsg);
+         
+         
          JButton chatBTN = new JButton("Send");
-         chat.add(chatBTN);
+        
+         //chat.add(chatBTN);
+         add(chatBTN);
+         
 
     }
      public static String[] getUsers(int amt)
@@ -75,8 +77,11 @@ public class ChatPanelView extends JPanel
         // This is eventually going to get a list of users from the chat section
         // Possibly in array form??
         // Right now there are dummy values for this in an array, please adjust as needed
-                int amtUsers = amt; // constant here, this would be retrieved
-        String[] users = new String[amtUsers];
+        
+    	int amtUsers = amt; // constant here, this would be retrieved
+        
+    	
+    	String[] users = new String[amtUsers];
         users[0] = "Amanda";
         users[1] = "Ben";
         users[2] = "Joe";

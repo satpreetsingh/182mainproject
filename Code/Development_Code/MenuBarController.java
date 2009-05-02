@@ -8,10 +8,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+
+
 
 
 /**
@@ -22,13 +25,12 @@ import javax.swing.JOptionPane;
  */
 public class MenuBarController implements ActionListener {
 
-	
 	protected DrawingCanvas canvas;
 	protected JFileChooser FileChooser;
 	
 	
 	/**
-	 * Constuctor passes canvas into the controller.
+	 * Constructor passes canvas into the controller.
 	 * @param DrawingCanvas c
 	 */
 	MenuBarController (DrawingCanvas c){
@@ -47,15 +49,126 @@ public class MenuBarController implements ActionListener {
 		
 		
 		
+		/* Create a new session */
+		if (e.getSource().toString().contains("fileItem1")) {		
+        	JOptionPane.showMessageDialog(
+        			null,
+        			"This version of MultiDraw is in beta development.  " + "\n" +
+        			"Please look for upcoming releases which should include multiple session handling.",
+        			"New Session",
+        			JOptionPane.INFORMATION_MESSAGE);	
+
+	
+		}		
+		
+		/* Close the application */
+		else if (e.getSource().toString().contains("fileItem2")) {		
+			System.out.println("MenuBarController TODO:  Add in exiting a session code!");
+			System.exit(0);			
+		}		
+		
+		
+		/* Attempt to dynamically load a class */
+		else if (e.getSource().toString().contains("toolItem1")) {
+			/* Create the JFileChooser component, and set the directory to the user directory */
+			FileChooser = new JFileChooser(System.getProperty("user.dir"));
+		
+			/* Initiate the classes to null */
+			Class NewShapeClass = null;
+			
+			Object FactoryObject = null;
+			Method FactoryMethod = null;
+			
+		
+
+			/* Now load the shape class */
+			if  (FileChooser.showDialog(null, "Open Shape file") == JFileChooser.APPROVE_OPTION) {
+				
+				System.out.println(FileChooser.getSelectedFile().getName());
+				
+				filename = FileChooser.getSelectedFile().getName();
+				
+				/* Trim off the extension */
+				filename = filename.substring(0, filename.indexOf("."));
+				
+				
+				/* Add the results as optional output (defined by user preferences) */
+				Output.processMessage("Filename = " + filename, Constants.Message_Type.info);
+				
+				CompilingClassLoader classloader = new CompilingClassLoader();
+				
+				/* Load the class */
+				try {
+					NewShapeClass = classloader.loadClass(filename);
+					
+				} catch (ClassNotFoundException e1) {
+					Output.processMessage("Cannot load class = " + filename, Constants.Message_Type.error);
+				}			
+			}
+			
+			
+			if (NewShapeClass != null) {
+			
+				
+				/* Create a live object */
+				try {
+					FactoryObject = NewShapeClass.newInstance();
+				} catch (InstantiationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+				/* We have the factory and shape class, now append the ToolList 
+	
+				/* Reload all of the items on the menubar */
+		
+			
+			}
+			
+			else{
+				/* Reset the objects to null */
+				NewShapeClass = null;
+			}	
+		}
+
+		
+		
+		/* We want to request control of a session */
+		else if (e.getSource().toString().contains("ctrlItem1")) {
+			
+			
+			/* Attempt to gain ownership of the session */
+
+				
+			
+			
+		}
+		
+		/* We want to relinquish control of a session */
+		else if (e.getSource().toString().contains("ctrlItem2")) {
+				
+        	JOptionPane.showMessageDialog(
+        			null,
+        			"This version of MultiDraw is in beta development.  " + "\n" +
+        			"Please look for upcoming releases which should include relinquishing control of a session.",
+        			"New Session",
+        			JOptionPane.INFORMATION_MESSAGE);	
+        	
+		}
+		
 		/* We want to SAVE a session */
-		if (e.getSource().toString().contains("sessionItem1")) {
+		else if (e.getSource().toString().contains("sessionItem1")) {
 			
 			/* Create the JFileChooser component, and set the directory to the user directory */
 			FileChooser = new JFileChooser(System.getProperty("user.dir"));
 			
 		
 			/* If the user clicked OK, get the path */
-			if  (FileChooser.showDialog(null, "Save") == JFileChooser.APPROVE_OPTION) {
+			if  (FileChooser.showDialog(null, "Save Session") == JFileChooser.APPROVE_OPTION) {
 		
 				/* Get the absolute path of the file the user entered in from the dialog window */
 				filename = FileChooser.getSelectedFile().getAbsolutePath();
@@ -75,7 +188,7 @@ public class MenuBarController implements ActionListener {
 			}      		
 		}
 		
-		/* We want to SAVE a session */
+		/* We want to LOAD a session */
 		else if (e.getSource().toString().contains("sessionItem2")){
 			
 			/* Create the JFileChooser component, and set the directory to the user directory */
@@ -83,7 +196,7 @@ public class MenuBarController implements ActionListener {
 			
 		
 			/* If the user clicked OK, get the path */
-			if  (FileChooser.showDialog(null, "Open") == JFileChooser.APPROVE_OPTION) {
+			if  (FileChooser.showDialog(null, "Load Session") == JFileChooser.APPROVE_OPTION) {
 			
 				/* Get the absolute path of the file the user entered in from the dialog window */
 				filename = FileChooser.getSelectedFile().getAbsolutePath();
@@ -93,9 +206,20 @@ public class MenuBarController implements ActionListener {
 				
 				
 				try{
-				
-					/* Perform the loading of the canvas */
-					canvas.doLoad(filename);
+					
+					/*  Make sure the user selects a valid filename before loading (and clearing the canvas) */
+					if (FileChooser.getSelectedFile().exists()) {
+						
+						/* Perform the loading of the canvas */
+						canvas.doLoad(filename);
+					}
+					else {
+	          			JOptionPane.showMessageDialog(
+	          		  			null,
+	          		  			"You must enter valid file.",
+	          		  			"Input Error",
+	          		  			JOptionPane.ERROR_MESSAGE); 
+					}
 				
 				} catch (Exception ex) {              
 					/* Do nothing */
