@@ -15,6 +15,8 @@ import javax.swing.JTextField;
  */
 public class ChatPanelView extends JToolBar implements SessionListener
 {
+	private Constants.Message_Type currentPriority = Constants.Message_Type.debug;
+	
     private Session session;
     private ChatPanelController controller;
     private List lstUsers;
@@ -30,11 +32,12 @@ public class ChatPanelView extends JToolBar implements SessionListener
     JButton btnChat;
 
     
-    public ChatPanelView(Session s) {
-    	
-    	
-         session = s;
-        
+    /**
+     * Create a new chatPanelView
+     */
+    public ChatPanelView() 
+    {
+         session = null;
          
          /* Set up the main panel for this JToolBar container */
          pnlMain = new JPanel();                
@@ -43,18 +46,13 @@ public class ChatPanelView extends JToolBar implements SessionListener
          /* Set up the top panel */
          pnlTop = new JPanel();
          pnlTop.setLayout(new BoxLayout(pnlTop, BoxLayout.Y_AXIS));
-
          
          /* Create the user list and add it to the main panel */
          lstUsers = new List();
          
-         RefreshUsersList();
+         refreshUsersList();
          
          pnlTop.add(lstUsers);
-         
-
-
-        //get a list of users and display them
 
         //display chat messages
         chatbox = new JTextArea ("This is where chats should be sent");
@@ -65,19 +63,14 @@ public class ChatPanelView extends JToolBar implements SessionListener
         chatbox.setFont(new Font("Serif", Font.BOLD, 16));
         chatbox.setLineWrap(true);
         chatbox.setWrapStyleWord(true);
-
-        
         
         areaScrollPane = new JScrollPane(chatbox);
         areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         areaScrollPane.setPreferredSize(new Dimension(250, 250));
         pnlTop.add(chatbox);
-
         
         /* Add the top panel to the main panel */    
         pnlMain.add(pnlTop);
-
-        
         
         /* Set up the bottom panel */
         pnlBot = new JPanel();
@@ -86,7 +79,6 @@ public class ChatPanelView extends JToolBar implements SessionListener
         
         txtMsg = new JTextField(20);
         pnlBot.add(txtMsg);
-         
          
         btnChat = new JButton("Send");
         pnlBot.add(btnChat);
@@ -100,13 +92,19 @@ public class ChatPanelView extends JToolBar implements SessionListener
         
     }
     
-    public void RefreshUsersList () 
+    /**
+     * Update the list of users.
+     */
+    public void refreshUsersList () 
     {
-    	lstUsers.clear();
-    	for(int i = 0; i < session.networkMembers.size(); i++)
+    	lstUsers.removeAll();
+    	if(session != null)
     	{
-    		lstUsers.add(session.networkMembers.get(i).person.name);
-    		
+	    	for(int i = 0; i < session.networkMembers.size(); i++)
+	    	{
+	    		lstUsers.add(session.networkMembers.get(i).person.name);
+	    		
+	    	}
     	}
     	
      }
@@ -117,8 +115,62 @@ public class ChatPanelView extends JToolBar implements SessionListener
 
 	public void setSession(Session s) {
 		session = s;
-		RefreshUsersList();
+		refreshUsersList();
 		
 	}
+	
+	/**
+	 * Process a message.
+	 * @param s Message to process.
+	 * @param m Message priority.
+	 */
+	public void processMessage(String s, Constants.Message_Type m)
+	{
+		String finalOutput = "";
+		if(m == Constants.Message_Type.none)
+		{
+			finalOutput = ("Someone did something dumb, asked a message to be printed with priority none.");
+		}
+		else
+		{
+			if (currentPriority == Constants.Message_Type.debug)
+			{
+				finalOutput = s;
+			}
+			else if (currentPriority == Constants.Message_Type.info)
+			{
+				if(m != Constants.Message_Type.debug)
+				{
+					finalOutput = s;
+				}
+			}
+			else if (currentPriority == Constants.Message_Type.error)
+			{
+				if(m == Constants.Message_Type.error ||
+				   m == Constants.Message_Type.chat)
+				{
+					finalOutput = s;
+				}
+			}
+			else if (currentPriority == Constants.Message_Type.chat)
+			{
+				if(m == Constants.Message_Type.chat)
+				{
+					finalOutput =s;
+				}
+			}
+			else
+			{
+				
+			}
+		}
+		
+		if(finalOutput.equals("") == false)
+		{
+			chatbox.append(finalOutput);
+		}
+		
+	}
+
 
 }

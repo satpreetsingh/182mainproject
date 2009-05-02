@@ -28,7 +28,7 @@ public class ControlPanelController
   public void actionPerformed(ActionEvent e) {
 	  if(session != null)
 	  {
-		  session.clearObjects(false);
+		  session.processClearObjects(false);
 	  }
 	  
 	 

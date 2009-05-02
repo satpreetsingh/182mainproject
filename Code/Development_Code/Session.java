@@ -22,8 +22,11 @@ import javax.swing.JOptionPane;
  * @author bmhelppi
  *
  */
-public class Session {
+public class Session 
+{
 
+	
+	private int rebellionCount = 0;
 	public ArrayList<PeerThread> threads = new ArrayList<PeerThread>();
 	public ArrayList<NetworkBundle>  networkMembers;
 	public ArrayList<ToolController> tools;
@@ -35,6 +38,7 @@ public class Session {
 	public DrawState currentState;
 	
 	public DrawingCanvas canvas;
+	public ChatPanelView chatPanel;
 	
 	/**
 	 * Create a new Session on the local machine, that this application will not be in charge of.
@@ -46,7 +50,13 @@ public class Session {
 	 * @param port
 	 * @throws ActivationException
 	 */
-	public Session (NetworkBundle local, ServerSocket serverSock,DrawingCanvas canvas, String ip, int port,ArrayList<ToolController> tools) throws ActivationException
+	public Session 
+	(NetworkBundle local, 
+			ServerSocket serverSock,
+			DrawingCanvas canvas,
+			String ip, 
+			int port,ArrayList<ToolController> tools, 
+			ChatPanelView chatPanel) throws ActivationException
 	{
 		networkMembers = new ArrayList<NetworkBundle>();
 		networkMembers.add(local);
@@ -56,6 +66,7 @@ public class Session {
 		this.master = null;
 		this.serverSock = serverSock;
 		this.tools = tools;
+		this.chatPanel = chatPanel;
 		
 		try 
 		{
@@ -92,7 +103,7 @@ public class Session {
 	 * @param creater
 	 * @param canvas
 	 */
-	public Session (ServerSocket serverSock,NetworkBundle creater, DrawingCanvas canvas,ArrayList<ToolController> tools)
+	public Session (ServerSocket serverSock,NetworkBundle creater, DrawingCanvas canvas,ArrayList<ToolController> tools, ChatPanelView chatPanel)
 	{
 		networkMembers = new ArrayList<NetworkBundle>();
 		networkMembers.add(creater);
@@ -102,6 +113,7 @@ public class Session {
 		this.localUser = creater;
 		this.serverSock = serverSock;
 		this.tools = tools;
+		this.chatPanel = chatPanel;
 	}
 	
 	
@@ -124,7 +136,7 @@ public class Session {
 	/**
 	 * Process an event to clear the last selected object.
 	 */
-	public void clearSelection(boolean networkEvent)
+	public void processClearSelectedObject(boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -140,7 +152,7 @@ public class Session {
 	 * Process an event to select a shape.
 	 * @param s Shape to select.
 	 */
-	public void selectShape(Shape s, boolean networkEvent)
+	public void processSelectShape(Shape s, boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -167,7 +179,7 @@ public class Session {
 	 * Process an event to delete a shape.
 	 * @param s Shape to delete.
 	 */
-	public void deleteShape (Shape s, boolean networkEvent)
+	public void processDeleteShape (Shape s, boolean networkEvent)
 	{
 		if (this.drawable(this.localUser))
 		{
@@ -196,7 +208,7 @@ public class Session {
 	 * @param s Shape to set.
 	 * @param c Color to set.
 	 */
-	public void setMainColor(Shape s, Color c, boolean networkEvent)
+	public void processSetMainColor(Shape s, Color c, boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -225,7 +237,7 @@ public class Session {
 	 * @param shape Shape to set.
 	 * @param IsOutline boolean to set.
 	 */
-	public void setShapeFill(Shape shape, boolean isoutline, boolean networkEvent)
+	public void processSetShapeFill(Shape shape, boolean isoutline, boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -253,7 +265,7 @@ public class Session {
 	/**
 	 * Process an event to delete all the shapes on the canvas.
 	 */
-	public void clearObjects(boolean networkEvent)
+	public void processClearObjects(boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -472,37 +484,108 @@ public class Session {
 		return localTool;
 	}
 	
-	public void chatMessage(String message, boolean networkEvent)
+	public void processChatMessage(String message, boolean networkEvent)
 	{
-		
+		if(networkEvent == false)
+		{
+			SessionUtils.sendChatMesage(this, message);
+		}
+		else
+		{
+			this.chatPanel.processMessage(message, Constants.Message_Type.chat);
+		}
 	}
 	
-	public void transferOwnership(NetworkBundle newOwner)
+	public void processTransferOwnership(NetworkBundle newOwner, boolean networkEvent)
 	{
-		
+		this.master = newOwner;
+		this.chatPanel.processMessage("New owner is " + newOwner.person.name, Constants.Message_Type.info);
+		if(networkEvent == false)
+		{
+			SessionUtils.sendTransferOwnership(this, newOwner);
+		}
 	}
 	
-	public void requestOwnership()
+	public void processRejectOwnership(NetworkBundle newOwner, boolean networkEvent)
+	{
+		if(networkEvent == false)
+		{
+			SessionUtils.sendRejectOwnerShip(this, newOwner);
+		}
+		else
+		{
+			// Joe please create popup to inform user they are denied.
+		}
+	}
+	
+	public void processRequestOwnership(Member requestor, boolean networkEvent)
 	{
 		//Step 1 Joe call this
-		//Step 2 Ben check if user isn't the controller, then continue on to Network this
-		//Step 3 Joe add popup confirm/deny.
 		
+		NetworkBundle requestBundle = null;
+		for(int i = 0; i < networkMembers.size(); i++)
+		{
+			if(networkMembers.get(i).person.id.equals(requestor.id))
+			{
+				requestBundle = networkMembers.get(i);
+			}
+		}
+		if(networkEvent && requestBundle != null)
+		{
+	    	/* If controller accepts giving up control */
+	    	if (JOptionPane.showConfirmDialog(
+	    	    null,
+	    	    "Would you like to pass control of the session to " + requestor.name + "?",
+	    	    "Pass Control Request",
+	    	    JOptionPane.YES_NO_OPTION) == 0)
+	    	{
+	    		this.processTransferOwnership(requestBundle, false);
+	    	}
+	    	else
+	    	{
+	    		this.processRejectOwnership(requestBundle, false);
+	    	}
+		}
+		else
+		{
+			SessionUtils.sendOwnershipRequest(this);
+		}
+			
 		
-    	/* If controller accepts giving up control */
+			
+	}
+	
+	public void processInciteRebellion()
+	{
+		this.rebellionCount = 0;
+		SessionUtils.sendInciteRebellionRequest(this);
+	}
+	
+	public void processRespondtoRebellion(Member rebel)
+	{
+		/* If controller accepts giving up control */
     	if (JOptionPane.showConfirmDialog(
     	    null,
-    	    "Would you like to pass control of the session?",
-    	    "Pass Control Request",
-    	    JOptionPane.YES_NO_OPTION) == 0){
-    		
+    	    rebel.name + 
+    	    " thinks the current owner is boring.  Want to replace " +
+    	    this.master.person.name + "?",
+    	    "Rebellion",
+    	    JOptionPane.YES_NO_OPTION) == 0)
+    	{
+    		SessionUtils.sendRebellionSupport(this);
     	}
-    	else{
-    		/* Alert user his request got denied */
+    	else
+    	{
     	}
-			
-		
-			
+	}
+	
+	public void processRebellionVotes()
+	{
+		this.rebellionCount = this.rebellionCount + 1;
+		if(this.rebellionCount >= this.networkMembers.size() / 2)
+		{
+			this.processTransferOwnership(this.localUser, false);
+		}
 	}
 
 }

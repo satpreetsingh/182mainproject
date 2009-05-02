@@ -23,44 +23,19 @@ public class MultiDraw extends JApplet  {
 	
 	
 
-  /* Constructors  */
-  
 	/**
 	 * Create a new instance of MultiDraw class.
 	 */
 	public MultiDraw() 
 	{ 
-		  sessionMgr = new SessionManager();
-		  
-		  		    
-		    
-		  /**
-			 * TODO: REMOVE LATER
-			 * This is temp code, it automatically creates a new session,
-			 * so that Object draw functionality will work.
-			*/
-			String tempName;
+		sessionMgr = new SessionManager();
 			
-			isSlave = initialwindow.getSlaveMaster();
-	
-		    Member temp = new Member(initialwindow.getUserName());
-			  
-			  Session tempAuto;
-			  if (isSlave == false)
-			  {
-				  tempAuto = SessionUtils.buildSession(temp,canvas, tools);
-			  }
-			  else
-			  {
-				  tempAuto = SessionUtils.buildSession(temp, canvas, initialwindow.getIP(), initialwindow.getPort(), tools);
-			  }
-		
 		
 		getContentPane().setLayout(new BorderLayout());
 		canvas = createDrawingCanvas();
 		getContentPane().add(canvas, BorderLayout.CENTER);
-	    chatPanelView = new ChatPanelView(tempAuto);
-	    chatPanelController = new ChatPanelController(tempAuto, chatPanelView);
+	    chatPanelView = new ChatPanelView();
+	    chatPanelController = new ChatPanelController(chatPanelView);
 	    getContentPane().add(chatPanelView,BorderLayout.EAST);
 		controlPanel = createControlPanelView();
 		getContentPane().add(controlPanel, BorderLayout.SOUTH);
@@ -71,10 +46,24 @@ public class MultiDraw extends JApplet  {
 	  	getContentPane().add (menuBar, BorderLayout.NORTH);
 	  	
 	  	
+		isSlave = initialwindow.getSlaveMaster();
+	    Member tempMember = new Member(initialwindow.getUserName());
+		Session tempSession;
+		if (isSlave == false)
+		{
+		    tempSession = SessionUtils.buildSession(tempMember,canvas, tools,chatPanelView);
+		}
+		else
+		{
+            tempSession = SessionUtils.buildSession(tempMember, canvas, initialwindow.getIP(), initialwindow.getPort(), tools,chatPanelView);
+		}
+
+	  	
+	  	
         sessionMgr.addSessionChangeListenObject(canvas);	
         sessionMgr.addSessionChangeListenObject(chatPanelView);
         sessionMgr.addSessionChangeListenObject(chatPanelController);
-     	sessionMgr.addNewSession(tempAuto);
+     	sessionMgr.addNewSession(tempSession);
         sessionMgr.start();
 
 	}

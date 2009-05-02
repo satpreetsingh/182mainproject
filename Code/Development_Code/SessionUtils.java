@@ -107,7 +107,7 @@ public class SessionUtils
 	 * @param c Canvas, will be in focus of the Session created.
 	 * @return Returns an operation Session, if the port is available, else null.
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools)
+	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools, ChatPanelView chatPanel)
 	{
 		Session result;
 		boolean portNotFound = true;
@@ -132,7 +132,7 @@ public class SessionUtils
 			String ipAddress = java.net.InetAddress.getLocalHost().getHostAddress();
 			
 			NetworkBundle creater = new NetworkBundle(m, null, null, null, ipAddress, port);
-			result = new Session(serverSock, creater, c, tools);
+			result = new Session(serverSock, creater, c, tools, chatPanel);
 			Output.processMessage("Built session " + ipAddress + "@" + port, Constants.Message_Type.info);
 			
 		} 
@@ -153,7 +153,7 @@ public class SessionUtils
 	 * @param port Port to connect to.
 	 * @return Returns a session, if success, else returns null; 
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools)
+	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools, ChatPanelView chatPanel)
 	{
 		Session result;
 		int localPort = 0;
@@ -178,7 +178,7 @@ public class SessionUtils
 			String localIp = java.net.InetAddress.getLocalHost().getHostAddress();
 			NetworkBundle local = new NetworkBundle(m,null,null,null, localIp, localPort);
 			
-			result = new Session(local, serverSock, c, ip, port,tools);
+			result = new Session(local, serverSock, c, ip, port,tools,chatPanel);
 			Output.processMessage("Built session " + localIp + "@" + localPort, Constants.Message_Type.info);
 		}
 		catch(Exception e)
@@ -191,6 +191,106 @@ public class SessionUtils
 	}
 
 
+	private static void processChat(Session s, NetworkObject data)
+	{
+		try
+		{
+			String networkData = (String) data.data;
+
+			s.processChatMessage(networkData, true);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective chat message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	
+	private static void processCanvasOwnershipRequest(Session s, NetworkObject data)
+	{
+		try
+		{
+			Member networkData = (Member) data.data;
+			s.processRequestOwnership(networkData, true);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective request owner message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	private static void processCanvasOwnershipConfirm(Session s, NetworkObject data)
+	{
+		try
+		{
+			Member networkData = (Member) data.data;
+
+			NetworkBundle newOwner = null;
+			for(int i = 0; i < s.networkMembers.size(); i++)
+			{
+				if(s.networkMembers.get(i).person.id.equals(networkData.id))
+				{
+					newOwner = s.networkMembers.get(i);
+				}
+			}
+			if(newOwner != null)
+			{
+				s.processTransferOwnership(newOwner, true);
+			}
+			else
+			{
+				Output.processMessage("Defective new owner message recieved, person doesn't exist", Constants.Message_Type.error);
+				
+			}
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective new owner message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	
+	private static void processCanvasOwnershipDeny(Session s, NetworkObject data)
+	{
+		try
+		{
+			s.processRejectOwnership(null, true);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective reject owner message recieved", Constants.Message_Type.error);
+		}
+
+	}
+
+	private static void processCanvasOwnershipRebel(Session s, NetworkObject data)
+	{
+		try
+		{
+			s.processRespondtoRebellion(data.Originator);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective rebellion incite message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	
+	private static void processCanvasOwnershipSupportRebellion(Session s, NetworkObject data)
+	{
+		try
+		{
+			s.processRebellionVotes();
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective rebel support message recieved", Constants.Message_Type.error);
+		}
+
+	}
+	
+	
+	
 	private static void processMouseRelease(Session s, NetworkObject data)
 	{
 		try
@@ -208,7 +308,7 @@ public class SessionUtils
 			Output.processMessage("Defective mouseRelease message recieved", Constants.Message_Type.error);
 		}
 	}
-
+	
 	private static void processMousePress(Session s, NetworkObject data)
 	{
 		try
@@ -297,12 +397,12 @@ public class SessionUtils
 	
 	private static void processClear(Session session, NetworkObject data)
 	{
-		session.clearObjects(true);
+		session.processClearObjects(true);
 	}
 
 	private static void processClearSelection(Session session, NetworkObject data)
 	{
-		session.clearSelection(true);
+		session.processClearSelectedObject(true);
 	}
 	
 	private static void processSelectShape(Session session, NetworkObject data)
@@ -312,7 +412,7 @@ public class SessionUtils
 			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
 			Shape shape= (Shape)networkData.get(0);
 
-			session.selectShape(shape, true);
+			session.processSelectShape(shape, true);
 		}
 		catch (Exception e)
 		{
@@ -329,7 +429,7 @@ public class SessionUtils
 			Shape shape= (Shape)networkData.get(0);
 			boolean isFill = (Boolean)networkData.get(1);
 
-			session.setShapeFill(shape, isFill, true);
+			session.processSetShapeFill(shape, isFill, true);
 		}
 		catch (Exception e)
 		{
@@ -346,7 +446,7 @@ public class SessionUtils
 			Shape shape= (Shape)networkData.get(0);
 			Color color = (Color)networkData.get(1);
 
-			session.setMainColor(shape, color, true);
+			session.processSetMainColor(shape, color, true);
 		}
 		catch (Exception e)
 		{
@@ -362,7 +462,7 @@ public class SessionUtils
 			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
 			Shape shape= (Shape)networkData.get(0);
 
-			session.deleteShape(shape, true);
+			session.processDeleteShape(shape, true);
 		}
 		catch (Exception e)
 		{
@@ -538,7 +638,31 @@ public class SessionUtils
 				{
 					processPeerListUpdate(session, data);
 				}
-
+				else if (data.objectReason == NetworkObject.reason.chat)
+				{
+					processChat(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.canvasOwnershipConfirm)
+				{
+					processCanvasOwnershipConfirm(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.canvasOwnershipDeny)
+				{
+					processCanvasOwnershipDeny(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.canvasOwnershipRequest)
+				{
+					processCanvasOwnershipRequest(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.canvasOwnershipRebel)
+				{
+					processCanvasOwnershipRebel(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.canvasOwnershipSupportRebellion)
+				{
+					processCanvasOwnershipSupportRebellion(session, data);
+				}
+			
 			} 
 			catch (SocketTimeoutException sockTime)
 			{
@@ -565,39 +689,72 @@ public class SessionUtils
 		}
 	}
 
-	private static void genericSendToAllPeers(Session s, Object o, NetworkObject.reason reason)
+	/**
+	 * Generic send.
+	 * @param s Session to send to.
+	 * @param o Object to send.
+	 * @param reason Reason to send.  IMPORTANT, each reason has one style of packing/unpacking.
+	 * Anything else will cause errors.
+	 * @param specialTarget If message should only go to one person, initialize this, else null.
+	 */
+	private static void genericSendToAllPeers(Session s, Object o, NetworkObject.reason reason, NetworkBundle specialTarget)
 	{
 		try
 		{
-			for(int i = 0; i < s.networkMembers.size(); i ++)
+			if (specialTarget != null)
 			{
-				NetworkBundle target = s.networkMembers.get(i);
-
-				/**
-				 * Make sure we don't send message to ourself.  That never works well.
-				 */
-				if(target != s.localUser)
+				try
 				{
-					try
-					{
-						NetworkObject genericObject = new NetworkObject
-						(s.localUser.person,
-								target.person,
-								o,
-								reason,
-								1
-						);
-	
-						ObjectOutputStream stream = target.oos;
-	
-						stream.writeObject(genericObject);
-						stream.flush();
-						}
-					catch(Exception e)
-					{
-						Output.processMessage("Error in generic send for a person", Constants.Message_Type.error);
-					}
+					NetworkObject genericObject = new NetworkObject
+					(s.localUser.person,
+							specialTarget.person,
+							o,
+							reason,
+							1
+					);
 
+					ObjectOutputStream stream = specialTarget.oos;
+
+					stream.writeObject(genericObject);
+					stream.flush();
+					}
+				catch(Exception e)
+				{
+					Output.processMessage("Error in generic send for a person", Constants.Message_Type.error);
+				}
+			}
+			else
+			{
+				for(int i = 0; i < s.networkMembers.size(); i ++)
+				{
+					NetworkBundle target = s.networkMembers.get(i);
+	
+					/**
+					 * Make sure we don't send message to ourself.  That never works well.
+					 */
+					if(target != s.localUser)
+					{
+						try
+						{
+							NetworkObject genericObject = new NetworkObject
+							(s.localUser.person,
+									target.person,
+									o,
+									reason,
+									1
+							);
+		
+							ObjectOutputStream stream = target.oos;
+		
+							stream.writeObject(genericObject);
+							stream.flush();
+							}
+						catch(Exception e)
+						{
+							Output.processMessage("Error in generic send for a person", Constants.Message_Type.error);
+						}
+	
+					}
 				}
 			}
 		}
@@ -616,7 +773,7 @@ public class SessionUtils
 			currentPeerList.add(s.networkMembers.get(i).person);
 		}
 
-		genericSendToAllPeers(s, currentPeerList, NetworkObject.reason.peerListUpdate);
+		genericSendToAllPeers(s, currentPeerList, NetworkObject.reason.peerListUpdate, null);
 		Output.processMessage("Master is sending peerListUpdate", Constants.Message_Type.info);
 	}
 
@@ -637,7 +794,7 @@ public class SessionUtils
 		data.add(netBool);
 		data.add(uniqueId);
 
-		genericSendToAllPeers(s, data, NetworkObject.reason.mousePress);
+		genericSendToAllPeers(s, data, NetworkObject.reason.mousePress, null);
 		Output.processMessage("Master is sending mousePress", Constants.Message_Type.info);
 
 	}
@@ -658,7 +815,7 @@ public class SessionUtils
 		data.add(c);
 		data.add(netBool);
 
-		genericSendToAllPeers(s, data, NetworkObject.reason.mouseRelease);
+		genericSendToAllPeers(s, data, NetworkObject.reason.mouseRelease, null);
 		Output.processMessage("Master is sending mouseRelease", Constants.Message_Type.info);
 	}
 
@@ -674,7 +831,7 @@ public class SessionUtils
 		data.add(p);
 		data.add(t);
 
-		genericSendToAllPeers(s, data, NetworkObject.reason.mouseDrag);
+		genericSendToAllPeers(s, data, NetworkObject.reason.mouseDrag, null);
 		Output.processMessage("Master is sending mouseDrag", Constants.Message_Type.info);
 	}
 
@@ -693,7 +850,7 @@ public class SessionUtils
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(networkChar);
 		data.add(tool);
-		genericSendToAllPeers(session, data, NetworkObject.reason.keyTyped);
+		genericSendToAllPeers(session, data, NetworkObject.reason.keyTyped, null);
 
 		Output.processMessage("Master is sending keyTyped", Constants.Message_Type.info);
 
@@ -711,7 +868,7 @@ public class SessionUtils
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(networkChar);
 		data.add(tool);
-		genericSendToAllPeers(session, data, NetworkObject.reason.keyReleased);
+		genericSendToAllPeers(session, data, NetworkObject.reason.keyReleased, null);
 
 		Output.processMessage("Master is sending keyReleased", Constants.Message_Type.info);
 
@@ -731,7 +888,7 @@ public class SessionUtils
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(networkChar);
 		data.add(tool);
-		genericSendToAllPeers(session, data, NetworkObject.reason.keyPressed);
+		genericSendToAllPeers(session, data, NetworkObject.reason.keyPressed, null);
 
 		Output.processMessage("Master is sending keyPressed", Constants.Message_Type.info);
 
@@ -744,7 +901,7 @@ public class SessionUtils
 	 */
 	public static void sendClearObjects(Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
-		genericSendToAllPeers(session, data, NetworkObject.reason.clearCanvas);
+		genericSendToAllPeers(session, data, NetworkObject.reason.clearCanvas, null);
 
 		Output.processMessage("Master is sending clear", Constants.Message_Type.info);
 
@@ -756,7 +913,7 @@ public class SessionUtils
 	 */
 	public static void sendClearSelection(Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
-		genericSendToAllPeers(session, data, NetworkObject.reason.clearSelection);
+		genericSendToAllPeers(session, data, NetworkObject.reason.clearSelection, null);
 
 		Output.processMessage("Master is sending clearSelection", Constants.Message_Type.info);
 
@@ -770,7 +927,7 @@ public class SessionUtils
 	public static void selectShape(Shape s, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
-		genericSendToAllPeers(session, data, NetworkObject.reason.selectShape);
+		genericSendToAllPeers(session, data, NetworkObject.reason.selectShape, null);
 
 		Output.processMessage("Master is sending selectShape", Constants.Message_Type.info);
 
@@ -784,7 +941,7 @@ public class SessionUtils
 	public static void sendDeleteShape(Shape s, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
-		genericSendToAllPeers(session, data, NetworkObject.reason.deleteShape);
+		genericSendToAllPeers(session, data, NetworkObject.reason.deleteShape, null);
 
 		Output.processMessage("Master is sending deleteShape", Constants.Message_Type.info);
 
@@ -800,7 +957,7 @@ public class SessionUtils
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
 		data.add(c);
-		genericSendToAllPeers(session, data, NetworkObject.reason.setShapeColor);
+		genericSendToAllPeers(session, data, NetworkObject.reason.setShapeColor, null);
 
 		Output.processMessage("Master is sending set Color", Constants.Message_Type.info);
 
@@ -819,10 +976,71 @@ public class SessionUtils
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(shape);
 		data.add(networkBool);
-		genericSendToAllPeers(session, data, NetworkObject.reason.setShapeFill);
+		genericSendToAllPeers(session, data, NetworkObject.reason.setShapeFill, null);
 
 		Output.processMessage("Master is sending set fill", Constants.Message_Type.info);
 
+	}
+
+
+	/**
+	 * Send a chat message.
+	 * @param session Session to send message to.
+	 * @param message Message to send.
+	 */
+	public static void sendChatMesage(Session session, String message) 
+	{
+		genericSendToAllPeers(session, message, NetworkObject.reason.chat, null);
+		
+	}
+
+	/**
+	 * Tell everyone a new guy is running the show.
+	 * @param session Session to do this for.
+	 * @param newOwner The new owner.
+	 */
+	public static void sendTransferOwnership(Session session,
+			NetworkBundle newOwner) 
+	{
+		genericSendToAllPeers(session, newOwner.person, NetworkObject.reason.canvasOwnershipConfirm, null);
+		
+	}
+
+	/**
+	 * Tell somebody they aren't going to be in charge.
+	 * @param session Session to do this for.
+	 * @param newOwner Disappointed guy.
+	 */
+	public static void sendRejectOwnerShip(Session session,
+			NetworkBundle newOwner) 
+	{
+		genericSendToAllPeers(session, newOwner.person, NetworkObject.reason.canvasOwnershipDeny, newOwner);
+	}
+
+	/**
+	 * Ask to be in charge.
+	 * @param session Session to do this for.
+	 */
+	public static void sendOwnershipRequest(Session session) 
+	{
+		genericSendToAllPeers(session, session.master, NetworkObject.reason.canvasOwnershipRequest, session.master);
+		
+	}
+
+	/**
+	 * Send a request to invoke a rebellion.
+	 * @param session Session to do this for.
+	 */
+	public static void sendInciteRebellionRequest(Session session) {
+		genericSendToAllPeers(session, session.master.person, NetworkObject.reason.canvasOwnershipRebel, null);
+	}
+
+	/**
+	 * Support a rebellion.
+	 * @param session Session to do this for.
+	 */
+	public static void sendRebellionSupport(Session session) {
+		genericSendToAllPeers(session, session.master.person, NetworkObject.reason.canvasOwnershipSupportRebellion, null);
 	}
 
 

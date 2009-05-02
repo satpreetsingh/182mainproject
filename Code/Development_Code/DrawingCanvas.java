@@ -109,7 +109,7 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
     	  /* If we have an object that has been selected */
     	  if (session.currentState.lastSelected() != null)
     	  {
-    		  session.setMainColor(session.currentState.lastSelected(), c, false);
+    		  session.processSetMainColor(session.currentState.lastSelected(), c, false);
     	  }
     	  
       }
@@ -128,7 +128,7 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
       	  /* If we have an object that has been selected */
       	  if (session.currentState.lastSelected() != null)
       	  {
-      		  session.setShapeFill(session.currentState.lastSelected(), isoutline, false);
+      		  session.processSetShapeFill(session.currentState.lastSelected(), isoutline, false);
       	  }
       	  repaint();
         }
@@ -175,7 +175,7 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
     		{  
     			if(session != null)
     			{
-    				session.deleteShape(session.currentState.lastSelected(), false);
+    				session.processDeleteShape(session.currentState.lastSelected(), false);
     			}
     		}
 	    }	
@@ -354,7 +354,7 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
           
     	
     	/* Clear off the object list */
-    	session.clearObjects(false);
+    	session.processClearObjects(false);
     	
     	refresh();
     	
