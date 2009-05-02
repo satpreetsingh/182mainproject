@@ -18,7 +18,8 @@ public class MultiDraw extends JApplet  {
 	protected ToolBarView toolBar;
 	protected MenuBarView menuBar;
 	protected ArrayList<ToolController> tools;
-    protected ChatPanelView chatPanel;
+    protected ChatPanelView chatPanelView;
+    protected ChatPanelController chatPanelController;
 	
 	
 
@@ -31,25 +32,13 @@ public class MultiDraw extends JApplet  {
 	{ 
 		  sessionMgr = new SessionManager();
 		  
-		    getContentPane().setLayout(new BorderLayout());
-		    canvas = createDrawingCanvas();
-		    getContentPane().add(canvas, BorderLayout.CENTER);
-            chatPanel = createChatPanelView();
-            getContentPane().add(chatPanel,BorderLayout.EAST);
-		    controlPanel = createControlPanelView();
-		    getContentPane().add(controlPanel, BorderLayout.SOUTH);
-		    tools = createTools();
-		    toolBar = createToolBarView(tools);
-		    getContentPane().add(toolBar, BorderLayout.WEST);
-		    menuBar = createMenuBarView(tools);
-		    getContentPane().add (menuBar, BorderLayout.NORTH);
+		  		    
 		    
-		    
-		    /**
-			   * TODO: REMOVE LATER
-			   * This is temp code, it automatically creates a new session,
-			   * so that Object draw functionality will work.
-			   */
+		  /**
+			 * TODO: REMOVE LATER
+			 * This is temp code, it automatically creates a new session,
+			 * so that Object draw functionality will work.
+			*/
 			String tempName;
 			
 			isSlave = initialwindow.getSlaveMaster();
@@ -65,11 +54,28 @@ public class MultiDraw extends JApplet  {
 			  {
 				  tempAuto = SessionUtils.buildSession(temp, canvas, initialwindow.getIP(), initialwindow.getPort(), tools);
 			  }
-			  sessionMgr.addNewSession(tempAuto);
-			  canvas.updateSession(tempAuto);
-			  controlPanel.updateSession(tempAuto);
-			  
-			  sessionMgr.start();
+		
+		
+		getContentPane().setLayout(new BorderLayout());
+		canvas = createDrawingCanvas();
+		getContentPane().add(canvas, BorderLayout.CENTER);
+	    chatPanelView = new ChatPanelView(tempAuto);
+	    chatPanelController = new ChatPanelController(tempAuto, chatPanelView);
+	    getContentPane().add(chatPanelView,BorderLayout.EAST);
+		controlPanel = createControlPanelView();
+		getContentPane().add(controlPanel, BorderLayout.SOUTH);
+		tools = createTools();
+		toolBar = createToolBarView(tools);
+		getContentPane().add(toolBar, BorderLayout.WEST);
+		menuBar = createMenuBarView(tools);
+	  	getContentPane().add (menuBar, BorderLayout.NORTH);
+	  	
+	  	
+        sessionMgr.addSessionChangeListenObject(canvas);	
+        sessionMgr.addSessionChangeListenObject(chatPanelView);
+        sessionMgr.addSessionChangeListenObject(chatPanelController);
+     	sessionMgr.addNewSession(tempAuto);
+        sessionMgr.start();
 
 	}
 
@@ -89,10 +95,6 @@ public class MultiDraw extends JApplet  {
 		return new ControlPanelView(null); 
 	}
 
-    protected ChatPanelView createChatPanelView()
-    {
-        return new ChatPanelView(null);
-    }
  
 	protected ToolBarView createToolBarView(ArrayList<ToolController> toolList) {
 		return new ToolBarView(toolList);

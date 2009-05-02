@@ -82,16 +82,19 @@ import javax.swing.JTextField;
         		/** Attempt to convert the text into an integer.  
         		 * If it fails, then set the port to 3000.
         		 */
-        		try{
+        		try
+        		{
         			port	 = Integer.valueOf(txtPort.getText()).intValue();   			
         		}
-        		catch(NumberFormatException e1) {
+        		catch(NumberFormatException e1) 
+        		{
         			port 	 = 3000;
         		}
         		
     		}
     		
-    		else{
+    		else
+    		{
 	   			username = txtUN2.getText();
     		}
   			

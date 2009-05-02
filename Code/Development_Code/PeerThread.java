@@ -22,11 +22,16 @@ public class PeerThread extends Thread{
 	 */
 	public void run ()
 	{
-		while(true)
+		boolean dontQuit = true;
+		while(dontQuit)
 		{
+			if(this.target == null)
+			{
+				dontQuit = false;
+			}
 			try
 			{
-				SessionUtils.processMessageFromPeer(session, target, local);
+				SessionUtils.processMessageFromPeer(this,session, target, local);
 			}
 			catch(Exception e)
 			{

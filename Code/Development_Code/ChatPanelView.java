@@ -13,11 +13,22 @@ import javax.swing.JTextField;
  * @author ben
  *
  */
-public class ChatPanelView extends JToolBar
+public class ChatPanelView extends JToolBar implements SessionListener
 {
     private Session session;
     private ChatPanelController controller;
     private List lstUsers;
+    
+    private JPanel pnlMain;
+    private JPanel pnlTop;
+    
+    protected JTextArea chatbox;
+    JScrollPane scrollPane;
+    JScrollPane areaScrollPane;
+    JPanel pnlBot;
+    JTextField txtMsg;
+    JButton btnChat;
+
     
     public ChatPanelView(Session s) {
     	
@@ -25,15 +36,12 @@ public class ChatPanelView extends JToolBar
          session = s;
         
          
-         
-         
-         
          /* Set up the main panel for this JToolBar container */
-         JPanel pnlMain = new JPanel();                
+         pnlMain = new JPanel();                
          pnlMain.setLayout(new BoxLayout(pnlMain, BoxLayout.Y_AXIS));
          
          /* Set up the top panel */
-         JPanel pnlTop = new JPanel();
+         pnlTop = new JPanel();
          pnlTop.setLayout(new BoxLayout(pnlTop, BoxLayout.Y_AXIS));
 
          
@@ -49,9 +57,9 @@ public class ChatPanelView extends JToolBar
         //get a list of users and display them
 
         //display chat messages
-        JTextArea chatbox = new JTextArea ("This is where chats should be sent");
+        chatbox = new JTextArea ("This is where chats should be sent");
 
-        JScrollPane scrollPane = new JScrollPane(chatbox, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane = new JScrollPane(chatbox, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
         chatbox.setEditable(false);
         chatbox.setFont(new Font("Serif", Font.BOLD, 16));
@@ -60,7 +68,7 @@ public class ChatPanelView extends JToolBar
 
         
         
-        JScrollPane areaScrollPane = new JScrollPane(chatbox);
+        areaScrollPane = new JScrollPane(chatbox);
         areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         areaScrollPane.setPreferredSize(new Dimension(250, 250));
         pnlTop.add(chatbox);
@@ -72,15 +80,15 @@ public class ChatPanelView extends JToolBar
         
         
         /* Set up the bottom panel */
-        JPanel pnlBot = new JPanel();
+        pnlBot = new JPanel();
         pnlBot.setLayout(new FlowLayout());
         
         
-        JTextField txtMsg = new JTextField(20);
+        txtMsg = new JTextField(20);
         pnlBot.add(txtMsg);
          
          
-        JButton btnChat = new JButton("Send");
+        btnChat = new JButton("Send");
         pnlBot.add(btnChat);
 
         /* Add the bottom panel to main panel */
@@ -92,17 +100,25 @@ public class ChatPanelView extends JToolBar
         
     }
     
-    public void RefreshUsersList () {
-    	
-       	
-    	/* Load each person onto the list */
-//    	for (int index = 0; index < session.networkMembers.size(); index++){
-//    		lstUsers.add(session.networkMembers.get(index).person.name);
-//    	}
-
-    	lstUsers.add("Joe");
-    	lstUsers.add("Ben");
+    public void RefreshUsersList () 
+    {
+    	lstUsers.clear();
+    	for(int i = 0; i < session.networkMembers.size(); i++)
+    	{
+    		lstUsers.add(session.networkMembers.get(i).person.name);
+    		
+    	}
     	
      }
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session s) {
+		session = s;
+		RefreshUsersList();
+		
+	}
 
 }

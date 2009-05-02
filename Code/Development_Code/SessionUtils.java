@@ -25,6 +25,7 @@ public class SessionUtils
 
 	private static final int basePort = 3000;
 	private static final double range = 32000.0;
+	
 	/**
 	 * Runs on SERVER
 	 * Sever got a connection.
@@ -258,6 +259,8 @@ public class SessionUtils
 
 
 	}
+	
+	
 	private static void processKeyReleased(Session session, NetworkObject data)
 	{
 		try
@@ -274,6 +277,7 @@ public class SessionUtils
 		}
 
 	}
+	
 	private static void processKeyTyped(Session session, NetworkObject data)
 	{
 		try
@@ -290,6 +294,7 @@ public class SessionUtils
 		}
 
 	}
+	
 	private static void processClear(Session session, NetworkObject data)
 	{
 		session.clearObjects(true);
@@ -299,6 +304,7 @@ public class SessionUtils
 	{
 		session.clearSelection(true);
 	}
+	
 	private static void processSelectShape(Session session, NetworkObject data)
 	{
 		try
@@ -348,7 +354,6 @@ public class SessionUtils
 		}
 
 	}
-
 
 	private static void processDeleteShape(Session session, NetworkObject data)
 	{
@@ -401,6 +406,9 @@ public class SessionUtils
 				
 				if (doesNotExist && myself < i)
 				{
+					/**
+					 * This guy doesn't exist, but I've been around longer.  I'll say hello.
+					 **/
 					Socket newGuySocket = new Socket(fromNewList.ipAddress, fromNewList.port);
 					ObjectOutputStream oos = new ObjectOutputStream(newGuySocket.getOutputStream());
 					ObjectInputStream ois = new ObjectInputStream(newGuySocket.getInputStream());
@@ -410,14 +418,18 @@ public class SessionUtils
 					
 					session.networkMembers.add(newGuyBundle);
 					requestSessionJoin(session, newGuyBundle, NetworkObject.reason.joinPeerRequest);
-
-					//TODO: This needs to create an instance of peer thread, to listen to messages.
 					
-					//This guy doesn't exist, but I've been around longer.  I'll say hello.
+					PeerThread p = new PeerThread(session,session.localUser, newGuyBundle);
+					p.start();
+					session.threads.add(p);
+					
 				}
 				else if(doesNotExist && myself < i)
 				{
-					//This guy doesn't exist, but he is older.  I'll wait for him to say hello.
+					/**
+					 * This guy doesn't exist, but he is older.  I'll wait for him to say hello.
+					 * So do nothing...
+					**/
 					
 				}
 			}
@@ -458,7 +470,7 @@ public class SessionUtils
 
 	
 	/* This can run on either MASTER or CLIENT */
-	protected static void processMessageFromPeer(Session session, NetworkBundle client, NetworkBundle local)
+	protected static void processMessageFromPeer(PeerThread p, Session session, NetworkBundle client, NetworkBundle local)
 	{
 		/**
 		 * Don't check ourself for messages.
@@ -538,6 +550,10 @@ public class SessionUtils
 			}
 			catch (SocketException sock)
 			{
+				session.threads.remove(p);
+				session.networkMembers.remove(p.target);
+				p.target = null;
+				p = null;
 				//TODO: RESET PEERS
 			}
 			catch (Exception e) 
@@ -549,13 +565,6 @@ public class SessionUtils
 		}
 	}
 
-	/**
-	 * Helper method to send an object o to all members in s for reason.
-	 * @param s Session  to send message for.  Will be checked for people
-	 * to send message to.
-	 * @param o Object to send.
-	 * @param reason Reason for sending this message.
-	 */
 	private static void genericSendToAllPeers(Session s, Object o, NetworkObject.reason reason)
 	{
 		try
@@ -569,19 +578,25 @@ public class SessionUtils
 				 */
 				if(target != s.localUser)
 				{
-
-					NetworkObject genericObject = new NetworkObject
-					(s.localUser.person,
-							target.person,
-							o,
-							reason,
-							1
-					);
-
-					ObjectOutputStream stream = target.oos;
-
-					stream.writeObject(genericObject);
-					stream.flush();
+					try
+					{
+						NetworkObject genericObject = new NetworkObject
+						(s.localUser.person,
+								target.person,
+								o,
+								reason,
+								1
+						);
+	
+						ObjectOutputStream stream = target.oos;
+	
+						stream.writeObject(genericObject);
+						stream.flush();
+						}
+					catch(Exception e)
+					{
+						Output.processMessage("Error in generic send for a person", Constants.Message_Type.error);
+					}
 
 				}
 			}
@@ -593,10 +608,6 @@ public class SessionUtils
 		}
 	}
 
-	/**
-	 * Send a peerListUpdate message (containing networkMembers<>) to all peers.
-	 * @param s Session to send message for.
-	 */
 	private static void sendPeerListToAllPeers(Session s) 
 	{
 		ArrayList<Member> currentPeerList = new ArrayList<Member>();
@@ -667,6 +678,12 @@ public class SessionUtils
 		Output.processMessage("Master is sending mouseDrag", Constants.Message_Type.info);
 	}
 
+	/**
+	 * Send a key typed event.
+	 * @param tool Tool on which the event occurred.
+	 * @param keyPressed The key which was pressed.
+	 * @param session Session to send event for.
+	 */
 	public static void sendKeyTyped
 	(KeyboardTool tool, 
 			char keyPressed,
@@ -682,6 +699,12 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Send a key released event.
+	 * @param tool Tool on which the event occurred.
+	 * @param keyPressed The key which was released.
+	 * @param session Session to send event for.
+	 */
 	public static void sendKeyReleased(KeyboardTool tool, char keyPressed,
 			Session session) {
 		Character networkChar = new Character(keyPressed);
@@ -695,6 +718,12 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Send a key pressed event.
+	 * @param tool Tool on which the event occurred.
+	 * @param keyPressed The key which was pressed.
+	 * @param session Session to send event for.
+	 */
 	public static void sendKeyPressed(KeyboardTool tool, char keyPress,
 			Session session) 
 	{
@@ -709,6 +738,10 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Send clearobjects event.
+	 * @param session Session to clear objects for.
+	 */
 	public static void sendClearObjects(Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		genericSendToAllPeers(session, data, NetworkObject.reason.clearCanvas);
@@ -717,6 +750,10 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Send clear selection event.  (i.e. unhighlight object).
+	 * @param session Session to do this for.
+	 */
 	public static void sendClearSelection(Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		genericSendToAllPeers(session, data, NetworkObject.reason.clearSelection);
@@ -725,6 +762,11 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Send highlight notice for a shape.
+	 * @param s Shape to highlight.
+	 * @param session Session to do this for.
+	 */
 	public static void selectShape(Shape s, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
@@ -734,6 +776,11 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Delete a shape.
+	 * @param s Shape to delete.
+	 * @param session Session to do this for.
+	 */
 	public static void sendDeleteShape(Shape s, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
@@ -743,6 +790,12 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Set a shapes color.
+	 * @param s Shape to set
+	 * @param c Color to set.
+	 * @param session Session to do this for.
+	 */
 	public static void setMainColor(Shape s, Color c, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
@@ -753,8 +806,15 @@ public class SessionUtils
 
 	}
 
+	/**
+	 * Set fill/empty on an object.
+	 * @param shape Shape to set for.
+	 * @param isoutline Value of filled/not.
+	 * @param session Session to do event for.
+	 */
 	public static void setDrawingType(Shape shape, boolean isoutline,
-			Session session) {
+			Session session) 
+	{
 		Boolean networkBool = new Boolean(isoutline);
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(shape);
