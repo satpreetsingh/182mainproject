@@ -12,29 +12,101 @@ import javax.swing.JTextField;
 
 
 /**
+ * Implments a chatPanel controller.  Accepts events to send messages,
+ * and also process events to post text.
  *
  * @author Mandi
+ * @author ben
+ * 
  */
-public class ChatPanelController implements ActionListener
+public class ChatPanelController implements ActionListener, SessionListener
 {
-    Session session;
+	private Session session;
+    private ChatPanelView chatView;
+    private Constants.Message_Type currentPriority = Constants.Message_Type.debug;
 
-    ChatPanelController(Session s)
+    ChatPanelController(Session session, ChatPanelView chatview)
     {
-        session = s;
+       this.session = session;
+       this.chatView = chatview;
+       
+       this.chatView.btnChat.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e)
     {
-        if (e.getSource().toString().contains("Send"))
+    	if(e.getSource() == this.chatView.btnChat)
         {
-            String msg = "";
-
-            // send whatever is in the chat box to the chat
-            Output o = new Output();
-            o.processMessage(msg,Constants.Message_Type.none);
+            String msg = this.chatView.txtMsg.getText();
+            this.chatView.txtMsg.setText("");
+            session.chatMessage(msg, false);
+            processMessage(msg,Constants.Message_Type.chat);
 
 
         }
     }
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session s) {
+		session = s;
+		
+	}
+	
+	
+	/**
+	 * Process a message.
+	 * @param s Message to process.
+	 * @param m Message priority.
+	 */
+	public void processMessage(String s, Constants.Message_Type m)
+	{
+		String finalOutput = "";
+		if(m == Constants.Message_Type.none)
+		{
+			finalOutput = ("Someone did something dumb, asked a message to be printed with priority none.");
+		}
+		else
+		{
+			if (currentPriority == Constants.Message_Type.debug)
+			{
+				finalOutput = s;
+			}
+			else if (currentPriority == Constants.Message_Type.info)
+			{
+				if(m != Constants.Message_Type.debug)
+				{
+					finalOutput = s;
+				}
+			}
+			else if (currentPriority == Constants.Message_Type.error)
+			{
+				if(m == Constants.Message_Type.error ||
+				   m == Constants.Message_Type.chat)
+				{
+					finalOutput = s;
+				}
+			}
+			else if (currentPriority == Constants.Message_Type.chat)
+			{
+				if(m == Constants.Message_Type.chat)
+				{
+					finalOutput =s;
+				}
+			}
+			else
+			{
+				
+			}
+		}
+		
+		if(finalOutput.equals("") == false)
+		{
+			chatView.chatbox.append(finalOutput);
+		}
+		
+	}
+
 }

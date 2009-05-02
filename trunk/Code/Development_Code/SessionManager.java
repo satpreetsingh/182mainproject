@@ -15,8 +15,8 @@ public class SessionManager extends Thread
 	private ArrayList <Session> activeSessions;
 	
 	private Session sessionInFocus = null;
-	//TODO: Add canvas, etc... that change focus.
-	private DrawingCanvas canvas;
+	
+	private ArrayList <SessionListener> objectsInFocus = new ArrayList<SessionListener>();
 	
 	
 	/**
@@ -96,7 +96,7 @@ public class SessionManager extends Thread
 	{
 		if(activeSessions.size() == 0)
 		{
-			sessionInFocus = s;
+			setFocusOnSession(s);
 		}
 		activeSessions.add(s);
 		
@@ -110,6 +110,10 @@ public class SessionManager extends Thread
 	public void setFocusOnSession(Session s)
 	{
 		this.sessionInFocus = s;
+		for(int i = 0; i < objectsInFocus.size(); i++)
+		{
+			objectsInFocus.get(i).setSession(s);
+		}
 	}
 	
 	/**
@@ -143,5 +147,10 @@ public class SessionManager extends Thread
 				activeSessions.remove(i);
 			}
 		}
+	}
+	
+	public void addSessionChangeListenObject(SessionListener s)
+	{
+		this.objectsInFocus.add(s);
 	}
 }

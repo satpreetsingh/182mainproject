@@ -13,7 +13,8 @@ import javax.swing.JTextField;
  * @author ben
  *
  */
-public class ControlPanelView extends JPanel {
+public class ControlPanelView extends JPanel implements SessionListener
+{
   
 	private Session session;
 	private ControlPanelController controller;
@@ -126,17 +127,17 @@ public class ControlPanelView extends JPanel {
 	
     
     
-    
-	/**
-	 * Change the Session that this ControlPanel is associated with.
-	 * @param s Session to focus on.
-	 */
-	public void updateSession(Session s)
+  
+	public Session getSession() 
+	{
+		return session;
+		
+	}
+	public void setSession(Session s) 
 	{
 		session = s;
 		controller.updateSession(s);
 	}
+}
 
 	  
-  
-}

@@ -117,7 +117,7 @@ public class Session {
 	 */
 	private boolean drawable(NetworkBundle m)
 	{
-		return true;
+		return (m.person.id.equals(this.master.person.id));
 	}
 	
 	
@@ -472,7 +472,7 @@ public class Session {
 		return localTool;
 	}
 	
-	public void chatMessage(String message)
+	public void chatMessage(String message, boolean networkEvent)
 	{
 		
 	}

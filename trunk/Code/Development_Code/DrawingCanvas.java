@@ -18,7 +18,7 @@ import java.util.EventListener;
  * @authors bmhelppi, jjtrapan
  *
  */
-public class DrawingCanvas extends JComponent implements Serializable
+public class DrawingCanvas extends JComponent implements Serializable, SessionListener
 {
 	
 	private MouseController mouseController = null;
@@ -253,30 +253,33 @@ public class DrawingCanvas extends JComponent implements Serializable
    */
   public void refresh() {
 	   
-	   /* Set the new rectangle color to white */
-	   imageBufferGraphics.setColor(Color.WHITE);
-	   imageBufferGraphics.setXORMode(Color.WHITE);
-	   
-	   imageBufferGraphics.fillRect(0, 0, canvasWidth, canvasHeight);
-	   imageBufferGraphics.setColor(penColor); 
-	   paint(imageBufferGraphics);
-	   
-	   /* Redraw each of the shapes on the buffer */
-	   if (session != null)
-	   {
-		   ArrayList <Shape> drawableShapes = session.currentState.currentShapes();
-	   
-		   if (drawableShapes != null) 
+	  if(imageBufferGraphics != null)
+	  {
+		   /* Set the new rectangle color to white */
+		   imageBufferGraphics.setColor(Color.WHITE);
+		   imageBufferGraphics.setXORMode(Color.WHITE);
+		   
+		   imageBufferGraphics.fillRect(0, 0, canvasWidth, canvasHeight);
+		   imageBufferGraphics.setColor(penColor); 
+		   paint(imageBufferGraphics);
+		   
+		   /* Redraw each of the shapes on the buffer */
+		   if (session != null)
 		   {
-			   for (int i = 0 ; i < drawableShapes.size(); i++)
+			   ArrayList <Shape> drawableShapes = session.currentState.currentShapes();
+		   
+			   if (drawableShapes != null) 
 			   {
-				   drawableShapes.get(i).draw(imageBufferGraphics);
+				   for (int i = 0 ; i < drawableShapes.size(); i++)
+				   {
+					   drawableShapes.get(i).draw(imageBufferGraphics);
+				   }
 			   }
-		   }
-	    }
-	   
-	   /* Repaint the canvas */
-	   repaint();
+		    }
+		   
+		   /* Repaint the canvas */
+		   repaint();
+	  }
   }
   
 	/**
@@ -387,6 +390,15 @@ public class DrawingCanvas extends JComponent implements Serializable
             
    
     }
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session s) {
+		session = s;
+		this.refresh();
+	}
     
     
       
