@@ -132,6 +132,7 @@ public class InitialWindowView {
 	  static class AppCloser extends WindowAdapter  {
 	    public void windowClosing(WindowEvent e) {
 	    	System.exit(0);
+	    	System.out.println("InitialWindowView TODO:  Add in exiting a session code!");
 	    }
 	  }	
 	

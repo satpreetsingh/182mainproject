@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.swing.JOptionPane;
+
 
 /**
  * Implements a network session.
@@ -483,8 +485,24 @@ public class Session {
 	public void requestOwnership()
 	{
 		//Step 1 Joe call this
-		//Step 2 Ben Network this
+		//Step 2 Ben check if user isn't the controller, then continue on to Network this
 		//Step 3 Joe add popup confirm/deny.
+		
+		
+    	/* If controller accepts giving up control */
+    	if (JOptionPane.showConfirmDialog(
+    	    null,
+    	    "Would you like to pass control of the session?",
+    	    "Pass Control Request",
+    	    JOptionPane.YES_NO_OPTION) == 0){
+    		
+    	}
+    	else{
+    		/* Alert user his request got denied */
+    	}
+			
+		
+			
 	}
 
 }

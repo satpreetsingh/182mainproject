@@ -1,4 +1,6 @@
 import java.awt.event.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.EventListener;
 import javax.swing.*;
 import java.awt.GridLayout;
@@ -18,7 +20,9 @@ public class ControlPanelView extends JPanel {
 	private JButton clearButton;
 	protected JComboBox comboType;
 	protected JComboBox comboColor;
-
+	protected JLabel lblClientIP;
+	protected JLabel lblControllerIP;
+	
 	/**
 	 * Create a new ControlPanelView
 	 * @param s Session that the panel is linked to.
@@ -60,27 +64,31 @@ public class ControlPanelView extends JPanel {
    	    comboColor.addItem("black");
 	    add(comboColor);
 
-        JLabel myIPlbl = new JLabel("My IP Address: ");
-        add(myIPlbl);
+	    
+	    
+        JLabel lblclientIPTitle = new JLabel("My IP Address: ");
+        add(lblclientIPTitle);
 
-        //get my IP address
-        String clientIP = getIP();
+        
+        
+        /* Create the client IP address label */
+        lblClientIP = new JLabel(RefreshClientIP());
+        add(lblClientIP);
 
-        JLabel myIP = new JLabel();
-        myIP.setText(clientIP);
-        add(myIP);
-
+        /* Add a dummy buffer for spacing needs */
         JLabel buffer = new JLabel();
         add(buffer);
         
-        JLabel theirIPlbl = new JLabel("Host IP Address: ");
-        add(theirIPlbl);
+        
+        JLabel lblControllerIPTitle = new JLabel("Host IP Address: ");
+        add(lblControllerIPTitle);
 
-        String hostIP = getIP();
-
-        JLabel theirIP = new JLabel();
-        theirIP.setText(hostIP);
-        add(theirIP);
+        /* Create the controller IP address label */ 
+        lblControllerIP = new JLabel(getControllerIP());
+        add(lblControllerIP);
+        
+        
+        
         repaint();
 
 	    /* Assign the listener to the components */
@@ -91,14 +99,32 @@ public class ControlPanelView extends JPanel {
 
 	}
 
-    public String getIP()
+    public String getControllerIP()
     {
-        String ip = "display the IP";
+        String ip = "Display the IP";
 
         //grab the IP and return it
         return ip;
     }
+    
+    
+    
+    public String RefreshClientIP() {
+       	
+    	try {
+    		
+            /* Get the user's IP Address */
+            return InetAddress.getLocalHost().getHostAddress();
+            
+        } catch (UnknownHostException e) {
+        	return "IP Not Found.";
+        }
+
+    }
 	
+    
+    
+    
 	/**
 	 * Change the Session that this ControlPanel is associated with.
 	 * @param s Session to focus on.

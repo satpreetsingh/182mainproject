@@ -127,7 +127,7 @@ import javax.swing.JTextField;
   						      	BorderLayout.CENTER);
             	frame.addWindowListener(new AppCloser());
             	frame.pack();
-            	frame.setSize(600, 600);
+            	frame.setSize(800, 600);
   		
   			
   			
@@ -163,6 +163,7 @@ import javax.swing.JTextField;
   	  /* when Close Window button of frame is clicked       */
   	  static class AppCloser extends WindowAdapter  {
   	    public void windowClosing(WindowEvent e) {
+  	    	System.out.println("InitialWindowController TODO:  Add in exiting a session code!");
   	    	System.exit(0);
   	    }
   	  }  
