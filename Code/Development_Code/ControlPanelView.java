@@ -28,9 +28,8 @@ public class ControlPanelView extends JPanel implements SessionListener
 	 * Create a new ControlPanelView
 	 * @param s Session that the panel is linked to.
 	 */
-	public ControlPanelView(Session s) 
+	public ControlPanelView(ControlPanelController controller) 
 	{ 
-	    session = s;
 
         GridLayout gl = new GridLayout(3,0);
         setLayout(gl);
@@ -49,8 +48,6 @@ public class ControlPanelView extends JPanel implements SessionListener
 	    
 	    add(comboType);
 	    
-	    
-	    
 	    comboColor = new JComboBox();
 	    
 	    /* Make sure the set the name of this component for evaluation in the controller */
@@ -66,13 +63,9 @@ public class ControlPanelView extends JPanel implements SessionListener
         comboColor.addItem("Yellow");
    	    
 	    add(comboColor);
-
-	    
 	    
         JLabel lblclientIPTitle = new JLabel("My IP Address: ");
         add(lblclientIPTitle);
-
-        
         
         /* Create the client IP address label */
         lblClientIP = new JLabel(RefreshClientIP());
@@ -82,7 +75,6 @@ public class ControlPanelView extends JPanel implements SessionListener
         JLabel buffer = new JLabel();
         add(buffer);
         
-        
         JLabel lblControllerIPTitle = new JLabel("Host IP Address: ");
         add(lblControllerIPTitle);
 
@@ -90,43 +82,51 @@ public class ControlPanelView extends JPanel implements SessionListener
         lblControllerIP = new JLabel(getControllerIP());
         add(lblControllerIP);
         
-        
-        
         repaint();
 
 	    /* Assign the listener to the components */
-	    controller = new ControlPanelController(session);
+	   
 	    clearButton.addActionListener((ActionListener)controller);
 	    comboColor.addItemListener((ItemListener)controller);
 	    comboType.addItemListener((ItemListener)controller);
 
 	}
 
+	/**
+	 * Get the masters ip address.
+	 * @return Returns the ip address of master.
+	 */
     public String getControllerIP()
     {
-        String ip = "Display the IP";
+    	if(session != null)
+    	{
+    		return session.master.person.ipAddress;
+    	}
+    	else
+    	{
+    		return "";
+    	}
 
-        //grab the IP and return it
-        return ip;
     }
     
     
-    
-    public String RefreshClientIP() {
-       	
-    	try {
-    		
-            /* Get the user's IP Address */
-            return InetAddress.getLocalHost().getHostAddress();
-            
-        } catch (UnknownHostException e) {
-        	return "IP Not Found.";
-        }
+    /**
+     * Get local ip address.
+     * @return Returns local ip address.
+     */
+    public String RefreshClientIP() 
+    {
+    	if (session != null)
+    	{
+    		return session.localUser.person.ipAddress;
+    	}
+    	else
+    	{
+    		return "";
+    	}
 
     }
 	
-    
-    
   
 	public Session getSession() 
 	{
@@ -136,7 +136,6 @@ public class ControlPanelView extends JPanel implements SessionListener
 	public void setSession(Session s) 
 	{
 		session = s;
-		controller.updateSession(s);
 	}
 }
 

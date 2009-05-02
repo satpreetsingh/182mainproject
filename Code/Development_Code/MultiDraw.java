@@ -14,6 +14,7 @@ public class MultiDraw extends JApplet  {
 	private SessionManager sessionMgr;
 	protected DrawingCanvas canvas;
 	protected ControlPanelView controlPanel;
+	private ControlPanelController controlPanelController;
 	protected static InitialWindowView initialwindow;
 	protected ToolBarView toolBar;
 	protected MenuBarView menuBar;
@@ -30,7 +31,7 @@ public class MultiDraw extends JApplet  {
 	{ 
 		sessionMgr = new SessionManager();
 			
-		
+		controlPanelController = new ControlPanelController();
 		getContentPane().setLayout(new BorderLayout());
 		canvas = createDrawingCanvas();
 		getContentPane().add(canvas, BorderLayout.CENTER);
@@ -63,6 +64,8 @@ public class MultiDraw extends JApplet  {
         sessionMgr.addSessionChangeListenObject(canvas);	
         sessionMgr.addSessionChangeListenObject(chatPanelView);
         sessionMgr.addSessionChangeListenObject(chatPanelController);
+        sessionMgr.addSessionChangeListenObject(controlPanel);
+        sessionMgr.addSessionChangeListenObject(controlPanelController);
      	sessionMgr.addNewSession(tempSession);
         sessionMgr.start();
 
