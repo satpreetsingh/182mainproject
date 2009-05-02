@@ -159,17 +159,17 @@ public class SelectorTool implements Tool
 			{
 				if(canvas.session.currentState.lastSelected() != null)
 				{
-					canvas.session.clearSelection(false);
+					canvas.session.processClearSelectedObject(false);
 				}
 			}
   			
-			canvas.session.selectShape(shapeOfInterest, false);
+			canvas.session.processSelectShape(shapeOfInterest, false);
 			
 		}	
     	else 
     	{ 
     		/* Clear the canvas's last selected object */	
-    		canvas.session.clearSelection(false);
+    		canvas.session.processClearSelectedObject(false);
 	      
 	  	 	/* Set the previous selected objects to null */
     		PrepreviousSelectedObject = previousSelectedObject;
