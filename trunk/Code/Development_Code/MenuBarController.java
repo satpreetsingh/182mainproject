@@ -193,44 +193,78 @@ public class MenuBarController implements ActionListener, SessionListener {
 		/* We want to LOAD a session */
 		else if (e.getSource() == this.menubarview.mnuLoad){
 			
-			/* Create the JFileChooser component, and set the directory to the user directory */
-			FileChooser = new JFileChooser(System.getProperty("user.dir"));
+			
+			/* Only controllers can load a new session */
+			if (session.drawable(session.localUser)){
+				
+			
+			
+				/* Create the JFileChooser component, and set the directory to the user directory */
+				FileChooser = new JFileChooser(System.getProperty("user.dir"));
 			
 		
-			/* If the user clicked OK, get the path */
-			if  (FileChooser.showDialog(null, "Load Session") == JFileChooser.APPROVE_OPTION) {
+				/* If the user clicked OK, get the path */
+				if  (FileChooser.showDialog(null, "Load Session") == JFileChooser.APPROVE_OPTION) {
 			
-				/* Get the absolute path of the file the user entered in from the dialog window */
-				filename = FileChooser.getSelectedFile().getAbsolutePath();
+					/* Get the absolute path of the file the user entered in from the dialog window */
+					filename = FileChooser.getSelectedFile().getAbsolutePath();
 				
-				/* Add the results as optional output (defined by user preferences) */
-				Output.processMessage("Filepath = " + filename, Constants.Message_Type.info);
+					/* Add the results as optional output (defined by user preferences) */
+					Output.processMessage("Filepath = " + filename, Constants.Message_Type.info);
 				
-				
-				try{
 					
-					/*  Make sure the user selects a valid filename before loading (and clearing the canvas) */
-					if (FileChooser.getSelectedFile().exists()) {
+					try{
 						
-						/* Perform the loading of the canvas */
-						canvas.doLoad(filename);
-					}
-					else {
-	          			JOptionPane.showMessageDialog(
-	          		  			null,
-	          		  			"You must enter valid file.",
-	          		  			"Input Error",
-	          		  			JOptionPane.ERROR_MESSAGE); 
-					}
+						/*  Make sure the user selects a valid filename before loading (and clearing the canvas) */
+						if (FileChooser.getSelectedFile().exists()) {
+							
+							/* Perform the loading of the canvas */
+							canvas.doLoad(filename);
+						}
+						else {
+		          			JOptionPane.showMessageDialog(
+		          		  			null,
+		          		  			"You must enter valid file.",
+		          		  			"Input Error",
+		          		  			JOptionPane.ERROR_MESSAGE); 
+						}
+					
+					} catch (Exception ex) {              
+						/* Do nothing */
+					}	
 				
-				} catch (Exception ex) {              
-					/* Do nothing */
-				}	
+					
+				}
+			}
+			else{
+      			JOptionPane.showMessageDialog(
+      		  			null,
+      		  			"You must be a controller of a session to load a new canvas!",
+      		  			"Cannot process request",
+      		  			JOptionPane.ERROR_MESSAGE);   
+			}	
 			
+		}	
+		
+		
+		/* Cast a vote among all users to overthrow the controller's power */
+		else if (e.getSource() == this.menubarview.mnuRebellion) {
+			
+			
+			/* Only controllers can load a new session */
+			if (session.drawable(session.localUser) == false){
+				session.processInciteRebellion();
+			}
+			else{
+      			JOptionPane.showMessageDialog(
+      		  			null,
+      		  			"You must be a non-controller of a session to incite a rebellion!",
+      		  			"Cannot process request",
+      		  			JOptionPane.ERROR_MESSAGE); 
 				
 			}
 			
-		}	
+		}
 		
 		
 		/* Help -> About option was selected, display a message dialog with project info */
