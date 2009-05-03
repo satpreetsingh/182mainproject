@@ -1042,7 +1042,7 @@ public class SessionUtils
 	 */
 	public static void sendOwnershipRequest(Session session) 
 	{
-		genericSendToAllPeers(session, session.master, NetworkObject.reason.canvasOwnershipRequest, session.master);
+		genericSendToAllPeers(session, session.master.person, NetworkObject.reason.canvasOwnershipRequest, session.master);
 		
 	}
 
