@@ -23,18 +23,20 @@ import javax.swing.JOptionPane;
  * @author Joe
  *
  */
-public class MenuBarController implements ActionListener {
+public class MenuBarController implements ActionListener, SessionListener {
 
+	private Session session;
 	protected DrawingCanvas canvas;
 	protected JFileChooser FileChooser;
-	
+	protected MenuBarView menubarview;
 	
 	/**
 	 * Constructor passes canvas into the controller.
 	 * @param DrawingCanvas c
 	 */
-	MenuBarController (DrawingCanvas c){
+	MenuBarController (DrawingCanvas c, MenuBarView m){
 		canvas = c;
+		menubarview = m;	
 	}
 	
 	
@@ -50,7 +52,7 @@ public class MenuBarController implements ActionListener {
 		
 		
 		/* Create a new session */
-		if (e.getSource().toString().contains("fileItem1")) {		
+		if (e.getSource() == this.menubarview.mnuNew) {		
         	JOptionPane.showMessageDialog(
         			null,
         			"This version of MultiDraw is in beta development.  " + "\n" +
@@ -62,14 +64,14 @@ public class MenuBarController implements ActionListener {
 		}		
 		
 		/* Close the application */
-		else if (e.getSource().toString().contains("fileItem2")) {		
+		else if (e.getSource() == this.menubarview.mnuQuit) {		
 			System.out.println("MenuBarController TODO:  Add in exiting a session code!");
 			System.exit(0);			
 		}		
 		
 		
 		/* Attempt to dynamically load a class */
-		else if (e.getSource().toString().contains("toolItem1")) {
+		else if (e.getSource() == this.menubarview.mnuAddTool) {
 			/* Create the JFileChooser component, and set the directory to the user directory */
 			FileChooser = new JFileChooser(System.getProperty("user.dir"));
 		
@@ -138,18 +140,18 @@ public class MenuBarController implements ActionListener {
 		
 		
 		/* We want to request control of a session */
-		else if (e.getSource().toString().contains("ctrlItem1")) {
+		else if (e.getSource() == this.menubarview.mnuRequest) {
 			
 			
 			/* Attempt to gain ownership of the session */
-
+			session.processRequestOwnership(session.localUser.person, false);
 				
 			
 			
 		}
 		
 		/* We want to relinquish control of a session */
-		else if (e.getSource().toString().contains("ctrlItem2")) {
+		else if (e.getSource() == this.menubarview.mnuRelinquish) {
 				
         	JOptionPane.showMessageDialog(
         			null,
@@ -161,7 +163,7 @@ public class MenuBarController implements ActionListener {
 		}
 		
 		/* We want to SAVE a session */
-		else if (e.getSource().toString().contains("sessionItem1")) {
+		else if (e.getSource() == this.menubarview.mnuSave) {
 			
 			/* Create the JFileChooser component, and set the directory to the user directory */
 			FileChooser = new JFileChooser(System.getProperty("user.dir"));
@@ -189,7 +191,7 @@ public class MenuBarController implements ActionListener {
 		}
 		
 		/* We want to LOAD a session */
-		else if (e.getSource().toString().contains("sessionItem2")){
+		else if (e.getSource() == this.menubarview.mnuLoad){
 			
 			/* Create the JFileChooser component, and set the directory to the user directory */
 			FileChooser = new JFileChooser(System.getProperty("user.dir"));
@@ -232,7 +234,7 @@ public class MenuBarController implements ActionListener {
 		
 		
 		/* Help -> About option was selected, display a message dialog with project info */
-		else if (e.getSource().toString().contains("helpItem1")){
+		else if (e.getSource() == this.menubarview.mnuHelp){
         	JOptionPane.showMessageDialog(
         			null,
         			"MultiDraw Development Team:  " + "\n" +
@@ -252,6 +254,20 @@ public class MenuBarController implements ActionListener {
         			"About",
         			JOptionPane.INFORMATION_MESSAGE);			
 		}
+	}
+
+
+
+	public Session getSession() {
+		
+		return session;
+	}
+
+
+	public void setSession(Session s) {
+		
+		session = s;
+		
 	}
 	
 }

@@ -21,7 +21,7 @@ public class MultiDraw extends JApplet  {
 	protected ArrayList<ToolController> tools;
     protected ChatPanelView chatPanelView;
     protected ChatPanelController chatPanelController;
-	
+	private MenuBarController menuBarController;
 	
 
 	/**
@@ -43,7 +43,11 @@ public class MultiDraw extends JApplet  {
 		tools = createTools();
 		toolBar = createToolBarView(tools);
 		getContentPane().add(toolBar, BorderLayout.WEST);
+		
 		menuBar = createMenuBarView(tools);
+		menuBarController = new MenuBarController(canvas, menuBar);
+		menuBar.AddController(menuBarController);
+		
 	  	getContentPane().add (menuBar, BorderLayout.NORTH);
 	  	
 	  	
@@ -66,6 +70,7 @@ public class MultiDraw extends JApplet  {
         sessionMgr.addSessionChangeListenObject(chatPanelController);
         sessionMgr.addSessionChangeListenObject(controlPanel);
         sessionMgr.addSessionChangeListenObject(controlPanelController);
+        sessionMgr.addSessionChangeListenObject(menuBarController);
      	sessionMgr.addNewSession(tempSession);
         sessionMgr.start();
 
