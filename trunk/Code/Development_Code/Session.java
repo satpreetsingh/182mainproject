@@ -637,14 +637,18 @@ public class Session
 		if(this.rebellionCount >= this.networkMembers.size() / 2)
 		{
 			this.processTransferOwnership(this.localUser, false);
+			this.rebellionCount = 0;
 		}
 	}
 
-	public void setBaseline(DrawState baseline)
+	public void setBaseline(DrawState baseline, boolean networkEvent)
 	{
 		this.currentState = baseline;
 		this.canvas.refresh();
-		
+		if(networkEvent == false)
+		{
+			SessionUtils.sendDrawState(this, baseline);
+		}
 	}
 
 	public void updatePeerListOnScreen() {

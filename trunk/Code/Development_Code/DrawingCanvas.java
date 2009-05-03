@@ -341,9 +341,8 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
         } catch (IOException e) {
         	e.printStackTrace();
         }
-
-        /* Redraw all the shapes on the canvas */
-        refresh();
+        
+        session.setBaseline(session.currentState, false);
 
         
         in.close();
