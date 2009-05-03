@@ -564,7 +564,11 @@ public class Session
 		}
 		else
 		{
-			// Joe please create popup to inform user they are denied.
+  			JOptionPane.showMessageDialog(
+  		  			null,
+  		  			"Ownership request was rejected.",
+  		  			"Input Error",
+  		  			JOptionPane.ERROR_MESSAGE);   
 		}
 	}
 	

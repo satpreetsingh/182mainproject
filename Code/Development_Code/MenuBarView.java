@@ -19,6 +19,7 @@ public class MenuBarView extends JMenuBar
     public JMenuItem mnuSave;
     public JMenuItem mnuLoad;
     public JMenuItem mnuHelp;
+    public JMenuItem mnuRebellion;
     
     
 	
@@ -71,10 +72,12 @@ public class MenuBarView extends JMenuBar
         /* Create Control menu items */
         mnuRequest = new JMenuItem("Request");
         mnuRelinquish = new JMenuItem("Relinquish");
-
+        mnuRebellion = new JMenuItem("Rebellion");
+        
         /* Add Control menu items */
         ctrlMenu.add(mnuRequest);
         ctrlMenu.add(mnuRelinquish);
+        ctrlMenu.add(mnuRebellion);
         
         /* Add the ControlMenu to the MenuBar */
         add(ctrlMenu);
@@ -120,7 +123,8 @@ public class MenuBarView extends JMenuBar
         /* Add the listener for the session item menu options */
         mnuRequest.addActionListener((ActionListener)mBController);
         mnuRelinquish.addActionListener((ActionListener)mBController);
-     
+        mnuRebellion.addActionListener((ActionListener)mBController);
+        
         /* Add the listener for the session item menu options */
         mnuSave.addActionListener((ActionListener)mBController);
         mnuLoad.addActionListener((ActionListener)mBController);
