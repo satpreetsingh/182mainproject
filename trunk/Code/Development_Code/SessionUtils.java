@@ -78,8 +78,11 @@ public class SessionUtils
 		{
 			ObjectOutputStream masterStream = peer.oos;
 
+			UUID tempId = UUID.randomUUID();
 			ArrayList<Object> data = new ArrayList<Object>();
 			data.add(s.localUser.person);
+			data.add(tempId);
+			peer.tempId = tempId;
 
 			NetworkObject hello = new NetworkObject
 			(s.localUser.person,
@@ -566,6 +569,9 @@ public class SessionUtils
 			{
 				client.person = data.Originator;
 				
+				UUID tempId = (UUID)((ArrayList)data.data).get(1);
+				sendJoinConfirm(session, client,tempId);
+				
 				System.out.println("Sending PeerList to all peers ");
 				sendPeerListToAllPeers(session);
 				
@@ -583,7 +589,39 @@ public class SessionUtils
 			Output.processMessage("Defective JoinSessionRequest message recieved", Constants.Message_Type.error);
 		}
 	}
+	
+	private static void processJoinResponse(Session session, NetworkObject data) 
+	{
+		try
+		{
+			UUID tempId = (UUID)data.data;
+			
+			NetworkBundle joinBundle = null;
+			for(int i = 0; i < session.networkMembers.size(); i++)
+			{
+				if(session.networkMembers.get(i).tempId != null)
+				{
+					if(session.networkMembers.get(i).tempId.equals(tempId))
+					{
+						joinBundle = session.networkMembers.get(i);
+						joinBundle.person = data.Originator;
+						joinBundle.tempId = null;
+					}
+				}
+			}
+		
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective JoinSessionResponse message recieved", Constants.Message_Type.error);
+		}
+	}
 
+	
+	private static void sendJoinConfirm(Session session, NetworkBundle client, UUID tempId)
+	{
+		genericSendToAllPeers(session, tempId, NetworkObject.reason.joinRequestResponse, client);
+	}
 	
 	/* This can run on either MASTER or CLIENT */
 	protected static void processMessageFromPeer(PeerThread p, Session session, NetworkBundle client, NetworkBundle local)
@@ -650,6 +688,10 @@ public class SessionUtils
 				{
 					processJoinRequest(client, session, data);
 				}
+				else if (data.objectReason == NetworkObject.reason.joinPeerRequest)
+				{
+					processJoinRequest(client, session, data);
+				}
 				else if (data.objectReason == NetworkObject.reason.peerListUpdate)
 				{
 					processPeerListUpdate(session, data);
@@ -681,6 +723,10 @@ public class SessionUtils
 				else if (data.objectReason == NetworkObject.reason.updateToBaseline)
 				{
 					processUpdateToBaseline(session, data);
+				}
+				else if (data.objectReason == NetworkObject.reason.joinRequestResponse)
+				{
+					processJoinResponse(session, data);
 				}
 			
 			} 
@@ -1057,8 +1103,26 @@ public class SessionUtils
 	 * Support a rebellion.
 	 * @param session Session to do this for.
 	 */
-	public static void sendRebellionSupport(Session session) {
-		genericSendToAllPeers(session, session.master.person, NetworkObject.reason.canvasOwnershipSupportRebellion, null);
+	public static void sendRebellionSupport(Session session, Member m) 
+	{
+		NetworkBundle target = null;
+		for(int i = 0; i < session.networkMembers.size(); i++)
+		{
+			if(session.networkMembers.get(i).person.id.equals(m.id))
+			{
+				target = session.networkMembers.get(i);
+			}
+		}
+		
+		if (target != null)
+		{
+			genericSendToAllPeers
+			(session, 
+				m,
+				NetworkObject.reason.canvasOwnershipSupportRebellion, 
+				target);
+	
+		}
 	}
 
 

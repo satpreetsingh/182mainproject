@@ -639,7 +639,7 @@ public class Session
     	    "Rebellion",
     	    JOptionPane.YES_NO_OPTION) == 0)
     	{
-    		SessionUtils.sendRebellionSupport(this);
+    		SessionUtils.sendRebellionSupport(this, rebel);
     	}
     	else
     	{
@@ -656,7 +656,7 @@ public class Session
 		if(this.rebellionCount >= (this.networkMembers.size() / 2 - 1))
 		{
 			this.processTransferOwnership(this.localUser, false);
-			this.rebellionCount = 0;
+			this.rebellionCount = -10;
 		}
 	}
 
