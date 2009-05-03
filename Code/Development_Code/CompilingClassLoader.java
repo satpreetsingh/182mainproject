@@ -28,7 +28,7 @@ public class CompilingClassLoader extends ClassLoader {
 		int r = fin.read (raw);
 
 		if (r != len)
-			throw new IOException ("Can't read all, " + r + " != " + len);
+			throw new IOException ("[getBytes] Can't read all, " + r + " != " + len);
 		
 		/* Close the file! */ 
 		fin.close();
@@ -48,7 +48,7 @@ public class CompilingClassLoader extends ClassLoader {
 	private boolean compile (String javaFile) throws IOException {
 		
 		/* Let the user know what's going on */ 
-		System.out.println ("CCL Compiling " + javaFile + "...");
+		System.out.println ("[compile] CCL Compiling " + javaFile + "...");
 		
 		/* Start up the compiler */ 
 		Process p = Runtime.getRuntime().exec ("javac " + javaFile);
@@ -84,7 +84,7 @@ public class CompilingClassLoader extends ClassLoader {
 		/* First, see if we've already dealt with this one */ 
 		GenericClass = findLoadedClass (name);
 
-		System.out.println ("findLoadedClass: "  + GenericClass);
+		System.out.println ("[loadClass] findLoadedClass: "  + GenericClass);
 		
 		
 		/* Create a pathname from the class name */ 
@@ -113,7 +113,7 @@ public class CompilingClassLoader extends ClassLoader {
 				/* we must declare failure. (It's not good enough to use */ 
 				/* and already-existing, but out-of-date, classfile) */  
 				if (!compile (javaFilename) || !classFile.exists()) {
-					throw new ClassNotFoundException ("Compile failed " + javaFilename);
+					throw new ClassNotFoundException ("[loadClass] Compile failed " + javaFilename);
 				}
 			} catch( IOException ie ) {
 				/* Another place where we might come to if we fail to compile  */  
@@ -126,22 +126,23 @@ public class CompilingClassLoader extends ClassLoader {
 		try {
 			
 			/* Read the bytes */
-			byte raw[] = getBytes (classFilename);
+			byte[] raw = getBytes (classFilename);
 			/* Try to turn them into a class */
-			GenericClass = defineClass (name, raw, 0, raw.length);
+			GenericClass = defineClass (name, raw, 0, raw.length);		
 		} catch (IOException ie) {
 			/* This is not a failure! If we reach here, it might */
 			/* mean that we are dealing with a class in a library, */
 			/* such as java.lang.Object */
+			System.out.println ("[loadClass] defineClass " + GenericClass);
 		}
-		System.out.println ("defineClass" + GenericClass);
+		
 		
 		/* The class could be in a library -- try loading the normal way */
 		if (GenericClass == null) {
 			GenericClass = findSystemClass (name);
 		}
 	
-		System.out.println ("findSystemClass " + GenericClass);
+		System.out.println ("[loadClass] findSystemClass " + GenericClass);
 	
 		
 		

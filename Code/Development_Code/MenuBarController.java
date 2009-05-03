@@ -91,11 +91,11 @@ public class MenuBarController implements ActionListener, SessionListener {
 				filename = FileChooser.getSelectedFile().getName();
 				
 				/* Trim off the extension */
-				filename = filename.substring(0, filename.indexOf("."));
+				//filename = filename.substring(0, filename.indexOf("."));
 				
 				
 				/* Add the results as optional output (defined by user preferences) */
-				Output.processMessage("Filename = " + filename, Constants.Message_Type.info);
+				Output.processMessage("[actionPerformed] Filename = " + filename, Constants.Message_Type.info);
 				
 				CompilingClassLoader classloader = new CompilingClassLoader();
 				
