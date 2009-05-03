@@ -634,7 +634,7 @@ public class Session
 	public void processRebellionVotes()
 	{
 		this.rebellionCount = this.rebellionCount + 1;
-		if(this.rebellionCount >= this.networkMembers.size() / 2)
+		if(this.rebellionCount >= (this.networkMembers.size() / 2 - 1))
 		{
 			this.processTransferOwnership(this.localUser, false);
 			this.rebellionCount = 0;
