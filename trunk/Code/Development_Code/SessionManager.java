@@ -9,9 +9,10 @@ import java.util.ArrayList;
  * correctness not guaranteed.
  * @author bmhelppi
  */
-public class SessionManager extends Thread 
+public class SessionManager extends Thread implements ShutdownInterface
 {
 	
+
 	private ArrayList <Session> activeSessions;
 	
 	private Session sessionInFocus = null;
@@ -34,9 +35,22 @@ public class SessionManager extends Thread
 	{
 		while(true)
 		{
-			for(int i = 0; i < activeSessions.size(); i++)
+			if(activeSessions.size() == 0)
 			{
-				updateActiveSession(activeSessions.get(i));
+				try 
+				{
+					this.sleep(20);
+				} catch (InterruptedException e) 
+				{
+					
+				}
+			}
+			else
+			{
+				for(int i = 0; i < activeSessions.size(); i++)
+				{
+					updateActiveSession(activeSessions.get(i));
+				}
 			}
 		}
 		
@@ -149,8 +163,31 @@ public class SessionManager extends Thread
 		}
 	}
 	
+	/**
+	 * Add an object to be notified when the in focus session changes.
+	 * @param s Object to get updates.
+	 */
 	public void addSessionChangeListenObject(SessionListener s)
 	{
 		this.objectsInFocus.add(s);
+	}
+	
+
+
+	public void shutDown() 
+	{
+		System.out.println("TEST");
+		for(int i = 0 ; i < activeSessions.size(); i++)
+		{
+			Session act = activeSessions.get(i);
+			if(act.localUser == act.master && (act.networkMembers.size() > 1))
+			{
+				act.processTransferOwnership(act.networkMembers.get(1), false);
+				SessionUtils.sendQuitMessage(act);
+			}
+		}
+		
+		System.out.println("TEST");
+		
 	}
 }

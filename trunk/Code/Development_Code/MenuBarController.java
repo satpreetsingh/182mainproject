@@ -65,7 +65,6 @@ public class MenuBarController implements ActionListener, SessionListener {
 		
 		/* Close the application */
 		else if (e.getSource() == this.menubarview.mnuQuit) {		
-			System.out.println("MenuBarController TODO:  Add in exiting a session code!");
 			System.exit(0);			
 		}		
 		

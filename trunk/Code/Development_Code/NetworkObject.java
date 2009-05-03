@@ -25,9 +25,8 @@ public class NetworkObject implements Serializable {
 	 leaveNotification,
 	 keepAlivePing, 
 	 keepAliveResponse,
-	 event, 		//Any canvasEvent, transfer ownership
-	 dataState,  	//What objects are drawn on canvas.
 	 networkState,
+	 dataState,
 	 chat,
 	 mousePress,
 	 mouseDrag,
@@ -46,7 +45,7 @@ public class NetworkObject implements Serializable {
 	 canvasOwnershipDeny,
 	 canvasOwnershipRebel,
 	 canvasOwnershipSupportRebellion,
-	 updateToBaseline
+	 quit
 	 };
 	 
 	 

@@ -6,30 +6,29 @@ import javax.swing.*;
 
 import java.net.*;
 
-public class MultiDraw extends JApplet  {
+public class MultiDraw extends JApplet {
 
 	private boolean isSlave;
 	
-	
-	private SessionManager sessionMgr;
-	protected DrawingCanvas canvas;
-	protected ControlPanelView controlPanel;
+	private DrawingCanvas canvas;
+	private ControlPanelView controlPanel;
 	private ControlPanelController controlPanelController;
-	protected static InitialWindowView initialwindow;
-	protected ToolBarView toolBar;
-	protected MenuBarView menuBar;
-	protected ArrayList<ToolController> tools;
-    protected ChatPanelView chatPanelView;
-    protected ChatPanelController chatPanelController;
+
+	private ToolBarView toolBar;
+	private MenuBarView menuBar;
+	private ArrayList<ToolController> tools;
+	private ChatPanelView chatPanelView;
+    private ChatPanelController chatPanelController;
+    
+    private static InitialWindowView initialwindow;
 	private MenuBarController menuBarController;
 	
 
 	/**
 	 * Create a new instance of MultiDraw class.
 	 */
-	public MultiDraw() 
+	public MultiDraw(SessionManager sessionMgr) 
 	{ 
-		sessionMgr = new SessionManager();
 			
 		controlPanelController = new ControlPanelController();
 		getContentPane().setLayout(new BorderLayout());
@@ -41,10 +40,13 @@ public class MultiDraw extends JApplet  {
 		controlPanel = new ControlPanelView(controlPanelController);
 		getContentPane().add(controlPanel, BorderLayout.SOUTH);
 		tools = createTools();
-		toolBar = createToolBarView(tools);
+		toolBar = new ToolBarView(tools);
+		
 		getContentPane().add(toolBar, BorderLayout.WEST);
 		
-		menuBar = createMenuBarView(tools);
+		menuBar = new MenuBarView(canvas, tools);
+
+		
 		menuBarController = new MenuBarController(canvas, menuBar);
 		menuBar.AddController(menuBarController);
 		
@@ -72,60 +74,54 @@ public class MultiDraw extends JApplet  {
         sessionMgr.addSessionChangeListenObject(controlPanelController);
         sessionMgr.addSessionChangeListenObject(menuBarController);
      	sessionMgr.addNewSession(tempSession);
-        sessionMgr.start();
-
+        
 	}
  
-	protected ToolBarView createToolBarView(ArrayList<ToolController> toolList) {
-		return new ToolBarView(toolList);
-	}
+
   
-	protected MenuBarView createMenuBarView(ArrayList<ToolController> toolList) {
-		return new MenuBarView(canvas, toolList);
-	}
 
 	
 	/* Configure tool list used for ToolBar and MenuBar construction */
   
 	protected ArrayList<ToolController> createTools() {
-	    ArrayList<ToolController> actions = new ArrayList();
+	    ArrayList<ToolController> actions = new ArrayList<ToolController>();
 	
 	    actions.add(
 	        new ToolController("Freehand",
-	  	        getImageIcon("freehand.jpg"),
-	  	        "freehand drawing tool",
-	  	        canvas,
+    		new ImageIcon("freehand.jpg"),
+  	        "freehand drawing tool",
+  	        canvas,
 	  		new FreehandTool(canvas, new FreeHandFactory(), "Freehand")));
 	
 	    actions.add(
 	  		new ToolController("Line",
-	  		getImageIcon("line.jpg"),
+			new ImageIcon("line.jpg"),
 	  		"Line drawing tool",
 	  		canvas,
 	  		new TwoPointShapeTool(new LineFactory(), "Line")));
 	  
 	    actions.add(
 	  		new ToolController("Rectangle",
-	  		getImageIcon("rectangle.jpg"),
+			new ImageIcon("rectangle.jpg"),
 	  		"Rectangle drawing tool",
 	  		canvas,
 	  		new TwoPointShapeTool(new RectangleFactory(), "Rectangle")));
 	  		
 	    actions.add(
-	  	        new ToolController("Oval",
-	  	        getImageIcon("oval.jpg"),
+  	        new ToolController("Oval",
+    		new ImageIcon("oval.jpg"),
 	  		"Oval drawing tool",
 	  		canvas,
 	  		new TwoPointShapeTool(new OvalFactory(), "Oval")));
 	    actions.add(
 	  		new ToolController("Text",
-	  		getImageIcon("text.jpg"),
+			new ImageIcon("text.jpg"),
 	  		"text drawing tool",
-	          	canvas,
+          	canvas,
 	  		new TextTool(new TextFactory(),"Text")));		
 	    actions.add(
 	  		new ToolController("Eraser",
-	  		getImageIcon("eraser.jpg"),
+			new ImageIcon("eraser.jpg"),
 	  		"Eraser drawing tool",
 	  		canvas,
 	  		new EraserTool("Eraser")));
@@ -134,16 +130,12 @@ public class MultiDraw extends JApplet  {
 	    /* Create a select tool to select other objects */
 	    actions.add(
 	      		new ToolController("Select",
-	      		getImageIcon("select.jpg"),
+  				new ImageIcon("select.jpg"),
 	      		"Select tool",
 	      		canvas,
 	      		new SelectorTool("Select")));
 	    
 	    return actions;
-  }
-  
-  protected ImageIcon getImageIcon(String fileName) {
-      return new ImageIcon(fileName);
   }
   
   
@@ -153,11 +145,17 @@ public class MultiDraw extends JApplet  {
    * @param args Not used.
    */
   public static void main(String[] args) {
-    
-	  initialwindow = new InitialWindowView();
-
+	 
+	  ShutdownInterface sessionManger = new SessionManager();
+	  ShutdownHandler shutDown = new ShutdownHandler(sessionManger);
+	  
+	  Runtime.getRuntime().addShutdownHook(shutDown);
+	  
+	  sessionManger.start();
+	  initialwindow = new InitialWindowView((SessionManager)sessionManger);
+	 
   }
-
+  
   
 }
 

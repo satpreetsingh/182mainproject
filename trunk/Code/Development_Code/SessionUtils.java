@@ -623,13 +623,20 @@ public class SessionUtils
 		genericSendToAllPeers(session, tempId, NetworkObject.reason.joinRequestResponse, client);
 	}
 	
+	private static void processQuit(Session session, NetworkBundle client, PeerThread p)
+	{
+		session.networkMembers.remove(client);
+		session.threads.remove(p);
+		p.target = null;
+		p = null;
+	}
 	/* This can run on either MASTER or CLIENT */
 	protected static void processMessageFromPeer(PeerThread p, Session session, NetworkBundle client, NetworkBundle local)
 	{
 		/**
 		 * Don't check ourself for messages.
 		 */
-		if (client != local)
+		if (client != local && client != null)
 		{
 			try 
 			{
@@ -720,7 +727,7 @@ public class SessionUtils
 				{
 					processCanvasOwnershipSupportRebellion(session, data);
 				}
-				else if (data.objectReason == NetworkObject.reason.updateToBaseline)
+				else if (data.objectReason == NetworkObject.reason.dataState)
 				{
 					processUpdateToBaseline(session, data);
 				}
@@ -728,22 +735,33 @@ public class SessionUtils
 				{
 					processJoinResponse(session, data);
 				}
+				else if (data.objectReason == NetworkObject.reason.quit)
+				{
+					processQuit(session, client, p);
+				}
+				else
+				{
+					Output.processMessage("Broken message recieved", Constants.Message_Type.error);
+				}
 			
 			} 
-			catch (SocketTimeoutException sockTime)
-			{
-				
-			}
+
 			catch (StreamCorruptedException streamCorr)
 			{
-				Output.processMessage("CorruptSocket", Constants.Message_Type.error);
-			}
-			catch (SocketException sock)
-			{
+				Output.processMessage(p.target.person.name + " has a CorruptSocket, dropping connection", Constants.Message_Type.error);
 				session.threads.remove(p);
 				session.networkMembers.remove(p.target);
 				p.target = null;
 				p = null;
+			}
+			catch (SocketException sock)
+			{
+				Output.processMessage(p.target.person.name + " is assumed to have quit, dropping connection", Constants.Message_Type.info);
+				session.threads.remove(p);
+				session.networkMembers.remove(p.target);
+				p.target = null;
+				p = null;
+				
 			}
 			catch (Exception e) 
 			{
@@ -1125,7 +1143,11 @@ public class SessionUtils
 		}
 	}
 
-
+	public static void sendQuitMessage(Session session)
+	{
+		genericSendToAllPeers(session, session.localUser.person, NetworkObject.reason.quit, null);
+	}
+	
 	public static void sendDrawState(Session session, DrawState drawState)
 	{
 		genericSendToAllPeers(session,drawState, NetworkObject.reason.dataState, null);

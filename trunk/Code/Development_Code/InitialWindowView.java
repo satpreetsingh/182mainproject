@@ -13,128 +13,130 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 
-
+/**
+ * Handles being the first window in view.
+ * Purpose is to get data needed to build a session.
+ * @author ben
+ *
+ */
 public class InitialWindowView {
 
-	private static InitialWindowController IWC;
+	private static InitialWindowController initialWindowController;
 
+	protected JFrame initialWindow;
 	
-	InitialWindowView(){
-
-		
-		JFrame InitialWindow = new JFrame();
-		InitialWindow.setTitle("MultiDraw Startup");
-
+	/* Create a tabbed list of panes to display */
+	protected JTabbedPane tabbedPane;
+	protected JPanel pnlOne;
+	protected JLabel lblUN;
+	protected JTextField userNameTextBox;
+	protected JLabel lblIP;
+	protected JTextField userIPTextBox;
+	protected JLabel lblPort;
+	protected JTextField userPortTextBox;
+	protected JPanel pnlTwo;
+	protected JLabel lblUN2;
+	protected JTextField userNameMasterTextBox;
+	
+	protected JPanel pnlThree;
+	protected JButton buttonOk;
+	protected JButton buttonCancel;
+	
+	/**
+	 * Create a new InitialWindowView
+	 * @param sessionManger
+	 */
+	InitialWindowView(SessionManager sessionManger)
+	{
+		initialWindow = new JFrame();
+		initialWindow.setTitle("MultiDraw Startup");
 		
 		/* Use the grid layout manger */
-		InitialWindow.getContentPane().setLayout(new GridLayout(2,1));
-		
+		initialWindow.getContentPane().setLayout(new GridLayout(2,1));
 		
 		/* Create a tabbed list of panes to display */
-		JTabbedPane tabbedPane = new JTabbedPane();
-
-
+		tabbedPane = new JTabbedPane();
 
 		
-		JPanel pnlOne = new JPanel();
+		pnlOne = new JPanel();
 		pnlOne.setLayout(new GridLayout(3,2));
 
-		JLabel lblUN = new JLabel("Enter a username: ");
+		lblUN = new JLabel("Enter a username: ");
 		pnlOne.add(lblUN);
-		JTextField txtUN = new JTextField(20);
-		pnlOne.add(txtUN);
+		userNameTextBox = new JTextField(20);
+		pnlOne.add(userNameTextBox);
 		
-		JLabel lblIP = new JLabel("Enter their IP to join a session: ");
+		lblIP = new JLabel("Enter their IP to join a session: ");
 		pnlOne.add(lblIP);
-		JTextField txtIP = new JTextField(20);
-		pnlOne.add(txtIP);
+		userIPTextBox = new JTextField(20);
+		pnlOne.add(userIPTextBox);
 		
-		
-		
-		JLabel lblPort = new JLabel("Enter their port: ");
+		lblPort = new JLabel("Enter their port: ");
 		pnlOne.add(lblPort);
-		JTextField txtPort = new JTextField(10);
-		pnlOne.add(txtPort);
+		userPortTextBox = new JTextField(10);
+		pnlOne.add(userPortTextBox);
 		
 		tabbedPane.addTab(	"Join a sesion...", 
 							null, 
 							pnlOne,
 							"Join a MultiDraw session collaboration!");	
 		
-		
-		JPanel pnlTwo = new JPanel();	
+		pnlTwo = new JPanel();	
 		pnlTwo.setLayout(new GridLayout(1,2));
 		
-		JLabel lblUN2 = new JLabel("Enter a username: ");
+		lblUN2 = new JLabel("Enter a username: ");
 		pnlTwo.add(lblUN2);
-		JTextField txtUN2 = new JTextField(20);
-		pnlTwo.add(txtUN2);		
+		userNameMasterTextBox = new JTextField(20);
+		pnlTwo.add(userNameMasterTextBox);		
 		
 		tabbedPane.addTab(	"Create a session... ", 
 							null, 
 							pnlTwo,
 	    					"Create a MultiDraw session collaboration!");
 		
-		
-		
-		IWC = new InitialWindowController(InitialWindow,
-				txtUN,txtIP,txtPort,txtUN2,tabbedPane			
+		initialWindowController = new InitialWindowController(this, sessionManger			
 		);
 		
 		
 		/* Add the tabbed pane to the window */
-		InitialWindow.add(tabbedPane);
+		initialWindow.add(tabbedPane);
 		
 		
 		/* Create buttons for our entry form */
-		JPanel pnlThree = new JPanel();
+		pnlThree = new JPanel();
 		pnlTwo.setLayout(new FlowLayout());
-		InitialWindow.add(pnlThree);
+		initialWindow.add(pnlThree);
 		
-		JButton btnOK = new JButton("OK");
-		btnOK.addActionListener(IWC);
-		pnlThree.add(btnOK);
+		buttonOk = new JButton("OK");
+		buttonOk.addActionListener(initialWindowController);
+		pnlThree.add(buttonOk);
 		
-		JButton btnCancel = new JButton("Cancel");
-		btnCancel.addActionListener(IWC); 
-		pnlThree.add(btnCancel);
-		
-		
-
-		
+		buttonCancel = new JButton("Cancel");
+		buttonCancel.addActionListener(initialWindowController); 
+		pnlThree.add(buttonCancel);
 		
 		/* Finish packing/resizing the window */
-		InitialWindow.pack();
-		InitialWindow.setSize(375,250);
-		InitialWindow.setVisible(true);
-		InitialWindow.addWindowListener(new AppCloser());
+		initialWindow.pack();
+		initialWindow.setSize(375,250);
+		initialWindow.setVisible(true);
 		
 	}
 	
 
-	/* Methods the pass the value to MultiDraw.java */
+	/* Methods to pass the value to MultiDraw.java */
 	boolean getSlaveMaster(){
-		return IWC.IsSlave;
+		return initialWindowController.IsSlave;
 	}
 	String getUserName(){
-		return IWC.username;
+		return initialWindowController.username;
 	}
 	String getIP(){
-		return IWC.ip;
+		return initialWindowController.ip;
 	}	
 	int getPort(){
-		return IWC.port;
+		return initialWindowController.port;
 	}
 	
-	
-	  /* Inner class AppCLoser for terminating application  */
-	  /* when Close Window button of frame is clicked       */
-	  static class AppCloser extends WindowAdapter  {
-	    public void windowClosing(WindowEvent e) {
-	    	System.exit(0);
-	    	System.out.println("InitialWindowView TODO:  Add in exiting a session code!");
-	    }
-	  }	
-	
+	 
 	
 }
