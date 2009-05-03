@@ -643,6 +643,7 @@ public class Session
 	public void setBaseline(DrawState baseline)
 	{
 		this.currentState = baseline;
+		this.canvas.refresh();
 		
 	}
 
