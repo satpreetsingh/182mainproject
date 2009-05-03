@@ -10,8 +10,17 @@ import javax.swing.*;
  */
 public class MenuBarView extends JMenuBar 
 {
-	private MenuBarController controller;
-		
+	private MenuBarController mBController;
+	public JMenuItem mnuNew;
+	public JMenuItem mnuQuit;
+	public JMenuItem mnuRequest;
+	public JMenuItem mnuRelinquish;
+    public JMenuItem mnuAddTool;
+    public JMenuItem mnuSave;
+    public JMenuItem mnuLoad;
+    public JMenuItem mnuHelp;
+    
+    
 	
 	/**
 	 * Create a new MenuBar.
@@ -19,29 +28,18 @@ public class MenuBarView extends JMenuBar
 	 */
 	MenuBarView(DrawingCanvas canvas, ArrayList<ToolController> actions) 
 	{
-
-		/* Create a new controller that handles most of the menu item clicks */
-		controller = new MenuBarController(canvas);
 		
 		
         /* --------------------- FILE MenuItems -------------------------- */
         JMenu fileMenu = new JMenu("File");
          
         /* Create File menu items */
-        JMenuItem fileItem1 = new JMenuItem("New");
-        JMenuItem fileItem2 = new JMenuItem("Quit");       
-        
-        /* Set the file name and listener */
-        fileItem1.setName("fileItem1");
-        fileItem2.setName("fileItem2");
-                
-        fileItem1.addActionListener((ActionListener)controller);
-        fileItem2.addActionListener((ActionListener)controller);
-          
-        
+        mnuNew = new JMenuItem("New");
+        mnuQuit = new JMenuItem("Quit");       
+
         /* Add File menu items */
-        fileMenu.add(fileItem1);
-        fileMenu.add(fileItem2);
+        fileMenu.add(mnuNew);
+        fileMenu.add(mnuQuit);
         
         /* Add the FileMenu to the MenuBar */
         add(fileMenu);
@@ -59,14 +57,9 @@ public class MenuBarView extends JMenuBar
         toolMenu.add(new JSeparator());
         
         /* Additional tool menu items */
-        JMenuItem toolItem1 = new JMenuItem("Add Tool");
-
-        /* Set the tool name and listener */
-        toolItem1.setName("toolItem1");
+        mnuAddTool = new JMenuItem("Add Tool");
         
-        toolItem1.addActionListener((ActionListener)controller);
-        
-        toolMenu.add(toolItem1);
+        toolMenu.add(mnuAddTool);
      
         
 		/* Add the toolMenu to the MenuBar */
@@ -76,20 +69,12 @@ public class MenuBarView extends JMenuBar
         JMenu ctrlMenu = new JMenu("Control");
 	
         /* Create Control menu items */
-        JMenuItem ctrlItem1 = new JMenuItem("Request");
-        JMenuItem ctrlItem2 = new JMenuItem("Relinquish");
-        
-        /* Set the name of the objects */
-        ctrlItem1.setName("ctrlItem1");
-        ctrlItem2.setName("ctrlItem2");
-        
-        /* Add the listener for the session item menu options */
-        ctrlItem1.addActionListener((ActionListener)controller);
-        ctrlItem2.addActionListener((ActionListener)controller);
- 
+        mnuRequest = new JMenuItem("Request");
+        mnuRelinquish = new JMenuItem("Relinquish");
+
         /* Add Control menu items */
-        ctrlMenu.add(ctrlItem1);
-        ctrlMenu.add(ctrlItem2);
+        ctrlMenu.add(mnuRequest);
+        ctrlMenu.add(mnuRelinquish);
         
         /* Add the ControlMenu to the MenuBar */
         add(ctrlMenu);
@@ -97,21 +82,13 @@ public class MenuBarView extends JMenuBar
         /* --------------------- SESSION MenuItems -------------------------- */
         JMenu sessionMenu = new JMenu ("Session");
 
-        /* Create File menu items */
-        JMenuItem sessionItem1 = new JMenuItem("Save");
-        JMenuItem sessionItem2 = new JMenuItem("Load");
+        /* Create Session menu items */
+        mnuSave = new JMenuItem("Save");
+        mnuLoad = new JMenuItem("Load");
 
-        /* Set the name of the objects */
-        sessionItem1.setName("sessionItem1");
-        sessionItem2.setName("sessionItem2");
-        
-        /* Add the listener for the session item menu options */
-        sessionItem1.addActionListener((ActionListener)controller);
-        sessionItem2.addActionListener((ActionListener)controller);
- 
         /* Add Session menu items */
-        sessionMenu.add(sessionItem1);
-        sessionMenu.add(sessionItem2);
+        sessionMenu.add(mnuSave);
+        sessionMenu.add(mnuLoad);
        
         /* Add the SessionMenu to the MenuBar */
         add(sessionMenu);
@@ -120,21 +97,39 @@ public class MenuBarView extends JMenuBar
         JMenu helpMenu = new JMenu ("Help");
 
         /* Create File menu items */
-        JMenuItem helpItem1 = new JMenuItem("About");
-        
-        /* Set the name of the object */
-        helpItem1.setName("helpItem1");
-        
-        /* Add the listener for the help menu item option */
-        helpItem1.addActionListener((ActionListener)controller);
-        
+        mnuHelp = new JMenuItem("About");
+
         /* Add Help menu items */
-        helpMenu.add(helpItem1);
+        helpMenu.add(mnuHelp);
 
         /* Add the HelpMenu to the MenuBar */
         add(helpMenu);
         
 	}
   
+	
+	public void AddController (MenuBarController m){
+
+		/* Pass in the controller */
+		mBController = m;
+		
+		mnuNew.addActionListener((ActionListener)mBController);
+		mnuQuit.addActionListener((ActionListener)mBController);
+        mnuAddTool.addActionListener((ActionListener)mBController);     
+       
+        /* Add the listener for the session item menu options */
+        mnuRequest.addActionListener((ActionListener)mBController);
+        mnuRelinquish.addActionListener((ActionListener)mBController);
+     
+        /* Add the listener for the session item menu options */
+        mnuSave.addActionListener((ActionListener)mBController);
+        mnuLoad.addActionListener((ActionListener)mBController);
+        
+        /* Add the listener for the help menu item option */
+        mnuHelp.addActionListener((ActionListener)mBController);      
+        
+	}
+	
+	
 } 
 
