@@ -5,15 +5,15 @@ import java.awt.event.ActionListener;
 /**
  * Implments a chatPanel controller.  Accepts events to send messages.
  *
- * @author Mandi
- * @author ben
+ * @authors ben, joe
  * 
  */
 public class ChatPanelController implements ActionListener, SessionListener
 {
 	private Session session;
     private ChatPanelView chatView;
-   
+    private String localUserName;
+    
     /**
      * Create a new instance of chat panel controller.
      * @param chatview
@@ -23,8 +23,13 @@ public class ChatPanelController implements ActionListener, SessionListener
        this.session = null;
        this.chatView = chatview;
        
+       /* Set the listener up for the send button */
        this.chatView.btnChat.addActionListener(this);
+ 
+       
+       
     }
+    
 
     /**
      * Accept an action event. 
@@ -37,10 +42,10 @@ public class ChatPanelController implements ActionListener, SessionListener
             String msg = this.chatView.txtMsg.getText();
             this.chatView.txtMsg.setText("");
             
-            this.chatView.processMessage(msg,Constants.Message_Type.chat);
+            this.chatView.processMessage(session.localUser.person.name + ": " + msg,Constants.Message_Type.chat);
             if (session != null)
             {
-            	session.processChatMessage(msg, false);
+            	session.processChatMessage(session.localUser.person.name + ": " + msg, false);
             }
         }
     }
