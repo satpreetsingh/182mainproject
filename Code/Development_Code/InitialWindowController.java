@@ -7,50 +7,37 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 
 /**
-   * This class manages the Initial Window Controller.
-   * @author jjtrapan
-   *
-   */
+  * This class manages the Initial Window Controller.
+  * @author jjtrapan
+  *
+  */
 
-  public class InitialWindowController implements ActionListener {
+public class InitialWindowController implements ActionListener 
+{
   	  
-	  JFrame InitialWindow;
-	  JTextField editbox;
+	InitialWindowView initialView;
+	JTextField editbox;
 	  
-	  JTextField txtUN;
-	  JTextField txtIP; 
-	  JTextField txtPort;
-	  JTextField txtUN2;
-	  JTabbedPane tabbedPane;
-	  
-      protected String username = "", ip = "";
-      protected int port = 3000;
-      protected boolean IsSlave;
+	private SessionManager sessionManger;
+    protected String username = "", ip = "";
+    protected int port = -1;
+    protected boolean IsSlave;
   		  
   		  
 	  /**
   	   * Create a new instance of the Controller.
   	   */
-  	  InitialWindowController(JFrame Window, 
-  			  JTextField txtun, 
-  			  JTextField txtip,
-  			  JTextField txtport,
-  			  JTextField txtun2,
-  			  JTabbedPane tabbedpane){ 	
-  		
-  		InitialWindow = Window; 
-  		txtUN = txtun;
-  		txtIP = txtip;
-  		txtPort = txtport;
-  		txtUN2 = txtun2;
-  		tabbedPane = tabbedpane;
-  		
-  	  }
+  	  InitialWindowController
+  	  (InitialWindowView initialView,
+  			  SessionManager sessionManger)
+    { 	
+  		  this.sessionManger = sessionManger;
+  		  this.initialView = initialView;
+    }
   	  
 
   	  /**
@@ -59,24 +46,22 @@ import javax.swing.JTextField;
   	   */
   	  public void actionPerformed(ActionEvent e) {
   		  
+  		  boolean portError = false;
   		  
-  		  /* If cancel button was clicked, exit application */
-  		  if(e.getSource().toString().contains("Cancel")) { 
+  		  if(e.getSource() == initialView.buttonCancel)
+  		  {
   			  System.exit(0);	   
-
   		  }
-  		  
-  		  /* btnOK was clicked */
-  		  else if (e.getSource().toString().contains("OK")){  
- 			  		    
-    	
+  		  else if (e.getSource() == initialView.buttonOk)
+  		  {
   			  
   			/* The user choose to be a client (slave) */  
-  			IsSlave = (tabbedPane.getSelectedIndex() == 0);
+  			IsSlave = (initialView.tabbedPane.getSelectedIndex() == 0);
   			
-  			if (IsSlave) {
-  	 			username = txtUN.getText();
-        		ip		 = txtIP.getText();
+  			if (IsSlave) 
+  			{
+  	 			username = initialView.userNameTextBox.getText();
+        		ip		 = initialView.userIPTextBox.getText();
         		
         		
         		/** Attempt to convert the text into an integer.  
@@ -84,31 +69,43 @@ import javax.swing.JTextField;
         		 */
         		try
         		{
-        			port	 = Integer.valueOf(txtPort.getText()).intValue();   			
+        			port	 = Integer.valueOf(initialView.userPortTextBox.getText()).intValue(); 
+        				
         		}
         		catch(NumberFormatException e1) 
         		{
-        			port 	 = 3000;
+        			portError = true;
+        			
         		}
         		
     		}
     		
     		else
     		{
-	   			username = txtUN2.getText();
+	   			username = initialView.userNameMasterTextBox.getText();
     		}
   			
   			/* Check the user inputs to make sure they are valid */
-    		if (username.trim().equals("")){
+  			
+  			if (portError)
+  			{
+  				JOptionPane.showMessageDialog(
+      		  			null,
+      		  			"You must enter a valid port.",
+      		  			"Input Error",
+      		  			JOptionPane.ERROR_MESSAGE);   	
+  			}
+  			else if (username.trim().equals(""))
+  			{
       			JOptionPane.showMessageDialog(
       		  			null,
       		  			"You must enter a valid username.",
       		  			"Input Error",
       		  			JOptionPane.ERROR_MESSAGE);   			
     		}
-    		
     		else if ((ip.trim().equals("")) && 
-    				 (IsSlave)){
+    				 (IsSlave))
+    		{
           			JOptionPane.showMessageDialog(
           		  			null,
           		  			"You must enter a IP address.",
@@ -116,24 +113,17 @@ import javax.swing.JTextField;
           		  			JOptionPane.ERROR_MESSAGE); 
           			
     		}		
- 
-    		
    
-            else{
-            	
-            
+            else
+            {
             	/* Display main canvas window */
             	JFrame frame = new JFrame();
             	frame.setTitle("MultiDraw Development Build");
             	frame.getContentPane().setLayout(new BorderLayout());
-            	frame.getContentPane().add(new MultiDraw(),
+            	frame.getContentPane().add(new MultiDraw(sessionManger),
   						      	BorderLayout.CENTER);
-            	frame.addWindowListener(new AppCloser());
             	frame.pack();
             	frame.setSize(800, 600);
-  		
-  			
-  			
   		
             	JOptionPane.showMessageDialog(
             			null,
@@ -143,36 +133,13 @@ import javax.swing.JTextField;
   			
   			
             	/* Close the old window entirely and free it's memory */
-            	InitialWindow.dispose();
-            	InitialWindow.setVisible(false);
+            	initialView.initialWindow.setVisible(false);
+            	initialView.initialWindow.dispose();
   			
             	/* Show the new main canvas window */
             	frame.setVisible(true);
-            	
-            	
-            	
-
-    			
-    			
-    			
             }
-  			  
   		  }
-
-  		  
   	  }  
   	  
-  	  /* Inner class AppCLoser for terminating application  */
-  	  /* when Close Window button of frame is clicked       */
-  	  static class AppCloser extends WindowAdapter  {
-  	    public void windowClosing(WindowEvent e) {
-  	    	System.out.println("InitialWindowController TODO:  Add in exiting a session code!");
-  	    	System.exit(0);
-  	    }
-  	  }  
-  	  
-  	  
-
-  	
-  	
-  }
+}
