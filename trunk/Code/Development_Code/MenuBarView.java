@@ -15,22 +15,25 @@ public class MenuBarView extends JMenuBar
 	public JMenuItem mnuQuit;
 	public JMenuItem mnuRequest;
 	public JMenuItem mnuRelinquish;
+    public JMenu toolMenu;
     public JMenuItem mnuAddTool;
     public JMenuItem mnuSave;
     public JMenuItem mnuLoad;
     public JMenuItem mnuHelp;
     public JMenuItem mnuRebellion;
-    
+    public ArrayList<ToolController> actions; 
     
 	
 	/**
 	 * Create a new MenuBar.
 	 * @param canvas Canvas passed to controller.
 	 */
-	MenuBarView(DrawingCanvas canvas, ArrayList<ToolController> actions) 
+	MenuBarView(DrawingCanvas canvas, ArrayList<ToolController> a) 
 	{
 		
 		
+		actions = a;
+				
         /* --------------------- FILE MenuItems -------------------------- */
         JMenu fileMenu = new JMenu("File");
          
@@ -50,8 +53,8 @@ public class MenuBarView extends JMenuBar
 		
 		for(int i = 0; i < actions.size(); i++)
 		{
-			Action a = (Action) actions.get(i);
-			toolMenu.add(a);
+			Action actionitem = (Action) actions.get(i);
+			toolMenu.add(actionitem);
 		}
     		
 		/* Add a list breaker */
@@ -135,5 +138,15 @@ public class MenuBarView extends JMenuBar
 	}
 	
 	
-} 
+	/**
+	 * Regenerate all tool items on the Menu.
+	 */
+	public void RefreshTools(){
+	
 
+
+		
+	}
+	
+	
+} 

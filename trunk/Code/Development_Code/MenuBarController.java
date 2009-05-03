@@ -25,10 +25,11 @@ import javax.swing.JOptionPane;
  */
 public class MenuBarController implements ActionListener, SessionListener {
 
-	private Session session;
+	private Session         session;
 	protected DrawingCanvas canvas;
-	protected JFileChooser FileChooser;
-	protected MenuBarView menubarview;
+	protected JFileChooser  FileChooser;
+	protected MenuBarView   menubarview;
+
 	
 	/**
 	 * Constructor passes canvas into the controller.
@@ -45,23 +46,25 @@ public class MenuBarController implements ActionListener, SessionListener {
      * @param e ActionEvent                                                                                                                                                                     
      */
 	public void actionPerformed(ActionEvent e) {
-	
-		/* Initialize the filename path string */
-		String filename = "";
 		
 		
+			/* Initialize the filename path string */
+			String filename = "";
+			String usertogaincontrol = "";
+			Object[] possibilities = new Object [500];
 		
-		/* Create a new session */
-		if (e.getSource() == this.menubarview.mnuNew) {		
-        	JOptionPane.showMessageDialog(
-        			null,
-        			"This version of MultiDraw is in beta development.  " + "\n" +
-        			"Please look for upcoming releases which should include multiple session handling.",
-        			"New Session",
-        			JOptionPane.INFORMATION_MESSAGE);	
-
-	
-		}		
+			
+			
+			/* Create a new session */
+			if (e.getSource() == this.menubarview.mnuNew) {		
+				
+				JOptionPane.showMessageDialog (null,
+											   "This version of MultiDraw is in beta development.  " + "\n" +
+											   "Please look for upcoming releases which should include multiple session handling.",
+											   "New Session",
+											   JOptionPane.INFORMATION_MESSAGE);	
+			}		
+			
 		
 		/* Close the application */
 		else if (e.getSource() == this.menubarview.mnuQuit) {		
@@ -71,69 +74,82 @@ public class MenuBarController implements ActionListener, SessionListener {
 		
 		/* Attempt to dynamically load a class */
 		else if (e.getSource() == this.menubarview.mnuAddTool) {
-			/* Create the JFileChooser component, and set the directory to the user directory */
-			FileChooser = new JFileChooser(System.getProperty("user.dir"));
-		
-			/* Initiate the classes to null */
-			Class NewShapeClass = null;
 			
-			Object FactoryObject = null;
-			Method FactoryMethod = null;
+			/* Only controllers can pass on a new session */
+			if (session.drawable(session.localUser)){
+				
 			
+				/* Create the JFileChooser component, and set the directory to the user directory */
+				FileChooser = new JFileChooser(System.getProperty("user.dir"));
 		
-
-			/* Now load the shape class */
-			if  (FileChooser.showDialog(null, "Open Shape file") == JFileChooser.APPROVE_OPTION) {
+				/* Initiate the classes to null */
+				Class NewShapeClass = null;
 				
-				System.out.println(FileChooser.getSelectedFile().getName());
+				Object FactoryObject = null;
+				Method FactoryMethod = null;
 				
-				filename = FileChooser.getSelectedFile().getName();
-				
-				/* Trim off the extension */
-				//filename = filename.substring(0, filename.indexOf("."));
-				
-				
-				/* Add the results as optional output (defined by user preferences) */
-				Output.processMessage("[actionPerformed] Filename = " + filename, Constants.Message_Type.info);
-				
-				CompilingClassLoader classloader = new CompilingClassLoader();
-				
-				/* Load the class */
-				try {
-					NewShapeClass = classloader.loadClass(filename);
+			
+	
+				/* Now load the shape class */
+				if  (FileChooser.showDialog(null, "Open Shape file") == JFileChooser.APPROVE_OPTION) {
 					
-				} catch (ClassNotFoundException e1) {
-					Output.processMessage("Cannot load class = " + filename, Constants.Message_Type.error);
-				}			
-			}
-			
-			
-			if (NewShapeClass != null) {
-			
-				
-				/* Create a live object */
-				try {
-					FactoryObject = NewShapeClass.newInstance();
-				} catch (InstantiationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					System.out.println(FileChooser.getSelectedFile().getName());
+					
+					filename = FileChooser.getSelectedFile().getName();
+					
+					/* Trim off the extension */
+					filename = filename.substring(0, filename.indexOf("."));
+					
+					
+					/* Add the results as optional output (defined by user preferences) */
+					Output.processMessage("[actionPerformed] Filename = " + filename, Constants.Message_Type.info);
+					
+					CompilingClassLoader classloader = new CompilingClassLoader();
+					
+					/* Load the class */
+					try {
+						NewShapeClass = classloader.loadClass(filename);
+						
+					} catch (ClassNotFoundException e1) {
+						Output.processMessage("Cannot load class = " + filename, Constants.Message_Type.error);
+					}			
 				}
 				
 				
-				/* We have the factory and shape class, now append the ToolList 
-	
-				/* Reload all of the items on the menubar */
+				if (NewShapeClass != null) {
+				
+					
+					/* Create a live object 
+					try {
+						FactoryObject = NewShapeClass.newInstance();
+					} catch (InstantiationException e1) {
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						e1.printStackTrace();
+					}
+					*/
+					
+					
+					/* We have the factory and shape class, now append the ToolList 
 		
-			
+					/* Reload all of the items on the menubar */
+					this.menubarview.RefreshTools();
+				
+				}
+				
+				else{
+					/* Reset the objects to null */
+					NewShapeClass = null;
+				}	
 			}
 			
-			else{
-				/* Reset the objects to null */
-				NewShapeClass = null;
-			}	
+			/* The user is not the controller, so display a dialog that he cannot perform this action */
+			else {
+				JOptionPane.showMessageDialog (null,
+        		 						   	   "You must be a controller to add a tool!",
+        		 						   	   "Cannot perform this action...",
+        		 						   	   JOptionPane.WARNING_MESSAGE);	
+			}
 		}
 
 		
@@ -142,23 +158,72 @@ public class MenuBarController implements ActionListener, SessionListener {
 		else if (e.getSource() == this.menubarview.mnuRequest) {
 			
 			
-			/* Attempt to gain ownership of the session */
-			session.processRequestOwnership(session.localUser.person, false);
-				
+			/* A non-controller can request for control */
+			if (session.drawable(session.localUser) == false) {
 			
+				/* Attempt to gain ownership of the session */
+				session.processRequestOwnership(session.localUser.person, false);
+			}
+			
+			/* The user is already the controller, so display a dialog that he cannot perform this action */
+			else {
+				JOptionPane.showMessageDialog (null,
+        								       "You already are the controller of the session.",
+        								       "Cannot perform this action...",
+        								       JOptionPane.WARNING_MESSAGE);	
+			}
 			
 		}
-		
+
+			
+			
 		/* We want to relinquish control of a session */
 		else if (e.getSource() == this.menubarview.mnuRelinquish) {
+
+
+			/* Only controllers can pass on a new session */
+			if (session.drawable(session.localUser)){
 				
-        	JOptionPane.showMessageDialog(
-        			null,
-        			"This version of MultiDraw is in beta development.  " + "\n" +
-        			"Please look for upcoming releases which should include relinquishing control of a session.",
-        			"New Session",
-        			JOptionPane.INFORMATION_MESSAGE);	
+				/* Initialize the user to gain control */
+				usertogaincontrol = "";
         	
+				for (int i = 0; i < session.networkMembers.size(); i++){
+					possibilities[i] = session.networkMembers.get(i).person.name + " : " + session.networkMembers.get(i).person.id;
+
+				}
+
+				usertogaincontrol = (String)JOptionPane.showInputDialog(null,
+        				  					   							"Who do you wish to pass control to?", 
+        				  					   							"Customized Dialog",
+        				  					   							JOptionPane.PLAIN_MESSAGE,
+        				  					   							null,
+        				  					   							possibilities,
+        				  					   							possibilities[0]);  			
+  			
+				NetworkBundle requestBundle = null;
+    
+				for (int i = 0; i < session.networkMembers.size(); i++) {
+					
+					if ((session.networkMembers.get(i).person.name + " : " + session.networkMembers.get(i).person.id).equals(usertogaincontrol)) {
+						requestBundle = session.networkMembers.get(i);
+					}
+				}
+    		
+				/* If we found a valid user from the list */
+				if (requestBundle != null){
+					session.processTransferOwnership (requestBundle,false);
+				}
+			}
+
+			
+			/* The user is not the controller, so display a dialog that he cannot perform this action */
+			else {
+	        	JOptionPane.showMessageDialog (null,
+	        								   "You must be a controller to pass control!",
+	        								   "Cannot perform this action...",
+	        								   JOptionPane.WARNING_MESSAGE);	
+			}
+    		
 		}
 		
 		/* We want to SAVE a session */
@@ -250,7 +315,7 @@ public class MenuBarController implements ActionListener, SessionListener {
 		else if (e.getSource() == this.menubarview.mnuRebellion) {
 			
 			
-			/* Only controllers can load a new session */
+			/* Only non-controllers can lead a rebellion */
 			if (session.drawable(session.localUser) == false){
 				session.processInciteRebellion();
 			}
