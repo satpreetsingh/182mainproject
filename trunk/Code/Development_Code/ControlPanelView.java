@@ -104,6 +104,11 @@ public class ControlPanelView extends JPanel implements SessionListener
     	if(session != null)
     	{
     		ip = session.master.person.ipAddress + "@";
+    		if(session.master == session.localUser)
+    		{
+    			ip = ip + session.serverSock.getLocalPort();
+    		}
+    		
     		if (session.master.sock != null)
     		{
     			ip = ip + session.master.sock.getPort();
@@ -127,9 +132,9 @@ public class ControlPanelView extends JPanel implements SessionListener
     	if (session != null)
     	{
     		ip =  session.localUser.person.ipAddress + "@";
-    		if (session.localUser.sock != null)
+    		if (session.serverSock != null)
     		{
-    			ip = ip + session.localUser.sock.getLocalPort(); 
+    			ip = ip + session.serverSock.getLocalPort(); 
     		}
     		
     	}

@@ -92,6 +92,7 @@ public class Session
 			p.start();
 			
 			SessionUtils.requestSessionJoin(this, masterBundle, NetworkObject.reason.joinSessionRequest);
+			this.controlPanel.refresh();
 		} 
 		catch (IOException e) 
 		{
@@ -124,6 +125,7 @@ public class Session
 		this.tools = tools;
 		this.chatPanel = chatPanel;
 		this.controlPanel = controlPanel;
+		this.controlPanel.refresh();
 	}
 	
 	/**
@@ -588,7 +590,7 @@ public class Session
 				requestBundle = networkMembers.get(i);
 			}
 		}
-		if(networkEvent && requestBundle != null)
+		if(networkEvent && (requestBundle != null))
 		{
 	    	/* If controller accepts giving up control */
 	    	if (JOptionPane.showConfirmDialog(
