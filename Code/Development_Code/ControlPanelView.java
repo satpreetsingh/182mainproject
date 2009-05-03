@@ -68,7 +68,8 @@ public class ControlPanelView extends JPanel implements SessionListener
         add(lblclientIPTitle);
         
         /* Create the client IP address label */
-        lblClientIP = new JLabel(RefreshClientIP());
+        lblClientIP = new JLabel();
+        refreshClientIP();
         add(lblClientIP);
 
         /* Add a dummy buffer for spacing needs */
@@ -79,7 +80,8 @@ public class ControlPanelView extends JPanel implements SessionListener
         add(lblControllerIPTitle);
 
         /* Create the controller IP address label */ 
-        lblControllerIP = new JLabel(getControllerIP());
+        lblControllerIP = new JLabel("");
+        refreshControllerIP();
         add(lblControllerIP);
         
         repaint();
@@ -96,17 +98,22 @@ public class ControlPanelView extends JPanel implements SessionListener
 	 * Get the masters ip address.
 	 * @return Returns the ip address of master.
 	 */
-    public String getControllerIP()
+    public void refreshControllerIP()
     {
+    	String ip;
     	if(session != null)
     	{
-    		return session.master.person.ipAddress;
+    		ip = session.master.person.ipAddress + "@";
+    		if (session.master.sock != null)
+    		{
+    			ip = ip + session.master.sock.getPort();
+    		}
     	}
     	else
     	{
-    		return "";
+    		ip= "";
     	}
-
+    	this.lblControllerIP.setText(ip);
     }
     
     
@@ -114,16 +121,23 @@ public class ControlPanelView extends JPanel implements SessionListener
      * Get local ip address.
      * @return Returns local ip address.
      */
-    public String RefreshClientIP() 
+    public void refreshClientIP() 
     {
+    	String ip;
     	if (session != null)
     	{
-    		return session.localUser.person.ipAddress;
+    		ip =  session.localUser.person.ipAddress + "@";
+    		if (session.localUser.sock != null)
+    		{
+    			ip = ip + session.localUser.sock.getLocalPort(); 
+    		}
+    		
     	}
     	else
     	{
-    		return "";
+    		ip = "";
     	}
+    	this.lblClientIP.setText(ip);
 
     }
 	
@@ -136,6 +150,8 @@ public class ControlPanelView extends JPanel implements SessionListener
 	public void setSession(Session s) 
 	{
 		session = s;
+		refreshClientIP();
+		refreshControllerIP();
 	}
 }
 
