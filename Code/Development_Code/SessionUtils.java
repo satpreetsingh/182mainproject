@@ -195,7 +195,7 @@ public class SessionUtils
 		try
 		{
 			DrawState baseline = (DrawState)data.data;
-			session.setBaseline(baseline);
+			session.setBaseline(baseline, true);
 		}
 		catch(Exception e)
 		{
@@ -558,7 +558,7 @@ public class SessionUtils
 	}
 
 	/* Runs on only the MASTER */
-	private static void acceptJoinSessionRequest(NetworkBundle client, Session session, NetworkObject data) 
+	private static void processJoinRequest(NetworkBundle client, Session session, NetworkObject data) 
 	{
 		try
 		{
@@ -569,7 +569,8 @@ public class SessionUtils
 				
 				System.out.println("Sending PeerList to all peers ");
 				sendPeerListToAllPeers(session);
-				genericSendToAllPeers(session, session.currentState, NetworkObject.reason.updateToBaseline, client);
+				
+				sendDrawState(session, session.currentState);
 				session.updatePeerListOnScreen();
 			}
 			else
@@ -648,7 +649,7 @@ public class SessionUtils
 				}
 				else if (data.objectReason == NetworkObject.reason.joinSessionRequest)
 				{
-					acceptJoinSessionRequest(client, session, data);
+					processJoinRequest(client, session, data);
 				}
 				else if (data.objectReason == NetworkObject.reason.peerListUpdate)
 				{
@@ -1062,5 +1063,8 @@ public class SessionUtils
 	}
 
 
-
+	public static void sendDrawState(Session session, DrawState drawState)
+	{
+		genericSendToAllPeers(session,drawState, NetworkObject.reason.dataState, null);
+	}
 }
