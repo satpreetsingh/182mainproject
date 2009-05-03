@@ -10,7 +10,7 @@ import javax.swing.JTextField;
 
 /**
  * Manages viewable state of control panel.
- * @author ben
+ * @author ben, joe 
  *
  */
 public class ControlPanelView extends JPanel implements SessionListener
