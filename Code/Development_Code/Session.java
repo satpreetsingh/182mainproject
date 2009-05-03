@@ -39,6 +39,7 @@ public class Session
 	
 	public DrawingCanvas canvas;
 	public ChatPanelView chatPanel;
+	public ControlPanelView controlPanel;
 	
 	/**
 	 * Create a new Session on the local machine, that this application will not be in charge of.
@@ -56,7 +57,9 @@ public class Session
 			DrawingCanvas canvas,
 			String ip, 
 			int port,ArrayList<ToolController> tools, 
-			ChatPanelView chatPanel) throws ActivationException
+			ChatPanelView chatPanel,
+			ControlPanelView controlPanel) throws ActivationException
+			
 	{
 		networkMembers = new ArrayList<NetworkBundle>();
 		networkMembers.add(local);
@@ -67,6 +70,7 @@ public class Session
 		this.serverSock = serverSock;
 		this.tools = tools;
 		this.chatPanel = chatPanel;
+		this.controlPanel = controlPanel;
 		
 		try 
 		{
@@ -103,7 +107,12 @@ public class Session
 	 * @param creater
 	 * @param canvas
 	 */
-	public Session (ServerSocket serverSock,NetworkBundle creater, DrawingCanvas canvas,ArrayList<ToolController> tools, ChatPanelView chatPanel)
+	public Session (ServerSocket serverSock,
+					NetworkBundle creater, 
+					DrawingCanvas canvas,
+					ArrayList<ToolController> tools, 
+					ChatPanelView chatPanel, 
+					ControlPanelView controlPanel)
 	{
 		networkMembers = new ArrayList<NetworkBundle>();
 		networkMembers.add(creater);
@@ -114,6 +123,7 @@ public class Session
 		this.serverSock = serverSock;
 		this.tools = tools;
 		this.chatPanel = chatPanel;
+		this.controlPanel = controlPanel;
 	}
 	
 	/**
@@ -535,6 +545,10 @@ public class Session
 		{
 			SessionUtils.sendTransferOwnership(this, newOwner);
 		}
+		
+		/* Refresh the controller/client IPs */
+		controlPanel.refresh();
+		
 	}
 	
 	/**
@@ -561,7 +575,6 @@ public class Session
 	 */
 	public void processRequestOwnership(Member requestor, boolean networkEvent)
 	{
-		//Step 1 Joe call this
 		
 		NetworkBundle requestBundle = null;
 		for(int i = 0; i < networkMembers.size(); i++)

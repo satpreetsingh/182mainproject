@@ -106,7 +106,7 @@ public class SessionUtils
 	 * @param c Canvas, will be in focus of the Session created.
 	 * @return Returns an operation Session, if the port is available, else null.
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools, ChatPanelView chatPanel)
+	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools, ChatPanelView chatPanel, ControlPanelView controlPanel)
 	{
 		Session result;
 		boolean portNotFound = true;
@@ -131,7 +131,7 @@ public class SessionUtils
 			String ipAddress = java.net.InetAddress.getLocalHost().getHostAddress();
 			
 			NetworkBundle creater = new NetworkBundle(m, null, null, null, ipAddress, port);
-			result = new Session(serverSock, creater, c, tools, chatPanel);
+			result = new Session(serverSock, creater, c, tools, chatPanel, controlPanel);
 			Output.processMessage("Built session " + ipAddress + "@" + port, Constants.Message_Type.info);
 			
 		} 
@@ -152,7 +152,7 @@ public class SessionUtils
 	 * @param port Port to connect to.
 	 * @return Returns a session, if success, else returns null; 
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools, ChatPanelView chatPanel)
+	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools, ChatPanelView chatPanel, ControlPanelView controlPanel)
 	{
 		Session result;
 		int localPort = 0;
@@ -177,7 +177,7 @@ public class SessionUtils
 			String localIp = java.net.InetAddress.getLocalHost().getHostAddress();
 			NetworkBundle local = new NetworkBundle(m,null,null,null, localIp, localPort);
 			
-			result = new Session(local, serverSock, c, ip, port,tools,chatPanel);
+			result = new Session(local, serverSock, c, ip, port,tools,chatPanel, controlPanel);
 			Output.processMessage("Built session " + localIp + "@" + localPort, Constants.Message_Type.info);
 		}
 		catch(Exception e)

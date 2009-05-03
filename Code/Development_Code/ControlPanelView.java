@@ -150,9 +150,16 @@ public class ControlPanelView extends JPanel implements SessionListener
 	public void setSession(Session s) 
 	{
 		session = s;
-		refreshClientIP();
-		refreshControllerIP();
+		refresh();
 	}
+	
+	
+	public void refresh(){
+		refreshClientIP();
+		refreshControllerIP();		
+	}
+	
+	
 }
 
 	  

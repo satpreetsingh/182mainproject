@@ -56,11 +56,11 @@ public class MultiDraw extends JApplet  {
 		Session tempSession;
 		if (isSlave == false)
 		{
-		    tempSession = SessionUtils.buildSession(tempMember,canvas, tools,chatPanelView);
+		    tempSession = SessionUtils.buildSession(tempMember,canvas, tools,chatPanelView, controlPanel);
 		}
 		else
 		{
-            tempSession = SessionUtils.buildSession(tempMember, canvas, initialwindow.getIP(), initialwindow.getPort(), tools,chatPanelView);
+            tempSession = SessionUtils.buildSession(tempMember, canvas, initialwindow.getIP(), initialwindow.getPort(), tools,chatPanelView, controlPanel);
 		}
 
 	  	
