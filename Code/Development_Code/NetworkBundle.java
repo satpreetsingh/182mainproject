@@ -2,6 +2,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.UUID;
 
 
 /**
@@ -17,6 +18,7 @@ public class NetworkBundle {
 	public ObjectInputStream ois = null;
 	public ObjectOutputStream oos = null;
 	public Socket sock = null;
+	public UUID tempId = null;
 	
 	
 	/**
