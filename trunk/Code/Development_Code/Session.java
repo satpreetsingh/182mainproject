@@ -137,10 +137,10 @@ public class Session
 	
 	/**
 	 * Indicate if the user can draw on the canvas.
-	 * @param m Should be the local user.  Private method to prevent abuse.
+	 * @param m Should be the local user.  
 	 * @return Returns indication of if the user can draw on the campus.
 	 */
-	private boolean drawable(NetworkBundle m)
+	public boolean drawable(NetworkBundle m)
 	{
 		return (m.person.id.equals(this.master.person.id));
 	}
