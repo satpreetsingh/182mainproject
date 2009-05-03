@@ -224,8 +224,7 @@ public class SessionUtils
 	{
 		try
 		{
-			Member networkData = (Member) data.data;
-			s.processRequestOwnership(networkData, true);
+			s.processRequestOwnership(data.Originator, true);
 		}
 		catch (Exception e)
 		{
