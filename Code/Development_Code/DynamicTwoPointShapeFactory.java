@@ -9,7 +9,13 @@ import java.util.UUID;
  */
 public class DynamicTwoPointShapeFactory implements TwoPointShapeFactory, Serializable{
 
+	Class TwoPointShapeClass;
+	Constructor[] cstr;
 
+	public DynamicTwoPointShapeFactory(Class TwoPointShapeClass) {
+		this.TwoPointShapeClass = TwoPointShapeClass;
+		this.cstr = NewShapeClass.getDeclaredConstructors();
+	}
 	/**
 	 * Create a new Rectangle TwoPointShape.
 	 */
@@ -21,9 +27,9 @@ public class DynamicTwoPointShapeFactory implements TwoPointShapeFactory, Serial
 	 Color c,
 	 boolean IsOutline, UUID uniqueId) 
 	{
-//		TwoPointShape dynamicShape = new TwoPointShape(xOne, yOne, c, IsOutline, uniqueId);
-//		// TODO This needs a different constructor to be called 
-//		return dynamicShape;
+		TwoPointShape dynamicShape = cstr[0].(xOne, yOne, c, IsOutline, uniqueId);
+		// TODO This needs a different constructor to be called 
+		return dynamicShape;
 		
 	}
 
