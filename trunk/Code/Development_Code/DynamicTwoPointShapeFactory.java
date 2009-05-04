@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 /**
@@ -14,7 +16,7 @@ public class DynamicTwoPointShapeFactory implements TwoPointShapeFactory, Serial
 
 	public DynamicTwoPointShapeFactory(Class TwoPointShapeClass) {
 		this.TwoPointShapeClass = TwoPointShapeClass;
-		this.cstr = NewShapeClass.getDeclaredConstructors();
+		this.cstr = TwoPointShapeClass.getDeclaredConstructors();
 	}
 	/**
 	 * Create a new Rectangle TwoPointShape.
@@ -27,8 +29,12 @@ public class DynamicTwoPointShapeFactory implements TwoPointShapeFactory, Serial
 	 Color c,
 	 boolean IsOutline, UUID uniqueId) 
 	{
-		TwoPointShape dynamicShape = cstr[0].(xOne, yOne, c, IsOutline, uniqueId);
-		// TODO This needs a different constructor to be called 
+		TwoPointShape dynamicShape = null;
+		try {
+			dynamicShape =	(TwoPointShape) cstr[0].newInstance(xOne, yOne, c, IsOutline, uniqueId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
 		return dynamicShape;
 		
 	}
