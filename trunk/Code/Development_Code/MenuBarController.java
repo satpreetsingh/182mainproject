@@ -120,25 +120,12 @@ public class MenuBarController implements ActionListener, SessionListener {
 				
 				if (NewClass != null) {
 				
-
-						
-					/* Create a live object 
-					try {
-						FactoryObject = NewShapeClass.newInstance();
-					} catch (InstantiationException e1) {
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						e1.printStackTrace();
-					}
-					*/
-					
-							
 					/* Load the new item on the tool bar */
-					Action action = new ToolController("New Tool!", 
-						    null, 
-						    "New Tool Tip", 
+					Action action = new ToolController(NewClass.getName(), 
+						    null, 	
+						    "Draw a " + NewClass.getName(), 
 						    canvas, 
-						    null);
+						    new TwoPointShapeTool(new DynamicTwoPointShapeFactory(NewClass), NewClass.getName()));
 
 					/* Add the new tool to the list */
 					this.menubarview.toolMenu.add(action);
