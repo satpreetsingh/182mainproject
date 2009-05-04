@@ -11,18 +11,26 @@ import javax.swing.*;
 public class MenuBarView extends JMenuBar 
 {
 	private MenuBarController mBController;
+	
+	public JMenu fileMenu;
 	public JMenuItem mnuNew;
 	public JMenuItem mnuQuit;
+	public JMenu toolMenu;
+    public JMenuItem mnuAddTool;
+    public JMenu ctrlMenu;
 	public JMenuItem mnuRequest;
 	public JMenuItem mnuRelinquish;
-    public JMenu toolMenu;
-    public JMenuItem mnuAddTool;
+	public JMenuItem mnuRebellion;
+	public JMenu sessionMenu;
     public JMenuItem mnuSave;
     public JMenuItem mnuLoad;
+    public JMenu helpMenu;
     public JMenuItem mnuHelp;
-    public JMenuItem mnuRebellion;
+    
     public ArrayList<ToolController> actions; 
     
+    
+
 	
 	/**
 	 * Create a new MenuBar.
@@ -35,7 +43,7 @@ public class MenuBarView extends JMenuBar
 		actions = a;
 				
         /* --------------------- FILE MenuItems -------------------------- */
-        JMenu fileMenu = new JMenu("File");
+        fileMenu = new JMenu("File");
          
         /* Create File menu items */
         mnuNew = new JMenuItem("New");
@@ -49,7 +57,7 @@ public class MenuBarView extends JMenuBar
         add(fileMenu);
        
         /* --------------------- TOOL MenuItems -------------------------- */
-		JMenu toolMenu = new JMenu("Tool");
+		toolMenu = new JMenu("Tool");
 		
 		for(int i = 0; i < actions.size(); i++)
 		{
@@ -63,6 +71,10 @@ public class MenuBarView extends JMenuBar
         /* Additional tool menu items */
         mnuAddTool = new JMenuItem("Add Tool");
         
+        /* Add another line breaker (for newly loaded tools) */
+        toolMenu.add(new JSeparator());
+        
+        
         toolMenu.add(mnuAddTool);
      
         
@@ -70,7 +82,7 @@ public class MenuBarView extends JMenuBar
 		add(toolMenu);
 		
 		/* --------------------- CONTROL MenuItems -------------------------- */
-        JMenu ctrlMenu = new JMenu("Control");
+        ctrlMenu = new JMenu("Control");
 	
         /* Create Control menu items */
         mnuRequest = new JMenuItem("Request");
@@ -86,7 +98,7 @@ public class MenuBarView extends JMenuBar
         add(ctrlMenu);
         
         /* --------------------- SESSION MenuItems -------------------------- */
-        JMenu sessionMenu = new JMenu ("Session");
+        sessionMenu = new JMenu ("Session");
 
         /* Create Session menu items */
         mnuSave = new JMenuItem("Save");
@@ -100,7 +112,7 @@ public class MenuBarView extends JMenuBar
         add(sessionMenu);
         
         /* --------------------- HELP MenuItems -------------------------- */
-        JMenu helpMenu = new JMenu ("Help");
+        helpMenu = new JMenu ("Help");
 
         /* Create File menu items */
         mnuHelp = new JMenuItem("About");
@@ -135,17 +147,6 @@ public class MenuBarView extends JMenuBar
         /* Add the listener for the help menu item option */
         mnuHelp.addActionListener((ActionListener)mBController);      
         
-	}
-	
-	
-	/**
-	 * Regenerate all tool items on the Menu.
-	 */
-	public void RefreshTools(){
-	
-
-
-		
 	}
 	
 	
