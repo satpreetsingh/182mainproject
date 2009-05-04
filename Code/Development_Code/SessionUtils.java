@@ -630,6 +630,34 @@ public class SessionUtils
 		p.target = null;
 		p = null;
 	}
+	
+	private static void considerReset(NetworkBundle client, Session session)
+	{
+		if(client.person.id.equals(session.master.person.id))
+		{
+			Output.processMessage("Master dead, resetting" , Constants.Message_Type.info);
+			boolean lowest = true;
+			UUID self = session.localUser.person.id;
+			
+			for(int i = 0; i < session.networkMembers.size(); i++)
+			{
+				NetworkBundle temp = session.networkMembers.get(i);
+				
+				if(temp.person.id.equals(session.master) == false &&
+						temp.person.id.compareTo(self) < 0)
+				{
+					lowest = false;
+				}
+			}
+			
+			if (lowest)
+			{
+				Output.processMessage("Master dead, This unit taking control" , Constants.Message_Type.info);
+				
+				session.processTransferOwnership(session.localUser, false);
+			}
+		}
+	}
 	/* This can run on either MASTER or CLIENT */
 	protected static void processMessageFromPeer(PeerThread p, Session session, NetworkBundle client, NetworkBundle local)
 	{
@@ -749,6 +777,8 @@ public class SessionUtils
 			catch (StreamCorruptedException streamCorr)
 			{
 				Output.processMessage(p.target.person.name + " has a CorruptSocket, dropping connection", Constants.Message_Type.error);
+				
+				considerReset(client, session);
 				session.threads.remove(p);
 				session.networkMembers.remove(p.target);
 				p.target = null;
@@ -757,6 +787,7 @@ public class SessionUtils
 			catch (SocketException sock)
 			{
 				Output.processMessage(p.target.person.name + " is assumed to have quit, dropping connection", Constants.Message_Type.info);
+				considerReset(client, session);
 				session.threads.remove(p);
 				session.networkMembers.remove(p.target);
 				p.target = null;
