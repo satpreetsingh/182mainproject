@@ -99,11 +99,22 @@ public class Reflection_Test {
 		}
 
 
-		if (NewClass != null) {
+//		try {
+//			NewClass = Class.forName("MyThreePointShape");
+//		} catch (ClassNotFoundException e1) {
+//			e1.printStackTrace();
+//		}
+//		System.out.println("[NewClass] " + NewClass );
+		
+		
+//		Constructor[] cstr = NewClass.getDeclaredConstructors();
+		Object newObject = null;
 
-			Constructor[] cstr = NewClass.getDeclaredConstructors();
+		if (NewClass != null) {
 			try {
-				describeInstance(cstr[0].newInstance(1, 100, Color.BLUE, true, UUID.randomUUID()));
+				newObject = NewClass.newInstance();
+				System.out.println("[describeInstance(newObject)]");
+				describeInstance(newObject);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -113,12 +124,12 @@ public class Reflection_Test {
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+			} 
 		}
+		
+//		MyTwoPointShape advRect = (MyTwoPointShape) newObject;
+//		System.out.println("[describeInstance(advRect)]");
+//		describeInstance(advRect);
 
 	}
 }
