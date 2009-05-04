@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -71,6 +73,7 @@ public class MenuBarController implements ActionListener, SessionListener {
 			System.exit(0);			
 		}		
 		
+			
 		
 		/* Attempt to dynamically load a class */
 		else if (e.getSource() == this.menubarview.mnuAddTool) {
@@ -83,11 +86,10 @@ public class MenuBarController implements ActionListener, SessionListener {
 				FileChooser = new JFileChooser(System.getProperty("user.dir"));
 		
 				/* Initiate the classes to null */
-				Class NewShapeClass = null;
+				Class NewClass = null;
 				
-				Object FactoryObject = null;
-				Method FactoryMethod = null;
-				
+				Object GenericObject = null;
+			
 			
 	
 				/* Now load the shape class */
@@ -108,7 +110,7 @@ public class MenuBarController implements ActionListener, SessionListener {
 					
 					/* Load the class */
 					try {
-						NewShapeClass = classloader.loadClass(filename);
+						NewClass = classloader.loadClass(filename);
 						
 					} catch (ClassNotFoundException e1) {
 						Output.processMessage("Cannot load class = " + filename, Constants.Message_Type.error);
@@ -116,7 +118,7 @@ public class MenuBarController implements ActionListener, SessionListener {
 				}
 				
 				
-				if (NewShapeClass != null) {
+				if (NewClass != null) {
 				
 					
 					/* Create a live object 
@@ -129,19 +131,25 @@ public class MenuBarController implements ActionListener, SessionListener {
 					}
 					*/
 					
-					
-					/* We have the factory and shape class, now append the ToolList 
-		
-					/* Reload all of the items on the menubar */
-					this.menubarview.RefreshTools();
-				
+							
+					/* Load the new item on the tool bar */
+					Action action = new ToolController("New Tool!", 
+						    null, 
+						    "New Tool Tip", 
+						    canvas, 
+						    null);
+
+					/* Add the new tool to the list */
+					this.menubarview.toolMenu.add(action);
+
 				}
 				
 				else{
 					/* Reset the objects to null */
-					NewShapeClass = null;
+					NewClass = null;
 				}	
 			}
+		
 			
 			/* The user is not the controller, so display a dialog that he cannot perform this action */
 			else {
@@ -150,9 +158,12 @@ public class MenuBarController implements ActionListener, SessionListener {
         		 						   	   "Cannot perform this action...",
         		 						   	   JOptionPane.WARNING_MESSAGE);	
 			}
+			
+			
 		}
 
 		
+			
 		
 		/* We want to request control of a session */
 		else if (e.getSource() == this.menubarview.mnuRequest) {
