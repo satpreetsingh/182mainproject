@@ -120,7 +120,8 @@ public class MenuBarController implements ActionListener, SessionListener {
 				
 				if (NewClass != null) {
 				
-					
+
+						
 					/* Create a live object 
 					try {
 						FactoryObject = NewShapeClass.newInstance();
