@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -17,7 +19,7 @@ public class TwoPointShapeTool implements Tool {
 	protected String name;
 	protected Point startingMousePosition;
 	protected Point currentMousePosition;
-	protected TwoPointShape shape=null;
+	protected Object shape=null;
 	protected TwoPointShapeFactory shapeFactory;
   
 	  /**
@@ -58,7 +60,38 @@ public class TwoPointShapeTool implements Tool {
 										   p.y,
 				 						   Color.WHITE,
 				 						   fill, uniqueId);
-		 shape.draw(graphics);
+		 try{
+		 ((TwoPointShape) shape).draw(graphics);
+		 }catch(Exception e){
+		
+		 try {
+			
+			 Method mi = shape.getClass().getMethod("draw", Graphics.class );
+			 Graphics argsArray[] = {graphics};
+			 mi.invoke(shape, argsArray);
+			
+			
+		 } catch (SecurityException e0) {
+			// TODO Auto-generated catch block
+			e0.printStackTrace();
+		} catch (NoSuchMethodException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalArgumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (InvocationTargetException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}	 
+		
+		
+		 }
+		 
+		 
 		 canvas.repaint();
 	 }
 	
@@ -71,13 +104,13 @@ public class TwoPointShapeTool implements Tool {
 	   Graphics graphics = canvas.getimageBufferGraphics();
 	
 	   /* Erase previous temporary figure by redrawing it */
-	   shape.draw(graphics);
+	   ((TwoPointShape) shape).draw(graphics);
 	
 	   /* Draw new temporary figure */
-	   shape.setSecondPoint
+	   ((TwoPointShape) shape).setSecondPoint
 	   (p.x,
 	    p.y);
-	   shape.draw(graphics);
+	   ((TwoPointShape) shape).draw(graphics);
 	
 	   canvas.repaint();
 	 }
@@ -94,17 +127,17 @@ public class TwoPointShapeTool implements Tool {
 		Graphics graphics = canvas.getimageBufferGraphics();
 	
 	    /* Save the object's color to match the pen's color */
-	    shape.set_MainColor(finalColor);
+	    ((TwoPointShape) shape).set_MainColor(finalColor);
 	   
 	    /* Save the object's type */
-	    shape.set_DrawingType(canvas.getDrawingType());
+	    ((TwoPointShape) shape).set_DrawingType(canvas.getDrawingType());
 
 	    /* Draw final "permanent" object */
-	    shape.draw(graphics);
+	    ((TwoPointShape) shape).draw(graphics);
 	    canvas.repaint();   
 	
 	    /* Add shape to list maintained by the controller */
-	    currentShapes.add(shape);
+	    currentShapes.add((TwoPointShape) shape);
 	  }
 
 	public void deselected(DrawingCanvas canvas) { }

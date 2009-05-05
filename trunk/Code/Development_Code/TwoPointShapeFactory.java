@@ -20,7 +20,7 @@ interface TwoPointShapeFactory extends Serializable{
 	 * @param type int object type (outline,solid).
 	 * @return Returns an instantiated TwoPointShape.
 	 */
-	public TwoPointShape createShape
+	public Object createShape
 	(int xOne,
 	 int yOne,
 	 int xTwo,
