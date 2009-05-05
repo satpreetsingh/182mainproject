@@ -1,9 +1,13 @@
 import java.awt.Color;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
 
@@ -15,14 +19,14 @@ import java.util.ArrayList;
 public class SelectorTool implements Tool
 {
 	private String name;
-	protected Shape shapeOfInterest = null;
+	protected Object shapeOfInterest = null;
 	protected Point2D.Double point; 
 	
 	protected int selectionStyle = ShapeMath.neither;
 	protected Point2D.Double anchor;
 	protected Point2D.Double eventPoint;
-	protected Shape previousSelectedObject;
-	protected Shape PrepreviousSelectedObject;
+	protected Object previousSelectedObject = null;
+	protected Object PrepreviousSelectedObject = null;
 	
 	/**
 	 * Create a new instance of a selector tool.
@@ -41,14 +45,10 @@ public class SelectorTool implements Tool
 	 * When the mouse is pressed, highlight the first shape that 
 	 * is near the point if one is, and consider it for future shape manipulations.
 	 */
-	public void mousePressed(Point p,
-			ArrayList<Shape> currentShapes, 
-			DrawingCanvas canvas, 
-			boolean fill,
-			UUID uniqueId) 
+	public void mousePressed(Point p,ArrayList<Object> currentShapes, DrawingCanvas canvas,boolean fill,UUID uniqueId) 
 	{
 		/* Declare local vars to start the list with the latest object */
-		int LastListPos;
+		int LastListPos = 0;
 		boolean found = false;
 		
 		Graphics graphics = canvas.getimageBufferGraphics();
@@ -60,9 +60,61 @@ public class SelectorTool implements Tool
 			 * This also means if you click the same shape, it will be
 			 * unhighlighted, and then re-highlighted, but since
 			 * graphics are buffered, shouldn't be noticeable.
-			 */
-			shapeOfInterest.draw(graphics);
-			LastListPos = shapeOfInterest.ListPos;
+			 */	
+			 try{
+				 /* First attempt to draw the shape from a static class */
+				 ((Shape) shapeOfInterest).draw(graphics);
+				 
+				 	 
+				 
+			 }catch(Exception e){
+			
+				/* Otherwise try to draw the shape from a dynamically loaded class */ 
+				try {
+					
+					 Method mi = shapeOfInterest.getClass().getMethod("draw", Graphics.class );
+					 Object argsArray[] = {graphics};
+					 mi.invoke(shapeOfInterest, argsArray);
+
+			 	} catch (SecurityException e1) {
+				 	e1.printStackTrace();
+			 	} catch (NoSuchMethodException e2) {
+					e2.printStackTrace();
+				} catch (IllegalArgumentException e3) {
+					e3.printStackTrace();
+				} catch (IllegalAccessException e4) {
+					e4.printStackTrace();
+				} catch (InvocationTargetException e5) {
+					e5.printStackTrace();
+				}	 
+			 }			
+
+			 try { 
+				 LastListPos = ((Shape) shapeOfInterest).ListPos;
+			 }catch(Exception e){
+				 
+				 Field fe = null;
+				try {
+					fe = shapeOfInterest.getClass().getField("ListPos");
+				} catch (SecurityException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NoSuchFieldException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				 try {
+					LastListPos = fe.getInt(shapeOfInterest);
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				  
+			 }
+			
 		}
 		else 
 		{
@@ -78,32 +130,118 @@ public class SelectorTool implements Tool
 			for (int i = LastListPos; i < currentShapes.size(); i++) 
 			{
 				
-				if (currentShapes.get(i).near
-						(p.x,p.y)) 
-				{
+				/* Attempt to perform the object lookup statically */
+				try{
+					if (((Shape)currentShapes.get(i)).near(p.x,p.y)) {
 					
-					/* If we selected the same object twice, but not three times, set it as the focus shape */
-					if (previousSelectedObject == currentShapes.get(i))
-					{
-						if ((PrepreviousSelectedObject != currentShapes.get(i)) || 
-						    (found == true)) {
+						/* If we selected the same object twice, but not three times, set it as the focus shape */
+						if (previousSelectedObject == currentShapes.get(i))
+						{
+							if ((PrepreviousSelectedObject != currentShapes.get(i)) || 
+							    (found == true)) {
+								found = true;
+								shapeOfInterest = currentShapes.get(i);
+								((Shape)shapeOfInterest).ListPos = i;
+								i = currentShapes.size();	
+							}	
+						}
+						
+						/* If we have not found a near object, rescan the object list from 0 */
+						else 
+						{ 		
 							found = true;
 							shapeOfInterest = currentShapes.get(i);
-							shapeOfInterest.ListPos = i;
-							i = currentShapes.size();	
+							((Shape)shapeOfInterest).ListPos = i;
+							i = currentShapes.size();
 						}	
-					}
+	
+					} 
+				}catch(Exception e){
 					
-					/* If we have not found a near object, rescan the object list from 0 */
-					else 
-					{ 		
-						found = true;
-						shapeOfInterest = currentShapes.get(i);
-						shapeOfInterest.ListPos = i;
-						i = currentShapes.size();
-					}	
+					
+					Method mi = null;
+					try {
+						mi = currentShapes.get(i).getClass().getMethod("near", int.class, int.class);
+					} catch (SecurityException e3) {
+						// TODO Auto-generated catch block
+						e3.printStackTrace();
+					} catch (NoSuchMethodException e3) {
+						// TODO Auto-generated catch block
+						e3.printStackTrace();
+					}
+					Object argsArray[] = {p.x,p.y};
+	
+					 
+					try {
+						if (mi.invoke(shapeOfInterest, argsArray).toString().equals("true")) {
+							
+							/* If we selected the same object twice, but not three times, set it as the focus shape */
+							if (previousSelectedObject == currentShapes.get(i))
+							{
+								if ((PrepreviousSelectedObject != currentShapes.get(i)) || 
+								    (found == true)) {
+									
+									found = true;
+									
+									shapeOfInterest = currentShapes.get(i);
+									
+									Field fe = shapeOfInterest.getClass().getField("ListPos");
+									fe.setInt(shapeOfInterest, i);
+									
+									i = currentShapes.size();	
+								}	
+							}
+							
+							/* If we have not found a near object, rescan the object list from 0 */
+							else 
+							{ 		
+								found = true;
+								shapeOfInterest = currentShapes.get(i);
+								
+								
+								Field fe2 = null;
+								try {
+									fe2 = shapeOfInterest.getClass().getField("ListPos");
+								} catch (SecurityException e2) {
+									// TODO Auto-generated catch block
+									e2.printStackTrace();
+								} catch (NoSuchFieldException e2) {
+									// TODO Auto-generated catch block
+									e2.printStackTrace();
+								}
+								try {
+									fe2.setInt(shapeOfInterest, i);
+								} catch (IllegalArgumentException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								} catch (IllegalAccessException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}	
+								i = currentShapes.size();
+							}	
 
-				} 
+						}
+					} catch (IllegalArgumentException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SecurityException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (NoSuchFieldException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} 	
+				}
+				
+				
+				
 				
 				/*  If we have started from the mid section of the list and nothing has
 				      been found, then start from the beginning */
@@ -130,29 +268,116 @@ public class SelectorTool implements Tool
 			/* Set the color to light gray */
 			graphics.setXORMode(Color.lightGray);
 			
-			/* Redraw the shape */
-			shapeOfInterest.draw(graphics);
+
+			/* Redraw the shape */ 
+			 try{
+				 /* First attempt to draw the shape from a static class */
+				 ((Shape)shapeOfInterest).draw(graphics);
+				 ((Shape)shapeOfInterest).drawHighlightBoxes(graphics);
+				 
+			 }catch(Exception e){
 			
-  			/* Draw selection rectangles */
-			shapeOfInterest.drawHighlightBoxes(graphics);
+				/* Otherwise try to draw the shape from a dynamically loaded class */ 
+				try {
+					
+					 Method mi = shapeOfInterest.getClass().getMethod("draw", Graphics.class );
+					 Object argsArray[] = {graphics};
+					 mi.invoke(shapeOfInterest, argsArray);
+
+					 Method mi2 = shapeOfInterest.getClass().getMethod("drawHighlightBoxes", Graphics.class );
+					 Object argsArray2[] = {graphics};
+					 mi2.invoke(shapeOfInterest, argsArray2); 
+					 
+			 	} catch (SecurityException e1) {
+				 	e1.printStackTrace();
+			 	} catch (NoSuchMethodException e2) {
+					e2.printStackTrace();
+				} catch (IllegalArgumentException e3) {
+					e3.printStackTrace();
+				} catch (IllegalAccessException e4) {
+					e4.printStackTrace();
+				} catch (InvocationTargetException e5) {
+					e5.printStackTrace();
+				}	 
+			 }
+			 
+			 
 
 			/* Iterate the previously selected objects */
 			PrepreviousSelectedObject = previousSelectedObject;
 			previousSelectedObject = shapeOfInterest;
 						
+			
+			
 			/* Determine which part of the object the user clicked */
-			if(shapeOfInterest.exterior(p.x,p.y))
-			{
-				this.selectionStyle = ShapeMath.exterior;
-				eventPoint.x = p.x;
-				eventPoint.y = p.y;
-				this.anchor = shapeOfInterest.pickAnchor(eventPoint);
+			try{
+				
+				/* Try to accessing a static method */
+				if(((Shape)shapeOfInterest).exterior(p.x,p.y)) {
+					this.selectionStyle = ShapeMath.exterior;
+					eventPoint.x = p.x;
+					eventPoint.y = p.y;
+					this.anchor = ((Shape)shapeOfInterest).pickAnchor(eventPoint);
 		
+				}
+				else {
+					this.selectionStyle = ShapeMath.interior;
+				}
+			}catch(Exception e){
+				
+				
+				
+				Method mi = null;
+				try {
+					mi = shapeOfInterest.getClass().getMethod("exterior", int.class, int.class);
+				} catch (SecurityException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NoSuchMethodException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				Object argsArray[] = {p.x,p.y};
+				
+					 
+					 
+			    /* Otherwise try to access a dynamic method */
+				try {
+					if(mi.invoke(shapeOfInterest, argsArray).toString().equals("true")) {
+						
+						this.selectionStyle = ShapeMath.exterior;
+						eventPoint.x = p.x;
+						eventPoint.y = p.y;
+						
+						Method mi2 = shapeOfInterest.getClass().getMethod("pickAnchor", Point2D.Double.class );
+						Object argsArray2[] = {eventPoint};
+						this.anchor = (Double) mi2.invoke(shapeOfInterest, argsArray);					
+						
+
+					}
+					else {
+						this.selectionStyle = ShapeMath.interior;
+					}
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SecurityException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NoSuchMethodException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}				
 			}
-			else
-			{
-				this.selectionStyle = ShapeMath.interior;
-			}
+			
+			
+			
 			
 			/* Pass back the last object to the canvas */
 			if (canvas.session != null)
@@ -182,10 +407,13 @@ public class SelectorTool implements Tool
 		
 	}
 	
+	
+	
+	
 	/**
 	 * Processes mouseDragged events.
 	 */
-	public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas) 
+	public void mouseDragged(Point p, ArrayList<Object> currentShapes, DrawingCanvas canvas) 
 	{
 		
 		int deltaX, deltaY;
@@ -206,13 +434,72 @@ public class SelectorTool implements Tool
 			/* Resize the object */ 
   			if(this.selectionStyle == ShapeMath.exterior)
   			{
-  				shapeOfInterest.resize(anchor, deltaX, deltaY);
+
+  				/* Redraw the shape */ 
+  				 try{
+  					 /* First attempt to resize the shape from a static class */
+  					 ((Shape)shapeOfInterest).resize(anchor, deltaX, deltaY);
+ 
+  				 }catch(Exception e){
+  				
+  					/* Otherwise try to resize the shape from a dynamically loaded class */ 
+  					try {
+  						
+  						 Method mi = shapeOfInterest.getClass().getMethod("resize", Point2D.Double.class, int.class, int.class);
+  						 Object argsArray[] = {anchor, deltaX, deltaY};
+  						 mi.invoke(shapeOfInterest, argsArray);
+  						 
+  				 	} catch (SecurityException e1) {
+  					 	e1.printStackTrace();
+  				 	} catch (NoSuchMethodException e2) {
+  						e2.printStackTrace();
+  					} catch (IllegalArgumentException e3) {
+  						e3.printStackTrace();
+  					} catch (IllegalAccessException e4) {
+  						e4.printStackTrace();
+  					} catch (InvocationTargetException e5) {
+  						e5.printStackTrace();
+  					}	 
+  				 }
+  				  				
+  				
+  				
   			}
   			
   			/* Drag the object */
   			else
   			{
-  				shapeOfInterest.move(deltaX, deltaY);
+  	
+  				/* Move the shape */ 
+  				 try{
+  					 
+  					 /* First attempt to move the shape from a static class */
+  					 ((Shape)shapeOfInterest).move(deltaX, deltaY);  					 
+  		
+  				 }catch(Exception e){
+  				
+  					/* Otherwise try to move the shape from a dynamically loaded class */ 
+  					try {
+  						
+  						 Method mi = shapeOfInterest.getClass().getMethod("move", int.class, int.class);
+  						 Object argsArray[] = {deltaX, deltaY};
+  						 mi.invoke(shapeOfInterest, argsArray);
+  						 
+  				 	} catch (SecurityException e1) {
+  					 	e1.printStackTrace();
+  				 	} catch (NoSuchMethodException e2) {
+  						e2.printStackTrace();
+  					} catch (IllegalArgumentException e3) {
+  						e3.printStackTrace();
+  					} catch (IllegalAccessException e4) {
+  						e4.printStackTrace();
+  					} catch (InvocationTargetException e5) {
+  						e5.printStackTrace();
+  					}	 
+  				 }
+  				 
+  				 
+  				 
   			}
 
   			/* Clear off the old canvas and redraw all the shapes */
@@ -224,12 +511,41 @@ public class SelectorTool implements Tool
 			/* Set the XOR mode to light gray */
 			graphics.setXORMode(Color.lightGray);
 			
-			/* Redraw the shape */
-			shapeOfInterest.draw(graphics);
-  	
-			/* Draw selection rectangles */
-			shapeOfInterest.drawHighlightBoxes(graphics);
-	
+			
+			
+			/* Redraw the shape */ 
+			 try{
+				 /* First attempt to draw the shape from a static class */
+				 ((Shape)shapeOfInterest).draw(graphics);
+				 ((Shape)shapeOfInterest).drawHighlightBoxes(graphics);
+				 
+			 }catch(Exception e){
+			
+				/* Otherwise try to draw the shape from a dynamically loaded class */ 
+				try {
+					
+					 Method mi = shapeOfInterest.getClass().getMethod("draw", Graphics.class );
+					 Object argsArray[] = {graphics};
+					 mi.invoke(shapeOfInterest, argsArray);
+
+					 Method mi2 = shapeOfInterest.getClass().getMethod("drawHighlightBoxes", Graphics.class );
+					 Object argsArray2[] = {graphics};
+					 mi2.invoke(shapeOfInterest, argsArray2); 
+					 
+			 	} catch (SecurityException e1) {
+				 	e1.printStackTrace();
+			 	} catch (NoSuchMethodException e2) {
+					e2.printStackTrace();
+				} catch (IllegalArgumentException e3) {
+					e3.printStackTrace();
+				} catch (IllegalAccessException e4) {
+					e4.printStackTrace();
+				} catch (InvocationTargetException e5) {
+					e5.printStackTrace();
+				}	 
+			 }
+			 
+			 
 			/* Repaint the canvas to visually select/unselect the object */ 
 	 		canvas.repaint();	
 			
@@ -237,7 +553,7 @@ public class SelectorTool implements Tool
 		
 	}
 
-	public void mouseReleased(Point point, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor, boolean filled) 
+	public void mouseReleased(Point point, ArrayList<Object> currentShapes, DrawingCanvas canvas,Color finalColor, boolean filled) 
 	{
 		
 		if (shapeOfInterest != null)
@@ -251,11 +567,43 @@ public class SelectorTool implements Tool
 			
   			graphics.setXORMode(Color.lightGray);  			
 		
+  			
+  			
 			/* Redraw the shape */ 
-			shapeOfInterest.draw(graphics);
+			 try{
+				 /* First attempt to draw the shape from a static class */
+				 ((Shape)shapeOfInterest).draw(graphics);
+				 ((Shape)shapeOfInterest).drawHighlightBoxes(graphics);
+				 
+			 }catch(Exception e){
+			
+				/* Otherwise try to draw the shape from a dynamically loaded class */ 
+				try {
+					
+					 Method mi = shapeOfInterest.getClass().getMethod("draw", Graphics.class );
+					 Object argsArray[] = {graphics};
+					 mi.invoke(shapeOfInterest, argsArray);
 
-			/* Draw selection rectangles */
-			shapeOfInterest.drawHighlightBoxes(graphics);	
+					 Method mi2 = shapeOfInterest.getClass().getMethod("drawHighlightBoxes", Graphics.class );
+					 Object argsArray2[] = {graphics};
+					 mi2.invoke(shapeOfInterest, argsArray2); 
+					 
+			 	} catch (SecurityException e1) {
+				 	e1.printStackTrace();
+			 	} catch (NoSuchMethodException e2) {
+					e2.printStackTrace();
+				} catch (IllegalArgumentException e3) {
+					e3.printStackTrace();
+				} catch (IllegalAccessException e4) {
+					e4.printStackTrace();
+				} catch (InvocationTargetException e5) {
+					e5.printStackTrace();
+				}	 
+			 }
+			
+
+			
+			 
 			
 		}		
 	}
@@ -270,7 +618,34 @@ public class SelectorTool implements Tool
 		
 		if (shapeOfInterest != null)
 		{
-			shapeOfInterest.draw(graphics);
+			
+			
+			 try{
+				 /* First attempt to draw the shape from a static class */
+				 ((Shape)shapeOfInterest).draw(graphics);
+			 }catch(Exception e){
+			
+				/* Otherwise try to draw the shape from a dynamically loaded class */ 
+				try {
+					
+					 Method mi = shapeOfInterest.getClass().getMethod("draw", Graphics.class );
+					 Object argsArray[] = {graphics};
+					 mi.invoke(shapeOfInterest, argsArray);
+				
+			 	} catch (SecurityException e1) {
+				 	e1.printStackTrace();
+			 	} catch (NoSuchMethodException e2) {
+					e2.printStackTrace();
+				} catch (IllegalArgumentException e3) {
+					e3.printStackTrace();
+				} catch (IllegalAccessException e4) {
+					e4.printStackTrace();
+				} catch (InvocationTargetException e5) {
+					e5.printStackTrace();
+				}	 
+			 }
+			
+			
 			shapeOfInterest = null;
 			
 			/* Reset the previous selected objects to null */

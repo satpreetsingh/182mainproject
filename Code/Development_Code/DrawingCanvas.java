@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import javax.swing.*;
 import java.util.EventListener;
 
@@ -194,12 +197,40 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
 	    
 	    if (session != null)
 	    {
-	    	ArrayList <Shape> drawableShapes = session.currentState.currentShapes();
+	    	ArrayList <Object> drawableShapes = session.currentState.currentShapes();
 	    	if (drawableShapes != null)
 	    	{
 	    		for (int i = 0 ; i < drawableShapes.size(); i++)
 	    		{
-	    			drawableShapes.get(i).draw(imageBufferGraphics);
+	    			
+	    			/* Attempt to cast as a shape and call the static method */
+	    			try{
+	    				((Shape)drawableShapes.get(i)).draw(imageBufferGraphics);
+	    			}catch(Exception e){
+	    				
+	    				/* Try to call the shape draw method through reflection */
+	    				try {
+	    					
+	    					 Method mi = drawableShapes.get(i).getClass().getMethod("draw", Graphics.class );
+	    					 Object argsArray[] = {imageBufferGraphics};
+	    					 mi.invoke(drawableShapes.get(i), argsArray);
+	    				
+	    			 	} catch (SecurityException e1) {
+	    				 	e1.printStackTrace();
+	    			 	} catch (NoSuchMethodException e2) {
+	    					e2.printStackTrace();
+	    				} catch (IllegalArgumentException e3) {
+	    					e3.printStackTrace();
+	    				} catch (IllegalAccessException e4) {
+	    					e4.printStackTrace();
+	    				} catch (InvocationTargetException e5) {
+	    					e5.printStackTrace();
+	    				}	 	
+	    			}
+	    			
+	    			
+	    			
+	    			
 	    		}
 	    	}
 	    }
@@ -227,13 +258,39 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
 		   /* Redraw each of the shapes on the buffer */
 		   if (session != null)
 		   {
-			   ArrayList <Shape> drawableShapes = session.currentState.currentShapes();
+			   ArrayList <Object> drawableShapes = session.currentState.currentShapes();
 		   
 			   if (drawableShapes != null) 
 			   {
 				   for (int i = 0 ; i < drawableShapes.size(); i++)
 				   {
-					   drawableShapes.get(i).draw(imageBufferGraphics);
+		    		
+					   
+					   /* Attempt to cast as a shape and call the static method */
+		    			try{
+		    				((Shape)drawableShapes.get(i)).draw(imageBufferGraphics);
+		    			}catch(Exception e){
+		    			
+		    				/* Try to call the shape draw method through reflection */
+		    				try {
+		    					
+		    					 Method mi = drawableShapes.get(i).getClass().getMethod("draw", Graphics.class );
+		    					 Object argsArray[] = {imageBufferGraphics};
+		    					 mi.invoke(drawableShapes.get(i), argsArray);
+		    				
+		    			 	} catch (SecurityException e1) {
+		    				 	e1.printStackTrace();
+		    			 	} catch (NoSuchMethodException e2) {
+		    					e2.printStackTrace();
+		    				} catch (IllegalArgumentException e3) {
+		    					e3.printStackTrace();
+		    				} catch (IllegalAccessException e4) {
+		    					e4.printStackTrace();
+		    				} catch (InvocationTargetException e5) {
+		    					e5.printStackTrace();
+		    				}	 	
+		    			}
+		    			
 				   }
 			   }
 		    }

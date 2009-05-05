@@ -26,7 +26,8 @@ public class Rectangle extends TwoPointShape
 	}
 	
 	
-	/**
+
+	 /**
 	 * Draws a Rectangle object.
 	 */
 	public void draw(Graphics g)

@@ -9,22 +9,22 @@ import java.util.ArrayList;
  */
 public class DrawState implements Serializable{
 
-	private ArrayList <Shape> currentShapes;
-	private Shape lastSelected;
+	private ArrayList <Object> currentShapes;
+	private Object lastSelected;
 	
 	/**
 	 * Create a new instance of DrawState.
 	 */
 	public DrawState ()
 	{
-		currentShapes = new ArrayList <Shape>();
+		currentShapes = new ArrayList <Object>();
 	}
 	
 	/**
 	 * Provide the currentList of shapes.
 	 * @return Returns currentShapes.
 	 */
-	public ArrayList<Shape> currentShapes()
+	public ArrayList<Object> currentShapes()
 	{
 		return currentShapes;
 	}
@@ -32,9 +32,9 @@ public class DrawState implements Serializable{
 	/**
 	 * Set the value of the last selected shape.
 	 * s must be a shape currently in this class.
-	 * @param s Shape to select.
+	 * @param s Object to select.
 	 */
-	public void setLastSelected(Shape s)
+	public void setLastSelected(Object s)
 	{
 		for(int i = 0; i < this.currentShapes.size(); i++)
 		{
@@ -47,10 +47,10 @@ public class DrawState implements Serializable{
 	}
 	
 	/**
-	 * Return the last selected shape.
-	 * @return Returns last selected shape.
+	 * Return the last selected object.
+	 * @return Returns last selected Object.
 	 */
-	public Shape lastSelected()
+	public Object lastSelected()
 	{
 		return this.lastSelected;
 	}

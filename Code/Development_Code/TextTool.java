@@ -29,11 +29,7 @@ public class TextTool implements KeyboardTool {
 	  * When mousePressed received, create a new text object,
 	  * finalizing the previous one if it exists.
 	  */
-  	  public void mousePressed(Point p, 
-  			  ArrayList<Shape> shapes, 
-  			  DrawingCanvas canvas, 
-  			  boolean fill,
-  			  UUID uniqueId) {
+  	  public void mousePressed(Point p, ArrayList<Object> shapes, DrawingCanvas canvas, boolean fill,UUID uniqueId) {
   		  
 		  Graphics graphics = canvas.getimageBufferGraphics();
 		  canvas.requestFocus();
@@ -48,7 +44,7 @@ public class TextTool implements KeyboardTool {
 	   * When a key is typed, update the text object, 
 	   * if it exists.
 	   */
-     public void keyTyped(char keyPressed, ArrayList<Shape> shapes, DrawingCanvas canvas) 
+     public void keyTyped(char keyPressed, ArrayList<Object> shapes, DrawingCanvas canvas) 
      {
 	   Graphics graphics;
 		if(currentText != null)
@@ -108,10 +104,10 @@ public class TextTool implements KeyboardTool {
     /**
 	 * Does nothing
 	 */
-     public void mouseReleased(Point point,ArrayList<Shape> shapes, DrawingCanvas canvas,Color finalColor, boolean filled) { }
-	 public void mouseDragged(Point p, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
-	 public void keyReleased(char keyPress, ArrayList<Shape> shapes, DrawingCanvas canvas) { }
-	 public void keyPressed(char keyPressed, ArrayList<Shape> shapes, DrawingCanvas canvas)  { }
+     public void mouseReleased(Point point,ArrayList<Object> shapes, DrawingCanvas canvas,Color finalColor, boolean filled) { }
+	 public void mouseDragged(Point p, ArrayList<Object> shapes, DrawingCanvas canvas) { }
+	 public void keyReleased(char keyPress, ArrayList<Object> shapes, DrawingCanvas canvas) { }
+	 public void keyPressed(char keyPressed, ArrayList<Object> shapes, DrawingCanvas canvas)  { }
 
 	
 

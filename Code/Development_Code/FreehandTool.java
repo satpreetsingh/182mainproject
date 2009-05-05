@@ -27,11 +27,7 @@ public class FreehandTool implements Tool {
   }
 
   
-  public void mousePressed(Point p,
-		  ArrayList<Shape> currentShapes,
-DrawingCanvas canvas, 
-boolean fill,
-UUID uniqueId)  
+  public void mousePressed(Point p,ArrayList<Object> currentShapes,DrawingCanvas canvas, boolean fill,UUID uniqueId)  
   {
 	freeHand = factory.createFreeHand(p.x, 
 									  p.y, 
@@ -47,7 +43,7 @@ UUID uniqueId)
     canvas.repaint();
   }
 	 
-  public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas)  
+  public void mouseDragged(Point p, ArrayList<Object> currentShapes, DrawingCanvas canvas)  
   {
 		
 	Graphics graphics = canvas.getimageBufferGraphics();
@@ -61,7 +57,7 @@ UUID uniqueId)
 		 
   }
 
-  public void mouseReleased(Point point, ArrayList<Shape> currentShapes, DrawingCanvas canvas,Color finalColor, boolean filled) 
+  public void mouseReleased(Point point, ArrayList<Object> currentShapes, DrawingCanvas canvas,Color finalColor, boolean filled) 
   {
 	   Graphics graphics = canvas.getimageBufferGraphics();
 		

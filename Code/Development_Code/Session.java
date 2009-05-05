@@ -1,9 +1,12 @@
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -165,9 +168,9 @@ public class Session
 	
 	/**
 	 * Process an event to select a shape.
-	 * @param s Shape to select.
+	 * @param s Object to select.
 	 */
-	public void processSelectShape(Shape s, boolean networkEvent)
+	public void processSelectShape(Object s, boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -176,7 +179,7 @@ public class Session
 				SessionUtils.selectShape(s, this);
 			}
 				
-			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
+			ArrayList <Object> drawableShapes = this.currentState.currentShapes();
 			if (drawableShapes != null)
 			{
 				for(int i = 0; i < drawableShapes.size(); i++) 
@@ -192,9 +195,9 @@ public class Session
 	
 	/**
 	 * Process an event to delete a shape.
-	 * @param s Shape to delete.
+	 * @param s Object to delete.
 	 */
-	public void processDeleteShape (Shape s, boolean networkEvent)
+	public void processDeleteShape (Object s, boolean networkEvent)
 	{
 		if (this.drawable(this.localUser))
 		{
@@ -203,7 +206,7 @@ public class Session
 				SessionUtils.sendDeleteShape(s, this);
 			}
 			
-			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
+			ArrayList <Object> drawableShapes = this.currentState.currentShapes();
 			if (drawableShapes != null)
 			{
 				for(int i = 0; i < drawableShapes.size(); i++) 
@@ -223,7 +226,7 @@ public class Session
 	 * @param s Shape to set.
 	 * @param c Color to set.
 	 */
-	public void processSetMainColor(Shape s, Color c, boolean networkEvent)
+	public void processSetMainColor(Object s, Color c, boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -232,14 +235,39 @@ public class Session
 				SessionUtils.setMainColor(s, c, this);
 			}
 			
-			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
+			ArrayList <Object> drawableShapes = this.currentState.currentShapes();
 			if (drawableShapes != null)
 			{
 				for(int i = 0; i < drawableShapes.size(); i++) 
 				{
 					if ( (drawableShapes.get(i).equals(s))) 
 					{
-						drawableShapes.get(i).set_MainColor(c);
+					
+						/* Attempt to cast as a shape and call the static method */
+		    			try{
+		    				((Shape)drawableShapes.get(i)).set_MainColor(c);
+		    			}catch(Exception e){
+		    			
+		    				/* Try to call the shape draw method through reflection */
+		    				try {
+		    					
+		    					 Method mi = drawableShapes.get(i).getClass().getMethod("set_MainColor", Color.class);
+		    					 Object argsArray[] = {c};
+		    					 mi.invoke(drawableShapes.get(i), argsArray);
+		    				
+		    			 	} catch (SecurityException e1) {
+		    				 	e1.printStackTrace();
+		    			 	} catch (NoSuchMethodException e2) {
+		    					e2.printStackTrace();
+		    				} catch (IllegalArgumentException e3) {
+		    					e3.printStackTrace();
+		    				} catch (IllegalAccessException e4) {
+		    					e4.printStackTrace();
+		    				} catch (InvocationTargetException e5) {
+		    					e5.printStackTrace();
+		    				}	 	
+		    			}
+		    			
 						this.canvas.repaint();
 					}
 				}	
@@ -252,7 +280,7 @@ public class Session
 	 * @param shape Shape to set.
 	 * @param IsOutline boolean to set.
 	 */
-	public void processSetShapeFill(Shape shape, boolean isoutline, boolean networkEvent)
+	public void processSetShapeFill(Object shape, boolean isoutline, boolean networkEvent)
 	{
 		if(this.drawable(this.localUser) || networkEvent)
 		{
@@ -261,15 +289,41 @@ public class Session
 				SessionUtils.setDrawingType(shape, isoutline, this);
 			}
 			
-			ArrayList <Shape> drawableShapes = this.currentState.currentShapes();
+			ArrayList <Object> drawableShapes = this.currentState.currentShapes();
 			if (drawableShapes != null)
 			{
 				for(int i = 0; i < drawableShapes.size(); i++) 
 				{
 					if ( (drawableShapes.get(i).equals(shape))) 
 					{
-						drawableShapes.get(i).set_DrawingType(isoutline);
-						this.canvas.refresh();
+						
+					     /* Save the object's type */
+						 try{
+							 /* First attempt to set the main color of a static class */
+							 ((Shape)drawableShapes.get(i)).set_DrawingType(isoutline);
+						 }catch(Exception e){
+						
+							/* Otherwise try to draw the shape from a dynamically loaded class */ 
+							try {
+								
+								 Method mi = drawableShapes.get(i).getClass().getMethod("set_DrawingType", boolean.class);
+								 Object argsArray[] = {isoutline};
+								 mi.invoke(drawableShapes.get(i), argsArray);
+							
+						 	} catch (SecurityException e1) {
+							 	e1.printStackTrace();
+						 	} catch (NoSuchMethodException e2) {
+								e2.printStackTrace();
+							} catch (IllegalArgumentException e3) {
+								e3.printStackTrace();
+							} catch (IllegalAccessException e4) {
+								e4.printStackTrace();
+							} catch (InvocationTargetException e5) {
+								e5.printStackTrace();
+							}	 
+						 }
+						 
+						 this.canvas.refresh();
 					}
 				}	
 			}

@@ -19,7 +19,7 @@ public class TwoPointShapeTool implements Tool {
 	protected String name;
 	protected Point startingMousePosition;
 	protected Point currentMousePosition;
-	protected Object shape=null;
+	protected Object shape = null;
 	protected TwoPointShapeFactory shapeFactory;
   
 	  /**
@@ -41,12 +41,7 @@ public class TwoPointShapeTool implements Tool {
 	   * For a TwoPointShapeTool, when the mouse is pressed,
 	   * create a new TwoPointShape on the canvas.
 	   */
-	 public void mousePressed
-	 (Point p, 
-			 ArrayList<Shape> currentShapes, 
-			 DrawingCanvas canvas, 
-			 boolean fill,
-			 UUID uniqueId)
+	 public void mousePressed (Point p, ArrayList<Object> currentShapes, DrawingCanvas canvas, boolean fill,UUID uniqueId)
 	 {
 	
 		 Graphics graphics = canvas.getimageBufferGraphics();
@@ -60,58 +55,128 @@ public class TwoPointShapeTool implements Tool {
 										   p.y,
 				 						   Color.WHITE,
 				 						   fill, uniqueId);
+
+		 
 		 try{
-		 ((TwoPointShape) shape).draw(graphics);
+			 ((TwoPointShape) shape).draw(graphics);
 		 }catch(Exception e){
 		
-		 try {
+			try {
 			
-			 Method mi = shape.getClass().getMethod("draw", Graphics.class );
-			 Graphics argsArray[] = {graphics};
-			 mi.invoke(shape, argsArray);
+				 Method mi = shape.getClass().getMethod("draw", Graphics.class );
+				 Object argsArray[] = {graphics};
+				 mi.invoke(shape, argsArray);
 			
-			
-		 } catch (SecurityException e0) {
-			// TODO Auto-generated catch block
-			e0.printStackTrace();
-		} catch (NoSuchMethodException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		} catch (InvocationTargetException e3) {
-			// TODO Auto-generated catch block
-			e3.printStackTrace();
-		}	 
-		
-		
+		 	} catch (SecurityException e1) {
+			 	e1.printStackTrace();
+		 	} catch (NoSuchMethodException e2) {
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e3) {
+				e3.printStackTrace();
+			} catch (IllegalAccessException e4) {
+				e4.printStackTrace();
+			} catch (InvocationTargetException e5) {
+				e5.printStackTrace();
+			}	 
 		 }
 		 
 		 
 		 canvas.repaint();
-	 }
+	 	}
 	
 	 /**
 	  * When the mouse is dragged for a TwoPointShapeTool,
 	  * update the second point of the shape, and redraw it.
 	  */
-	 public void mouseDragged(Point p,ArrayList<Shape> currentShapes, DrawingCanvas canvas)  
+	 public void mouseDragged(Point p,ArrayList<Object> currentShapes, DrawingCanvas canvas)  
 	 {
 	   Graphics graphics = canvas.getimageBufferGraphics();
 	
 	   /* Erase previous temporary figure by redrawing it */
-	   ((TwoPointShape) shape).draw(graphics);
+		 try{
+			 /* First attempt to draw the shape from a static class */
+			 ((TwoPointShape) shape).draw(graphics);
+		 }catch(Exception e){
+		
+			/* Otherwise try to draw the shape from a dynamically loaded class */ 
+			try {
+				
+				 Method mi = shape.getClass().getMethod("draw", Graphics.class );
+				 Object argsArray[] = {graphics};
+				 mi.invoke(shape, argsArray);
+			
+		 	} catch (SecurityException e1) {
+			 	e1.printStackTrace();
+		 	} catch (NoSuchMethodException e2) {
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e3) {
+				e3.printStackTrace();
+			} catch (IllegalAccessException e4) {
+				e4.printStackTrace();
+			} catch (InvocationTargetException e5) {
+				e5.printStackTrace();
+			}	 
+		 }
 	
-	   /* Draw new temporary figure */
-	   ((TwoPointShape) shape).setSecondPoint
-	   (p.x,
-	    p.y);
-	   ((TwoPointShape) shape).draw(graphics);
-	
+		 
+		 
+		 
+	   /* Set the second point of the new temporary figure */
+	   try{
+		   /* First attempt to set the points of the shape from a static class */
+		   ((TwoPointShape) shape).setSecondPoint (p.x,
+				    							   p.y);
+	   }catch(Exception e){
+		
+			/* Otherwise try to set the points of the shape from a dynamically loaded class */ 
+			try {
+		         Method mi = shape.getClass().getMethod("setSecondPoint", double.class, double.class);
+				 Object argsArray[] = {p.x, p.y};
+				 mi.invoke(shape, argsArray);
+			
+		 	} catch (SecurityException e1) {
+			 	e1.printStackTrace();
+		 	} catch (NoSuchMethodException e2) {
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e3) {
+				e3.printStackTrace();
+			} catch (IllegalAccessException e4) {
+				e4.printStackTrace();
+			} catch (InvocationTargetException e5) {
+				e5.printStackTrace();
+			}	 
+		 }
+		 
+	   
+	   
+	     /* Erase previous temporary figure by redrawing it */
+		 try{
+			 /* First attempt to draw the shape from a static class */
+			 ((TwoPointShape) shape).draw(graphics);
+		 }catch(Exception e){
+		
+			/* Otherwise try to draw the shape from a dynamically loaded class */ 
+			try {
+				
+				 Method mi = shape.getClass().getMethod("draw", Graphics.class );
+				 Object argsArray[] = {graphics};
+				 mi.invoke(shape, argsArray);
+			
+		 	} catch (SecurityException e1) {
+			 	e1.printStackTrace();
+		 	} catch (NoSuchMethodException e2) {
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e3) {
+				e3.printStackTrace();
+			} catch (IllegalAccessException e4) {
+				e4.printStackTrace();
+			} catch (InvocationTargetException e5) {
+				e5.printStackTrace();
+			}	 
+		 }
+	   
+	   
+	   
 	   canvas.repaint();
 	 }
 
@@ -122,22 +187,102 @@ public class TwoPointShapeTool implements Tool {
 	  * then handed over to the CanvasController for future 
 	  * manipulation. 
 	  */
-	 public void mouseReleased(Point point,ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor, boolean filled) { 
+	 public void mouseReleased(Point point,ArrayList<Object> currentShapes, DrawingCanvas canvas, Color finalColor, boolean filled) { 
 	    
 		Graphics graphics = canvas.getimageBufferGraphics();
 	
-	    /* Save the object's color to match the pen's color */
-	    ((TwoPointShape) shape).set_MainColor(finalColor);
+		
+		
+		
+	     /* Save the object's color to match the pen's color */
+		 try{
+			 /* First attempt to set the main color of a static class */
+			 ((TwoPointShape) shape).set_MainColor(finalColor);
+		 }catch(Exception e){
+		
+			/* Otherwise try to draw the shape from a dynamically loaded class */ 
+			try {
+				
+				 Method mi = shape.getClass().getMethod("set_MainColor", Color.class);
+				 Object argsArray[] = {finalColor};
+				 mi.invoke(shape, argsArray);
+			
+		 	} catch (SecurityException e1) {
+			 	e1.printStackTrace();
+		 	} catch (NoSuchMethodException e2) {
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e3) {
+				e3.printStackTrace();
+			} catch (IllegalAccessException e4) {
+				e4.printStackTrace();
+			} catch (InvocationTargetException e5) {
+				e5.printStackTrace();
+			}	 
+		 }
 	   
-	    /* Save the object's type */
-	    ((TwoPointShape) shape).set_DrawingType(canvas.getDrawingType());
-
+		 
+	    
+	   
+	     /* Save the object's type */
+		 try{
+			 /* First attempt to set the main color of a static class */
+			 ((TwoPointShape) shape).set_DrawingType(canvas.getDrawingType());
+		 }catch(Exception e){
+		
+			/* Otherwise try to draw the shape from a dynamically loaded class */ 
+			try {
+				
+				 Method mi = shape.getClass().getMethod("set_DrawingType", boolean.class);
+				 Object argsArray[] = {canvas.getDrawingType()};
+				 mi.invoke(shape, argsArray);
+			
+		 	} catch (SecurityException e1) {
+			 	e1.printStackTrace();
+		 	} catch (NoSuchMethodException e2) {
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e3) {
+				e3.printStackTrace();
+			} catch (IllegalAccessException e4) {
+				e4.printStackTrace();
+			} catch (InvocationTargetException e5) {
+				e5.printStackTrace();
+			}	 
+		 }
+		 
+	    
 	    /* Draw final "permanent" object */
-	    ((TwoPointShape) shape).draw(graphics);
+		 try{
+			 /* First attempt to draw the shape from a static class */
+			 ((TwoPointShape) shape).draw(graphics);
+		 }catch(Exception e){
+		
+			/* Otherwise try to draw the shape from a dynamically loaded class */ 
+			try {
+				
+				 Method mi = shape.getClass().getMethod("draw", Graphics.class );
+				 Object argsArray[] = {graphics};
+				 mi.invoke(shape, argsArray);
+			
+		 	} catch (SecurityException e1) {
+			 	e1.printStackTrace();
+		 	} catch (NoSuchMethodException e2) {
+				e2.printStackTrace();
+			} catch (IllegalArgumentException e3) {
+				e3.printStackTrace();
+			} catch (IllegalAccessException e4) {
+				e4.printStackTrace();
+			} catch (InvocationTargetException e5) {
+				e5.printStackTrace();
+			}	 
+		 }
+	   
+	    
 	    canvas.repaint();   
 	
 	    /* Add shape to list maintained by the controller */
-	    currentShapes.add((TwoPointShape) shape);
+	    currentShapes.add(shape);
+	    
+	    
 	  }
 
 	public void deselected(DrawingCanvas canvas) { }
