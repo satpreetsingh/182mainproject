@@ -781,6 +781,7 @@ public class SessionUtils
 				considerReset(client, session);
 				session.threads.remove(p);
 				session.networkMembers.remove(p.target);
+				session.updatePeerListOnScreen();
 				p.target = null;
 				p = null;
 			}
@@ -790,6 +791,7 @@ public class SessionUtils
 				considerReset(client, session);
 				session.threads.remove(p);
 				session.networkMembers.remove(p.target);
+				session.updatePeerListOnScreen();
 				p.target = null;
 				p = null;
 				
