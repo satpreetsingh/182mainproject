@@ -6,7 +6,7 @@ import java.util.UUID;
 
 /**
  * The AdvRectangle class implements methods necessary
- * to manipulate AdvRectangles, extending the TwoPointShape abstract class.
+ * to manipulate AdvRectangle, extending the TwoPointShape abstract class.
  * @authors bmhelppi, jjtrapan
  *
  */
@@ -25,8 +25,134 @@ public class AdvRectangle extends TwoPointShape
 		super(x, y, c, IsOutline,uniqueId);
 	}
 	
+	/**
+	 * Combines interior/exterior methods to indicate
+	 * if a position is near the object.
+	 * @param x X position
+	 * @param y Y Position
+	 * @return Returns true if interior/exterior returns true,
+	 * false otherwise.
+	 */
+	public boolean near(int x, int y)
+	{
+		return (interior(x,y) || exterior(x,y));
+	}
+
+	/**
+	 * Set base position of this object.
+	 * @param (int) d  X position (start).
+	 * @param e  Y position (start).
+	 * @param f X position (end).
+	 * @param g Y position (end).
+	 */
+	public void set_Position(double d, double e) {
+		origin.x = (int) d;
+		origin.y = (int)e;
+    }
+
+	/**
+	 * Set the primary color of the shape.
+	 * @param c
+	 */
+	public void set_MainColor(Color c)
+	{
+		shapeColor = c;
+	}
 	
 	/**
+	 * Set the type of drawing scheme of the shape.
+	 * @param Mode
+	 */
+	public void set_DrawingType(boolean isoutline)
+	{
+		IsOutline = isoutline;
+	}
+	public boolean equals(Shape s)
+	{
+		return (this.uniqueId.equals(s.uniqueId));
+	}
+	
+	
+	public void setSecondPoint(double x, double y) {
+		 this.end.x = x;
+		 this.end.y = y;
+		 
+		 
+		 this.endorigin.x = x;
+		 this.endorigin.y = this.origin.y;
+		 this.originend.x = this.origin.x;
+		 this.originend.y = y;
+	 }
+	
+	 /**
+	  * Move the shape.
+	  */
+	public void move(int x, int y)
+	 {
+		 this.origin.setLocation(this.origin.x + x, this.origin.y + y);
+		 this.end.setLocation(this.end.x + x, this.end.y + y);
+			
+		  /* Update the non-endpoint points */	
+		 this.endorigin.x = this.end.x + x;
+	     this.endorigin.y = this.origin.y + y;	
+		 this.originend.x = this.origin.x + x;
+	     this.originend.y = this.end.y + y;			 
+	 }
+	 
+	
+	/**
+	  * Resize the shape.
+	  */
+	public void resize(Point2D.Double anchor, int deltaX, int deltaY)
+	{
+			 
+			 if (anchor == this.origin)
+			 {				 			 
+				 this.end = scale(this.origin.x,this.end.x,this.origin.y,this.end.y,deltaX, deltaY);
+				 
+				 /* Update the sub points */
+				 this.endorigin.x = this.end.x;
+				 this.originend.y = this.end.y;
+			 }
+			 else if (anchor == this.endorigin){
+				 
+				 this.originend = scale(this.endorigin.x,this.originend.x,this.endorigin.y,this.originend.y,deltaX, deltaY);					 
+				 
+				 /* Update the main endpoints */
+				 this.origin.x = this.originend.x;
+				 this.end.y = this.originend.y;
+				 
+			 }
+			 else if (anchor == this.originend){
+				 this.endorigin = scale(this.originend.x,this.endorigin.x,this.originend.y,this.endorigin.y,deltaX, deltaY);	 
+				 
+				 /* Update the main endpoints */
+				 this.end.x = this.endorigin.x;
+				 this.origin.y = this.endorigin.y;
+			 }
+			 else
+			 {
+				 this.origin = scale(this.end.x,this.origin.x,this.end.y,this.origin.y,deltaX, deltaY);
+				 
+				 /* Update the sub points */
+				 this.originend.x = this.origin.x;
+				 this.endorigin.y = this.origin.y;
+				 
+			 }	 
+	}
+		 
+	public Point2D.Double scale(double x1,double x2,double y1,double y2, int deltaX, int deltaY)
+	{
+			 Point2D.Double result = new Point2D.Double();
+			 result.x = x2 + deltaX;
+			 result.y = y2 + deltaY;		 
+			 return result;
+			 
+	}
+
+
+
+	 /**
 	 * Draws a AdvRectangle object.
 	 */
 	public void draw(Graphics g)
@@ -136,7 +262,7 @@ public class AdvRectangle extends TwoPointShape
 	/**
 	 * Determine the anchor of the object.
 	 */
-	Point2D.Double pickAnchor (Point2D.Double p)
+	public Point2D.Double pickAnchor (Point2D.Double p)
 	{
 			Point2D.Double result;
 			

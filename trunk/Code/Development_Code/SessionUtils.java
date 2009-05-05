@@ -1036,10 +1036,10 @@ public class SessionUtils
 
 	/**
 	 * Send highlight notice for a shape.
-	 * @param s Shape to highlight.
+	 * @param s Object to highlight.
 	 * @param session Session to do this for.
 	 */
-	public static void selectShape(Shape s, Session session) {
+	public static void selectShape(Object s, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
 		genericSendToAllPeers(session, data, NetworkObject.reason.selectShape, null);
@@ -1049,11 +1049,11 @@ public class SessionUtils
 	}
 
 	/**
-	 * Delete a shape.
-	 * @param s Shape to delete.
+	 * Delete a shape (object).
+	 * @param s Object to delete.
 	 * @param session Session to do this for.
 	 */
-	public static void sendDeleteShape(Shape s, Session session) {
+	public static void sendDeleteShape(Object s, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
 		genericSendToAllPeers(session, data, NetworkObject.reason.deleteShape, null);
@@ -1064,11 +1064,11 @@ public class SessionUtils
 
 	/**
 	 * Set a shapes color.
-	 * @param s Shape to set
+	 * @param s Object to set
 	 * @param c Color to set.
 	 * @param session Session to do this for.
 	 */
-	public static void setMainColor(Shape s, Color c, Session session) {
+	public static void setMainColor(Object s, Color c, Session session) {
 		ArrayList<Object> data = new ArrayList<Object>();
 		data.add(s);
 		data.add(c);
@@ -1084,7 +1084,7 @@ public class SessionUtils
 	 * @param isoutline Value of filled/not.
 	 * @param session Session to do event for.
 	 */
-	public static void setDrawingType(Shape shape, boolean isoutline,
+	public static void setDrawingType(Object shape, boolean isoutline,
 			Session session) 
 	{
 		Boolean networkBool = new Boolean(isoutline);

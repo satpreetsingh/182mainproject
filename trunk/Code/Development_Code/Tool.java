@@ -26,7 +26,7 @@ public interface Tool extends Serializable {
 	 * @param fill TODO
 	 */
 	public void mousePressed(Point p,
-			ArrayList<Shape> currentShapes, 
+			ArrayList<Object> currentShapes, 
 			DrawingCanvas canvas, 
 			boolean fill,
 			UUID uniqueId);
@@ -39,7 +39,7 @@ public interface Tool extends Serializable {
 	 * @param finalColor The color the shape should be.
 	 * @param filled TODO
      */
-	public void mouseReleased(Point point, ArrayList<Shape> currentShapes, DrawingCanvas canvas, Color finalColor, boolean filled);
+	public void mouseReleased(Point point, ArrayList<Object> currentShapes, DrawingCanvas canvas, Color finalColor, boolean filled);
   
 	/**
      * Any instance of the Tool interface must handle mouseDragged events.
@@ -47,7 +47,7 @@ public interface Tool extends Serializable {
      * @param currentShapes ArrayList of drawable shapes in the current context.
      * @param canvas Canvas to draw on.
      */
-	public void mouseDragged(Point p, ArrayList<Shape> currentShapes, DrawingCanvas canvas);
+	public void mouseDragged(Point p, ArrayList<Object> currentShapes, DrawingCanvas canvas);
   
 	/**
      * Tool is no longer selected, any tools that need to finalize objects,

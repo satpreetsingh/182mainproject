@@ -1,6 +1,9 @@
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -27,9 +30,7 @@ public class EraserTool implements Tool {
 	/**
 	 * Dragging mouse does nothing for this class.
 	 */
-	public void mouseDragged(Point p, 
-		  ArrayList<Shape> currentShapes,
-		  DrawingCanvas canvas) {}
+	public void mouseDragged(Point p, ArrayList<Object> currentShapes,DrawingCanvas canvas) {}
 
   
 	/**
@@ -37,21 +38,28 @@ public class EraserTool implements Tool {
 	 * is found, delete it, and redraw the canvas.
 	 */
 	public void mousePressed(Point p,
-		  ArrayList<Shape> currentShapes,
+		  ArrayList<Object> currentShapes,
 		  DrawingCanvas canvas, 
 		  boolean fill,
 		  UUID uniqueId) 
 	{
-	    Shape shape;
+		Object shape;
 	    for (int i = 0; i < currentShapes.size(); i++) 
 	    {
 	    	shape = currentShapes.get(i);
-	    	if (shape.near(p.x, p.y)) 
-	    	{
-	    		currentShapes.remove(i);
-	    		i = currentShapes.size();
-	    		canvas.refresh();
+	    	
+			
+	    	try{
+				 /* Attempt to cast the eraser of type Shape from a static class */
+	    		if (((Shape)shape).near(p.x, p.y)) 
+	    		{
+	    			currentShapes.remove(i);
+	    			i = currentShapes.size();
+	    			canvas.refresh();
+	    		}
+	    	}catch(Exception e){
 	    	}
+	    	
 	    }
   }
   
@@ -59,7 +67,7 @@ public class EraserTool implements Tool {
   /**
    * This event does nothing for this tool.
    */
-  public void mouseReleased(Point point, ArrayList<Shape> currentShapes,DrawingCanvas canvas, Color finalColor, boolean filled) {}
+  public void mouseReleased(Point point, ArrayList<Object> currentShapes,DrawingCanvas canvas, Color finalColor, boolean filled) {}
 
   
   /**
