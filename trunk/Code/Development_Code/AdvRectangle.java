@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public class AdvRectangle extends TwoPointShape
 {
-	
+		
 	/**
 	 * Create a new instance of a AdvRectangle.
 	 * @param x X coordinate.
@@ -23,6 +23,15 @@ public class AdvRectangle extends TwoPointShape
 	public AdvRectangle(int x, int y, Color c, boolean IsOutline,UUID uniqueId) 
 	{
 		super(x, y, c, IsOutline,uniqueId);
+	}
+	
+	
+	public void setListPos (int i)  {
+		ListPos = i;	
+	}
+	
+	public int getListPos ()  {
+		return ListPos;	
 	}
 	
 	/**

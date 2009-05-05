@@ -47,6 +47,7 @@ public class SelectorTool implements Tool
 	 */
 	public void mousePressed(Point p,ArrayList<Object> currentShapes, DrawingCanvas canvas,boolean fill,UUID uniqueId) 
 	{
+		
 		/* Declare local vars to start the list with the latest object */
 		int LastListPos = 0;
 		boolean found = false;
@@ -64,9 +65,7 @@ public class SelectorTool implements Tool
 			 try{
 				 /* First attempt to draw the shape from a static class */
 				 ((Shape) shapeOfInterest).draw(graphics);
-				 
-				 	 
-				 
+
 			 }catch(Exception e){
 			
 				/* Otherwise try to draw the shape from a dynamically loaded class */ 
@@ -75,43 +74,35 @@ public class SelectorTool implements Tool
 					 Method mi = shapeOfInterest.getClass().getMethod("draw", Graphics.class );
 					 Object argsArray[] = {graphics};
 					 mi.invoke(shapeOfInterest, argsArray);
-
-			 	} catch (SecurityException e1) {
-				 	e1.printStackTrace();
-			 	} catch (NoSuchMethodException e2) {
-					e2.printStackTrace();
-				} catch (IllegalArgumentException e3) {
-					e3.printStackTrace();
-				} catch (IllegalAccessException e4) {
-					e4.printStackTrace();
-				} catch (InvocationTargetException e5) {
-					e5.printStackTrace();
-				}	 
+					 } 
+				catch (SecurityException e1) {e1.printStackTrace();} 
+			 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+			 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+			 	catch (IllegalAccessException e4) {e4.printStackTrace();} 
+				catch (InvocationTargetException e5) {e5.printStackTrace();}
+				
+				
 			 }			
 
 			 try { 
 				 LastListPos = ((Shape) shapeOfInterest).ListPos;
-			 }catch(Exception e){
-				 
-				 Field fe = null;
+			 }catch(Exception e){	
+				
+				Method mi2 = null;
+				try {mi2 = shapeOfInterest.getClass().getMethod("getListPos", (Class[]) null);} 
+				catch (SecurityException e1) {e1.printStackTrace();} 
+				catch (NoSuchMethodException e1) {e1.printStackTrace();}
+				
 				try {
-					fe = shapeOfInterest.getClass().getField("ListPos");
-				} catch (SecurityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NoSuchFieldException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				 try {
-					LastListPos = fe.getInt(shapeOfInterest);
-				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+					Object returnValue2 = mi2.invoke(shapeOfInterest, (Object[]) null);
+					LastListPos = ((Integer)returnValue2).intValue();
+				} 
+				catch (IllegalArgumentException e1) {e1.printStackTrace();} 
+				catch (IllegalAccessException e1) {e1.printStackTrace();} 
+				catch (InvocationTargetException e1) {e1.printStackTrace();}
+			
+				 
+				 
 				  
 			 }
 			
@@ -122,6 +113,9 @@ public class SelectorTool implements Tool
 		}
 		
 		shapeOfInterest = null;
+		
+		
+		
 		
 		/* Search the list and find the first object that is 'near' the mouse click */
 		if (currentShapes != null) 
@@ -160,21 +154,22 @@ public class SelectorTool implements Tool
 					
 					
 					Method mi = null;
-					try {
-						mi = currentShapes.get(i).getClass().getMethod("near", int.class, int.class);
-					} catch (SecurityException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					} catch (NoSuchMethodException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					}
+					
+					try {mi = currentShapes.get(i).getClass().getMethod("near", int.class, int.class);} 
+					catch (SecurityException e3) {e3.printStackTrace();} 
+					catch (NoSuchMethodException e3) {e3.printStackTrace();}
+
+					
 					Object argsArray[] = {p.x,p.y};
 	
 					 
-					try {
-						if (mi.invoke(shapeOfInterest, argsArray).toString().equals("true")) {
-							
+					try {	
+						
+						
+						Object returnValue = mi.invoke(currentShapes.get(i), argsArray);
+						
+						if (((Boolean)returnValue).booleanValue()) {
+						
 							/* If we selected the same object twice, but not three times, set it as the focus shape */
 							if (previousSelectedObject == currentShapes.get(i))
 							{
@@ -184,9 +179,17 @@ public class SelectorTool implements Tool
 									found = true;
 									
 									shapeOfInterest = currentShapes.get(i);
+		
 									
-									Field fe = shapeOfInterest.getClass().getField("ListPos");
-									fe.setInt(shapeOfInterest, i);
+									Method mi2 = null;
+									try {mi2 = shapeOfInterest.getClass().getMethod("setListPos", int.class);} 
+									catch (NoSuchMethodException e1) {e1.printStackTrace();}
+									catch (SecurityException e1) {e1.printStackTrace();} 
+								 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+									
+									
+									Object argsArray2[] = {i};
+									mi2.invoke(shapeOfInterest, argsArray2);
 									
 									i = currentShapes.size();	
 								}	
@@ -196,48 +199,28 @@ public class SelectorTool implements Tool
 							else 
 							{ 		
 								found = true;
-								shapeOfInterest = currentShapes.get(i);
+								shapeOfInterest = currentShapes.get(i);														
+								
+								Method mi3 = null;
+								try {mi3 = shapeOfInterest.getClass().getMethod("setListPos", int.class);} 
+								catch (NoSuchMethodException e1) {e1.printStackTrace();}
+							 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+								
+								Object argsArray3[] = {i};
+								mi3.invoke(shapeOfInterest, argsArray3);
 								
 								
-								Field fe2 = null;
-								try {
-									fe2 = shapeOfInterest.getClass().getField("ListPos");
-								} catch (SecurityException e2) {
-									// TODO Auto-generated catch block
-									e2.printStackTrace();
-								} catch (NoSuchFieldException e2) {
-									// TODO Auto-generated catch block
-									e2.printStackTrace();
-								}
-								try {
-									fe2.setInt(shapeOfInterest, i);
-								} catch (IllegalArgumentException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								} catch (IllegalAccessException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}	
 								i = currentShapes.size();
+
 							}	
 
 						}
-					} catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (SecurityException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (InvocationTargetException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (NoSuchFieldException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} 	
+					} 
+					catch (IllegalArgumentException e1) {e1.printStackTrace();} 
+					catch (SecurityException e1) {e1.printStackTrace();} 
+					catch (IllegalAccessException e1) {e1.printStackTrace();} 
+					catch (InvocationTargetException e1) {e1.printStackTrace();}
+					
 				}
 				
 				
@@ -287,18 +270,13 @@ public class SelectorTool implements Tool
 					 Method mi2 = shapeOfInterest.getClass().getMethod("drawHighlightBoxes", Graphics.class );
 					 Object argsArray2[] = {graphics};
 					 mi2.invoke(shapeOfInterest, argsArray2); 
-					 
-			 	} catch (SecurityException e1) {
-				 	e1.printStackTrace();
-			 	} catch (NoSuchMethodException e2) {
-					e2.printStackTrace();
-				} catch (IllegalArgumentException e3) {
-					e3.printStackTrace();
-				} catch (IllegalAccessException e4) {
-					e4.printStackTrace();
-				} catch (InvocationTargetException e5) {
-					e5.printStackTrace();
-				}	 
+				}
+				
+				catch (SecurityException e1) {e1.printStackTrace();} 
+			 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+			 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+				catch (IllegalAccessException e4) {e4.printStackTrace();} 
+				catch (InvocationTargetException e5) {e5.printStackTrace();}	 
 			 }
 			 
 			 
@@ -327,53 +305,45 @@ public class SelectorTool implements Tool
 				
 				
 				
-				Method mi = null;
+				
+				Method mi2 = null;
 				try {
-					mi = shapeOfInterest.getClass().getMethod("exterior", int.class, int.class);
-				} catch (SecurityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NoSuchMethodException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				Object argsArray[] = {p.x,p.y};
+					mi2 = shapeOfInterest.getClass().getMethod("exterior", int.class, int.class);
+				} 
+				catch (SecurityException e1) {e1.printStackTrace();} 
+				catch (NoSuchMethodException e1) {e1.printStackTrace();}
+				
+				Object argsArray2[] = {p.x,p.y};
 				
 					 
 					 
 			    /* Otherwise try to access a dynamic method */
 				try {
-					if(mi.invoke(shapeOfInterest, argsArray).toString().equals("true")) {
-						
+					
+					Object returnValue = mi2.invoke(shapeOfInterest, argsArray2);
+					
+					if (((Boolean)returnValue).booleanValue()) {
+
 						this.selectionStyle = ShapeMath.exterior;
 						eventPoint.x = p.x;
 						eventPoint.y = p.y;
 						
-						Method mi2 = shapeOfInterest.getClass().getMethod("pickAnchor", Point2D.Double.class );
-						Object argsArray2[] = {eventPoint};
-						this.anchor = (Double) mi2.invoke(shapeOfInterest, argsArray);					
+						Method mi3 = shapeOfInterest.getClass().getMethod("pickAnchor", Point2D.Double.class );
+						Object argsArray3[] = {eventPoint};
+						this.anchor = (Double) mi3.invoke(shapeOfInterest, argsArray3);					
 						
 
 					}
 					else {
 						this.selectionStyle = ShapeMath.interior;
 					}
-				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InvocationTargetException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NoSuchMethodException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}				
+				} 
+			
+				catch (IllegalArgumentException e1) {e1.printStackTrace();} 
+				catch (SecurityException e1) {e1.printStackTrace();} 
+				catch (IllegalAccessException e1) {e1.printStackTrace();} 
+				catch (InvocationTargetException e1) {e1.printStackTrace();} 
+				catch (NoSuchMethodException e1) {e1.printStackTrace();}				
 			}
 			
 			
@@ -449,17 +419,12 @@ public class SelectorTool implements Tool
   						 Object argsArray[] = {anchor, deltaX, deltaY};
   						 mi.invoke(shapeOfInterest, argsArray);
   						 
-  				 	} catch (SecurityException e1) {
-  					 	e1.printStackTrace();
-  				 	} catch (NoSuchMethodException e2) {
-  						e2.printStackTrace();
-  					} catch (IllegalArgumentException e3) {
-  						e3.printStackTrace();
-  					} catch (IllegalAccessException e4) {
-  						e4.printStackTrace();
-  					} catch (InvocationTargetException e5) {
-  						e5.printStackTrace();
-  					}	 
+  				 	} 
+  					catch (SecurityException e1) {e1.printStackTrace();} 
+  				 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+  				 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+  					catch (IllegalAccessException e4) {e4.printStackTrace();} 
+  					catch (InvocationTargetException e5) {e5.printStackTrace();}	 
   				 }
   				  				
   				
@@ -485,17 +450,12 @@ public class SelectorTool implements Tool
   						 Object argsArray[] = {deltaX, deltaY};
   						 mi.invoke(shapeOfInterest, argsArray);
   						 
-  				 	} catch (SecurityException e1) {
-  					 	e1.printStackTrace();
-  				 	} catch (NoSuchMethodException e2) {
-  						e2.printStackTrace();
-  					} catch (IllegalArgumentException e3) {
-  						e3.printStackTrace();
-  					} catch (IllegalAccessException e4) {
-  						e4.printStackTrace();
-  					} catch (InvocationTargetException e5) {
-  						e5.printStackTrace();
-  					}	 
+  				 	} 
+  					catch (SecurityException e1) {e1.printStackTrace();} 
+  				 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+  				 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+  				 	catch (IllegalAccessException e4) {e4.printStackTrace();} 
+  					catch (InvocationTargetException e5) {e5.printStackTrace();}	 
   				 }
   				 
   				 
@@ -532,17 +492,12 @@ public class SelectorTool implements Tool
 					 Object argsArray2[] = {graphics};
 					 mi2.invoke(shapeOfInterest, argsArray2); 
 					 
-			 	} catch (SecurityException e1) {
-				 	e1.printStackTrace();
-			 	} catch (NoSuchMethodException e2) {
-					e2.printStackTrace();
-				} catch (IllegalArgumentException e3) {
-					e3.printStackTrace();
-				} catch (IllegalAccessException e4) {
-					e4.printStackTrace();
-				} catch (InvocationTargetException e5) {
-					e5.printStackTrace();
-				}	 
+			 	} 
+				catch (SecurityException e1) {e1.printStackTrace();} 
+			 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+			 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+				catch (IllegalAccessException e4) {e4.printStackTrace();} 
+				catch (InvocationTargetException e5) {e5.printStackTrace();}	 
 			 }
 			 
 			 
@@ -588,17 +543,12 @@ public class SelectorTool implements Tool
 					 Object argsArray2[] = {graphics};
 					 mi2.invoke(shapeOfInterest, argsArray2); 
 					 
-			 	} catch (SecurityException e1) {
-				 	e1.printStackTrace();
-			 	} catch (NoSuchMethodException e2) {
-					e2.printStackTrace();
-				} catch (IllegalArgumentException e3) {
-					e3.printStackTrace();
-				} catch (IllegalAccessException e4) {
-					e4.printStackTrace();
-				} catch (InvocationTargetException e5) {
-					e5.printStackTrace();
-				}	 
+			 	} 
+				catch (SecurityException e1) {e1.printStackTrace();} 
+			 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+			 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+				catch (IllegalAccessException e4) {e4.printStackTrace();} 
+				catch (InvocationTargetException e5) {e5.printStackTrace();}	 
 			 }
 			
 
@@ -632,17 +582,12 @@ public class SelectorTool implements Tool
 					 Object argsArray[] = {graphics};
 					 mi.invoke(shapeOfInterest, argsArray);
 				
-			 	} catch (SecurityException e1) {
-				 	e1.printStackTrace();
-			 	} catch (NoSuchMethodException e2) {
-					e2.printStackTrace();
-				} catch (IllegalArgumentException e3) {
-					e3.printStackTrace();
-				} catch (IllegalAccessException e4) {
-					e4.printStackTrace();
-				} catch (InvocationTargetException e5) {
-					e5.printStackTrace();
-				}	 
+			 	} 
+				catch (SecurityException e1) {e1.printStackTrace();} 
+			 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+			 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+				catch (IllegalAccessException e4) {e4.printStackTrace();} 
+				catch (InvocationTargetException e5) {e5.printStackTrace();}	 
 			 }
 			
 			
