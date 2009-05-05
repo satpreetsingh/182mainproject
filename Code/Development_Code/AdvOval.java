@@ -20,10 +20,22 @@ public class AdvOval extends TwoPointShape
 	 * @param c Color.
 	 * @param type
 	 */
+	
+	
 	public AdvOval(int x, int y, Color c, boolean IsOutline,UUID uniqueId) 
 	{
 		super(x, y, c, IsOutline,uniqueId);
 	}
+	
+	
+	public void setListPos (int i)  {
+		ListPos = i;	
+	}
+	
+	public int getListPos ()  {
+		return ListPos;	
+	}
+	
 	
 	/**
 	 * Combines interior/exterior methods to indicate
@@ -32,7 +44,7 @@ public class AdvOval extends TwoPointShape
 	 * @param y Y Position
 	 * @return Returns true if interior/exterior returns true,
 	 * false otherwise.
-	 */
+	 */	
 	public boolean near(int x, int y)
 	{
 		return (interior(x,y) || exterior(x,y));

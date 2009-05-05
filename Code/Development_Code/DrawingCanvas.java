@@ -278,17 +278,12 @@ public class DrawingCanvas extends JComponent implements Serializable, SessionLi
 		    					 Object argsArray[] = {imageBufferGraphics};
 		    					 mi.invoke(drawableShapes.get(i), argsArray);
 		    				
-		    			 	} catch (SecurityException e1) {
-		    				 	e1.printStackTrace();
-		    			 	} catch (NoSuchMethodException e2) {
-		    					e2.printStackTrace();
-		    				} catch (IllegalArgumentException e3) {
-		    					e3.printStackTrace();
-		    				} catch (IllegalAccessException e4) {
-		    					e4.printStackTrace();
-		    				} catch (InvocationTargetException e5) {
-		    					e5.printStackTrace();
-		    				}	 	
+		    			 	} 
+		    				catch (SecurityException e1) {e1.printStackTrace();} 
+		    			 	catch (NoSuchMethodException e2) {e2.printStackTrace();} 
+		    			 	catch (IllegalArgumentException e3) {e3.printStackTrace();} 
+		    				catch (IllegalAccessException e4) {e4.printStackTrace();} 
+		    				catch (InvocationTargetException e5) {e5.printStackTrace();}	 	
 		    			}
 		    			
 				   }
