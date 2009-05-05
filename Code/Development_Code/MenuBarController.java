@@ -43,6 +43,21 @@ public class MenuBarController implements ActionListener, SessionListener {
 	}
 	
 	
+	/**
+	 * Restrict the user to only add class files as new tools.
+	 * @author jjtrapan
+	 *
+	 */
+    class MyFilter extends javax.swing.filechooser.FileFilter {
+        public boolean accept(File file) {
+            String filename = file.getName();
+            return filename.endsWith(".class");
+        }
+        public String getDescription() {
+            return "*.class";
+        }
+    }
+
     /**
      * If user selected a menu item, perform the assigned action.
      * @param e ActionEvent                                                                                                                                                                     
@@ -85,6 +100,11 @@ public class MenuBarController implements ActionListener, SessionListener {
 				/* Create the JFileChooser component, and set the directory to the user directory */
 				FileChooser = new JFileChooser(System.getProperty("user.dir"));
 		
+				/* Set the file filter */
+				FileChooser.setAcceptAllFileFilterUsed(false);
+				FileChooser.addChoosableFileFilter(new MyFilter());
+								
+				
 				/* Initiate the classes to null */
 				Class NewClass = null;
 				
