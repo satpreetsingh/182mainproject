@@ -6,7 +6,7 @@ import java.util.UUID;
 
 /**
  * Implements the TwoPointShapeFactory, to create Rectangle objects.
- * @author bmhelppi
+ * @author satpreet, jjtrapan
  *
  */
 public class DynamicTwoPointShapeFactory implements TwoPointShapeFactory, Serializable{
@@ -21,7 +21,7 @@ public class DynamicTwoPointShapeFactory implements TwoPointShapeFactory, Serial
 	/**
 	 * Create a new Rectangle TwoPointShape.
 	 */
-	public TwoPointShape createShape
+	public Object createShape
 	(int xOne, 
 	 int yOne, 
 	 int xTwo, 
@@ -29,12 +29,15 @@ public class DynamicTwoPointShapeFactory implements TwoPointShapeFactory, Serial
 	 Color c,
 	 boolean IsOutline, UUID uniqueId) 
 	{
-		TwoPointShape dynamicShape = null;
+		Object dynamicShape = null;
+
+		
 		try {
-			dynamicShape =	(TwoPointShape) cstr[0].newInstance(xOne, yOne, c, IsOutline, uniqueId);
+			dynamicShape = cstr[0].newInstance(xOne, yOne, c, IsOutline, uniqueId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
+				
 		return dynamicShape;
 		
 	}
