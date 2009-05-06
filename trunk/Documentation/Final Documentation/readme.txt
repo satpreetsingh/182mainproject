@@ -108,20 +108,16 @@ text.jpg
 =========================================
 PROGRAM REQUIREMENTS
 =========================================
- 
+ A JRE/Java compiler depending on whether
+using source/JAR
  
 
-=========================================
-HOW TO RUN THIS PROGRAM
-=========================================
- 
- 
- 
+
 
 =========================================
 KNOWN ISSUES
 =========================================
-
+None
  
 
 
@@ -129,4 +125,5 @@ KNOWN ISSUES
 REVISIONS
 =========================================
 1.0 Initial document created - Amanda
+1.1 Updated Ben
 
