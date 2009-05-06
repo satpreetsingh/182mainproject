@@ -10,8 +10,11 @@ import javax.swing.*;
  */
 public class MenuBarView extends JMenuBar 
 {
-	private MenuBarController mBController;
 	
+	private DrawingCanvas canvas;
+	private MenuBarController mBController;
+	private CompilingClassLoader loader;
+
 	public JMenu fileMenu;
 	public JMenuItem mnuNew;
 	public JMenuItem mnuQuit;
@@ -34,14 +37,17 @@ public class MenuBarView extends JMenuBar
 	
 	/**
 	 * Create a new MenuBar.
-	 * @param canvas Canvas passed to controller.
+	 * @param c Canvas passed to controller.
 	 */
-	MenuBarView(DrawingCanvas canvas, ArrayList<ToolController> a) 
+	MenuBarView(DrawingCanvas c, ArrayList<ToolController> a) 
 	{
 		
-		
+		canvas = c;
 		actions = a;
-				
+		loader = new CompilingClassLoader();
+
+		
+		
         /* --------------------- FILE MenuItems -------------------------- */
         fileMenu = new JMenu("File");
          
@@ -147,6 +153,37 @@ public class MenuBarView extends JMenuBar
         /* Add the listener for the help menu item option */
         mnuHelp.addActionListener((ActionListener)mBController);      
         
+	}
+	
+	
+	
+	public void AddNewTool(String name, byte[] classToLoad) {
+		
+		
+		Class loadedclass = null;
+	
+		/* Convert the bytes into a class */
+		try {loadedclass = loader.loadDynamicClass(name, classToLoad);} 
+		catch (ClassNotFoundException e) {e.printStackTrace();}
+		
+		
+		
+		/* Load the new item on the tool bar */
+		Action action = null;
+		
+		action = new ToolController(loadedclass.getName(), 
+			    null, 	
+			    "Draw a " + loadedclass.getName(), 
+			    canvas, 
+			    new TwoPointShapeTool(new DynamicTwoPointShapeFactory(loadedclass), loadedclass.getName()));
+
+		
+		/* Add the new tool to the list */
+		if (action != null) {
+			
+			toolMenu.add(action);	
+			
+		}	
 	}
 	
 	

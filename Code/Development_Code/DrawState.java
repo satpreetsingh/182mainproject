@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Manages the DrawState for a Session.
- * @author bmhelppi
+ * @author bmhelppi, jjtrapan
  *
  */
 public class DrawState implements Serializable{

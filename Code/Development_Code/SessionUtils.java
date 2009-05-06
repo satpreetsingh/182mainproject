@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.UUID;
 
 
+
 /**
  * Static utilities.  Handles large chunks of code for Session, and SessionManager.
  * @author ben
@@ -109,7 +110,7 @@ public class SessionUtils
 	 * @param c Canvas, will be in focus of the Session created.
 	 * @return Returns an operation Session, if the port is available, else null.
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools, ChatPanelView chatPanel, ControlPanelView controlPanel)
+	public static Session buildSession(Member m, DrawingCanvas c, ArrayList<ToolController> tools, MenuBarView menuBar, ChatPanelView chatPanel, ControlPanelView controlPanel)
 	{
 		Session result;
 		boolean portNotFound = true;
@@ -155,7 +156,7 @@ public class SessionUtils
 	 * @param port Port to connect to.
 	 * @return Returns a session, if success, else returns null; 
 	 */
-	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools, ChatPanelView chatPanel, ControlPanelView controlPanel)
+	public static Session buildSession(Member m, DrawingCanvas c, String ip, int port,ArrayList<ToolController> tools, MenuBarView menubar, ChatPanelView chatPanel, ControlPanelView controlPanel)
 	{
 		Session result;
 		int localPort = 0;
@@ -180,7 +181,7 @@ public class SessionUtils
 			String localIp = java.net.InetAddress.getLocalHost().getHostAddress();
 			NetworkBundle local = new NetworkBundle(m,null,null,null, localIp, localPort);
 			
-			result = new Session(local, serverSock, c, ip, port,tools,chatPanel, controlPanel);
+			result = new Session(local, serverSock, c, ip, port,tools, menubar, chatPanel, controlPanel);
 			Output.processMessage("Built session " + localIp + "@" + localPort, Constants.Message_Type.info);
 		}
 		catch(Exception e)
@@ -426,7 +427,7 @@ public class SessionUtils
 		try
 		{
 			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
-			Shape shape= (Shape)networkData.get(0);
+			Object shape= (Object)networkData.get(0);
 
 			session.processSelectShape(shape, true);
 		}
@@ -437,12 +438,32 @@ public class SessionUtils
 
 	}
 
+	private static void processSetNewTool(Session session, NetworkObject data)
+	{
+		try
+		{
+			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
+			String name = (String)networkData.get(0);
+			byte[] rawdata = (byte[])networkData.get(1);
+			
+
+			session.processSetNewTool(name, rawdata);
+		}
+		catch (Exception e)
+		{
+			Output.processMessage("Defective set NewTool message recieved", Constants.Message_Type.error);
+		}
+
+	}
+
+	
+	
 	private static void processSetShapeFill(Session session, NetworkObject data)
 	{
 		try
 		{
 			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
-			Shape shape= (Shape)networkData.get(0);
+			Object shape = (Object)networkData.get(0);
 			boolean isFill = (Boolean)networkData.get(1);
 
 			session.processSetShapeFill(shape, isFill, true);
@@ -459,7 +480,7 @@ public class SessionUtils
 		try
 		{
 			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
-			Shape shape= (Shape)networkData.get(0);
+			Object shape= (Object)networkData.get(0);
 			Color color = (Color)networkData.get(1);
 
 			session.processSetMainColor(shape, color, true);
@@ -476,7 +497,7 @@ public class SessionUtils
 		try
 		{
 			ArrayList<Object> networkData = (ArrayList<Object>)data.data;
-			Shape shape= (Shape)networkData.get(0);
+			Object shape= (Object)networkData.get(0);
 
 			session.processDeleteShape(shape, true);
 		}
@@ -707,6 +728,10 @@ public class SessionUtils
 				{
 					processSelectShape(session, data);
 				}
+				else if (data.objectReason == NetworkObject.reason.setNewTool)
+				{
+					processSetNewTool(session, data);
+				}
 				else if (data.objectReason == NetworkObject.reason.setShapeFill)
 				{
 					processSetShapeFill(session, data);
@@ -798,7 +823,8 @@ public class SessionUtils
 			}
 			catch (Exception e) 
 			{
-				
+				e.printStackTrace();
+
 				Output.processMessage("ServerUtils.checkMessageFromClient unable to get network object", Constants.Message_Type.error);
 			}
 
@@ -1080,7 +1106,7 @@ public class SessionUtils
 
 	/**
 	 * Set fill/empty on an object.
-	 * @param shape Shape to set for.
+	 * @param shape Object to set for.
 	 * @param isoutline Value of filled/not.
 	 * @param session Session to do event for.
 	 */
@@ -1096,7 +1122,22 @@ public class SessionUtils
 		Output.processMessage("Master is sending set fill", Constants.Message_Type.info);
 
 	}
-
+	
+	/**
+	 * Set a new tool.
+	 * @param session Session to send message to.
+	 * @param message Message to send.
+	 */
+	public static void sendNewTool(Session session, String name, byte[] rawbytes) 
+	{
+		
+		ArrayList<Object> data = new ArrayList<Object>();
+		data.add(name);
+		data.add(rawbytes);
+		
+		genericSendToAllPeers(session, data, NetworkObject.reason.setNewTool, null);
+		
+	}
 
 	/**
 	 * Send a chat message.

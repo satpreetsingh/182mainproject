@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 
 
@@ -22,7 +23,7 @@ import javax.swing.JOptionPane;
  * Implements a network session.
  * Keeps track of members active, who's in charge, and 
  * manages data.
- * @author bmhelppi
+ * @author bmhelppi, jjtrapan
  *
  */
 public class Session 
@@ -41,6 +42,7 @@ public class Session
 	public DrawState currentState;
 	
 	public DrawingCanvas canvas;
+	public MenuBarView menubar;
 	public ChatPanelView chatPanel;
 	public ControlPanelView controlPanel;
 	
@@ -60,6 +62,7 @@ public class Session
 			DrawingCanvas canvas,
 			String ip, 
 			int port,ArrayList<ToolController> tools, 
+			MenuBarView menubar, 
 			ChatPanelView chatPanel,
 			ControlPanelView controlPanel) throws ActivationException
 			
@@ -72,6 +75,7 @@ public class Session
 		this.master = null;
 		this.serverSock = serverSock;
 		this.tools = tools;
+		this.menubar = menubar;
 		this.chatPanel = chatPanel;
 		this.controlPanel = controlPanel;
 		
@@ -223,7 +227,7 @@ public class Session
 	
 	/**
 	 * Process an event to set the main color of a shape.
-	 * @param s Shape to set.
+	 * @param s Object to set.
 	 * @param c Color to set.
 	 */
 	public void processSetMainColor(Object s, Color c, boolean networkEvent)
@@ -276,8 +280,21 @@ public class Session
 	}
 	
 	/**
+	 * Process an event to set a new tool on the menubar.
+	 * @param a Action to set.
+	 */
+	public void processSetNewTool(String name, byte[] rawdata)
+	{		
+		
+		this.menubar.AddNewTool(name, rawdata);
+		
+	}
+	
+	
+	
+	/**
 	 * Process an event to set the main type of a shape.
-	 * @param shape Shape to set.
+	 * @param shape Object to set.
 	 * @param IsOutline boolean to set.
 	 */
 	public void processSetShapeFill(Object shape, boolean isoutline, boolean networkEvent)
@@ -569,6 +586,25 @@ public class Session
 			}
 		}
 		return localTool;
+	}
+	
+	/**
+	 * Process a new tool.
+	 * @param NewClass Class.
+	 * @param networkEvent If event from over network.
+	 */
+	public void processNewTool(String name, byte[] rawbytes, boolean networkEvent)
+	{
+		if(networkEvent == false)
+		{
+			SessionUtils.sendNewTool(this, name, rawbytes);
+		}
+		else
+		{
+			System.out.println("ProcessNewTool in Session.Java--networkEvent = True!!");
+			this.menubar.AddNewTool(name, rawbytes);
+			//this.chatPanel.processMessage(a, Constants.Message_Type.chat);
+		}
 	}
 	
 	/**
