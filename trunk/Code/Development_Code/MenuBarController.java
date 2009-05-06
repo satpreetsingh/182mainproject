@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -69,7 +68,8 @@ public class MenuBarController implements ActionListener, SessionListener {
 			String filename = "";
 			String usertogaincontrol = "";
 			Object[] possibilities = new Object [500];
-		
+			byte[] RawBytes = null;
+			
 			
 			
 			/* Create a new session */
@@ -128,40 +128,24 @@ public class MenuBarController implements ActionListener, SessionListener {
 					
 					CompilingClassLoader classloader = new CompilingClassLoader();
 					
-					/* Load the class */
-					try {
-						NewClass = classloader.loadClass(filename);
-						
-					} catch (ClassNotFoundException e1) {
-						Output.processMessage("Cannot load class = " + filename, Constants.Message_Type.error);
-					}			
+					RawBytes = classloader.ConvertFileToBytes(filename);			
 				}
 				
 				
-				if (NewClass != null) {
-				
-					/* Load the new item on the tool bar */
-					Action action = null;
+				if (RawBytes.length > 0) {
 					
-					action = new ToolController(NewClass.getName(), 
-						    null, 	
-						    "Draw a " + NewClass.getName(), 
-						    canvas, 
-						    new TwoPointShapeTool(new DynamicTwoPointShapeFactory(NewClass), NewClass.getName()));
-
 					
-					/* Add the new tool to the list */
-					if (action != null) {
-						this.menubarview.toolMenu.add(action);	
-					}
 					
-
+					menubarview.AddNewTool(filename, RawBytes);
+					
+					/* Alert everyone in the session that we have a new class! */
+					if (session != null)
+		            {
+		            	session.processNewTool(filename, RawBytes, false);
+		            }
+					
 				}
-				
-				else{
-					/* Reset the objects to null */
-					NewClass = null;
-				}	
+
 			}
 		
 			
@@ -392,5 +376,9 @@ public class MenuBarController implements ActionListener, SessionListener {
 		session = s;
 		
 	}
+	
+
+	
+	
 	
 }

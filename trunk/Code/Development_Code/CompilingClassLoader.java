@@ -175,6 +175,36 @@ public class CompilingClassLoader extends ClassLoader {
 		
 	}
 
-
+	public byte[] ConvertFileToBytes(String name){
+		byte[] raw = null;
+		
+		String fileStub = name.replace ('.', '/');
+		
+		String classFilename = fileStub + ".class";
+		File classFile = new File (classFilename);
+		
+		
+		try {
+			
+			/* Read the bytes */
+			raw = getBytes (classFilename);
+		}
+		catch (IOException ie) {ie.printStackTrace();}
+		
+		return raw;
+		
+	}
+	
+	
+	public Class loadDynamicClass (String name, byte[] loadedclass) throws ClassNotFoundException {
+		
+		/* Our goal is to get a Class object */ 
+		Class GenericClass = null;
+		
+		GenericClass = defineClass (name, loadedclass, 0, loadedclass.length);		
+		
+		return GenericClass;
+		
+	}
 
 }

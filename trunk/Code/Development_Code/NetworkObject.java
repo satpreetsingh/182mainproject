@@ -38,6 +38,7 @@ public class NetworkObject implements Serializable {
 	 clearSelection,
 	 selectShape,
 	 deleteShape,
+	 setNewTool,
 	 setShapeColor,
 	 setShapeFill,
 	 canvasOwnershipRequest,

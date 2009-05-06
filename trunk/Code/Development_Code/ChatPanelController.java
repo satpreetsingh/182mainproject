@@ -43,6 +43,7 @@ public class ChatPanelController implements ActionListener, SessionListener
             this.chatView.txtMsg.setText("");
             
             this.chatView.processMessage(session.localUser.person.name + ": " + msg,Constants.Message_Type.chat);
+            
             if (session != null)
             {
             	session.processChatMessage(session.localUser.person.name + ": " + msg, false);
