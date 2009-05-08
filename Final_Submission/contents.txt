@@ -1,0 +1,35 @@
+CONTENTS
+
+--------------------------------------
+Final Documentation.rar:
+--------------------------------------
+1. Team1_MultiDraw_FinalDoc-1.docx
+This file contains Architecture, Technology choices, Network & Reflection documentation. It is the main document.
+
+2. Team1_Use_Cases.doc
+
+3. Schedule.docx
+This contains our actual vs. intended schedule, along with all iteration goals.
+
+4. Meetings.docx
+This doc contains a list of each meeting, goals for those meetings and minutes for a few of the discussion meetings.
+
+5. MultiDraw.pptx
+Powerpoint slides from our final presentation 5-5-09.
+
+
+--------------------------------------
+Final_Build.rar:
+--------------------------------------
+1. DemoPack folder:
+This contains the jar file for our final project.
+
+2. Development_Code:
+This folder contains all of the .java files and a finalBuild.rar.
+
+3. readme.txt
+
+--------------------------------------
+Javadocs:
+--------------------------------------
+This .rar contains all of the javadocs for the project.
