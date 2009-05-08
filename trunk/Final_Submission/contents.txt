@@ -19,17 +19,21 @@ Powerpoint slides from our final presentation 5-5-09.
 
 
 --------------------------------------
-Final_Build.rar:
+StableBuild.rar:
 --------------------------------------
 1. DemoPack folder:
-This contains the jar file for our final project.
+This contains the jar file for our final project and the relevant image files.
 
-2. Development_Code:
-This folder contains all of the .java files and a finalBuild.rar.
+2. Javadocs for the StableBuild
 
 3. readme.txt
 
 --------------------------------------
-Javadocs:
+DevBuild.rar
 --------------------------------------
-This .rar contains all of the javadocs for the project.
+1. DevBuild folder: 
+This contains the jar for the development code, and relevant image files.
+
+2. Javadocs for the development code
+
+3. readme.txt
